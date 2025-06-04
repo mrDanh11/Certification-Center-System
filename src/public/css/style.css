@@ -1,0 +1,30 @@
+.pagination {
+    display: flex;
+}
+
+.pagination button {
+    padding: 6px 10px;
+    margin: 0 5px;
+    font-size: 16px;
+    /* cursor: pointer; */
+    background-color: #f0f7da;
+    color: #000;
+}
+
+#pageNumbers button {
+    margin: 0 2px;
+}
+
+.pagination .active {
+    background-color: #234d20;
+    /* Change this color as needed */
+    color: white;
+    font-weight: bold;
+    border-radius: 4px;
+    /* Optional for rounded button appearance */
+}
+
+.pagination .disable {
+    background-color: #333;
+    /* Change this color as needed */
+}

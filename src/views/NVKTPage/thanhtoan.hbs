@@ -1,0 +1,57 @@
+<div class="max-w-4xl mx-auto px-6 py-10 space-y-8 text-gray-800">
+  <!-- Tiêu đề -->
+  <h1 class="text-center text-2xl font-semibold border-b pb-2">Thanh toán đăng ký</h1>
+
+  <!-- Mã đăng ký -->
+  <div class="flex items-center space-x-2">
+    <label for="maDangKy" class="font-medium">Mã đăng ký</label>
+    <input type="text" id="maDangKy" class="border rounded px-3 py-1 w-40" />
+    <button id="btnTraCuu" class="p-2 rounded bg-gray-200 hover:bg-gray-300">🔍</button>
+  </div>
+
+  <!-- Thông tin khách hàng -->
+  <div id="khachHangSection" class="hidden">
+    <h2 class="text-lg font-semibold mb-2">Thông tin khách hàng</h2>
+    <div class="grid grid-cols-2 gap-y-1 text-sm">
+      <div>Căn cước công dân: <span id="cccd" class="font-medium"></span></div>
+      <div>Tình trạng thanh toán: <span id="tinhTrang" class="font-medium"></span></div>
+      <div>Loại khách hàng: <span id="loaiKhachHang" class="font-medium"></span></div>
+      <div>Số lượng: <span id="soLuong" class="font-medium"></span></div>
+    </div>
+  </div>
+
+  <!-- Thông tin đăng ký -->
+  <div id="dangKySection" class="hidden">
+    <div class="flex justify-between items-center">
+      <h2 class="text-lg font-semibold">Thông tin đăng ký</h2>
+      <button class="bg-gray-500 text-white text-sm px-3 py-1 rounded hover:bg-gray-600">
+        Thanh toán trực tuyến
+      </button>
+    </div>
+
+    <!-- Danh sách bài thi -->
+    <div id="dsBaiThi" class="border mt-2 max-h-56 overflow-y-auto p-2 space-y-4 bg-white"></div>
+  </div>
+
+  <!-- Tổng kết thanh toán -->
+  <div id="thanhToanSection" class="hidden grid grid-cols-2 gap-4 text-sm font-medium">
+    <div class="space-y-1">
+      <div>Tổng tiền: <span id="tongTien" class="font-bold"></span></div>
+      <div>Tiền giảm: <span id="giamGia" class="font-bold">0</span></div>
+      <div>Thành tiền: <span id="thanhTien" class="font-bold"></span></div>
+    </div>
+    <div class="space-y-1">
+      <div class="flex items-center justify-between">
+        <span>Tiền nhận:</span>
+        <input id="tienNhan" type="text" class="border rounded px-2 py-1 w-32 text-right" />
+      </div>
+      <div class="flex items-center justify-between">
+        <span>Tiền thối:</span>
+        <span id="tienThoi">0</span>
+      </div>
+      <button id="btnThanhToan" class="mt-2 w-full bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+        Xác nhận thanh toán
+      </button>
+    </div>
+  </div>
+</div>
