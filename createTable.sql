@@ -10,6 +10,9 @@ USE QuanLyDangKyThi;
 ALTER ROLE db_owner ADD MEMBER NVHT;
 GO
 
+USE QuanLyDangKyThi;
+SELECT * FROM sys.database_principals WHERE name = 'NVHT';
+
 CREATE TABLE NhanVien (
     NhanVienID INT IDENTITY(1, 1),
     Hoten NVARCHAR(100),
@@ -114,6 +117,7 @@ CREATE TABLE HoaDon (
     SoTienGiam INT,
     ThanhTien INT,
     TienNhan INT,
+	HinhThucThanhToan  NVARCHAR(50),
     NVKeToanLap INT,
     PRIMARY KEY(HoaDonID),
     FOREIGN KEY(PhieuID) REFERENCES PhieuDangKy(PhieuID),
@@ -218,7 +222,7 @@ CREATE TABLE PhieuThanhToan (
     SoTienGiam INT,
     ThanhTien INT,
     NgayLap DATETIME,
-    MaThanhToan INT,
+    MaThanhToan  NVARCHAR(100),
     TinhTrangDuyet BIT,
     PhieuDonViID INT,
     NVKeToanLap INT,

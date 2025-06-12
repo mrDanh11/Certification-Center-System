@@ -6,25 +6,29 @@
   <div class="flex items-center space-x-2">
     <label for="maDangKy" class="font-medium">Mã đăng ký</label>
     <input type="text" id="maDangKy" class="border rounded px-3 py-1 w-40" />
-    <button id="btnTraCuu" class="p-2 rounded bg-gray-200 hover:bg-gray-300">🔍</button>
+    <button id="btnTraCuu" class="p-2 rounded bg-blue hover:bg-babyblue hover:text-black text-white">Tìm kiếm</button>
   </div>
 
   <!-- Thông tin khách hàng -->
-  <div id="khachHangSection" class="hidden">
+  <div id="khachHangSection">
     <h2 class="text-lg font-semibold mb-2">Thông tin khách hàng</h2>
     <div class="grid grid-cols-2 gap-y-1 text-sm">
-      <div>Căn cước công dân: <span id="cccd" class="font-medium"></span></div>
-      <div>Tình trạng thanh toán: <span id="tinhTrang" class="font-medium"></span></div>
-      <div>Loại khách hàng: <span id="loaiKhachHang" class="font-medium"></span></div>
-      <div>Số lượng: <span id="soLuong" class="font-medium"></span></div>
+      <div>Căn cước công dân: <span id="cccd" class="font-medium">Không có</span></div>
+      <div>Họ tên: <span id="hoten" class="font-medium">Không có</span></div>
+      <div>Email: <span id="email" class="font-medium">Không có</span></div>
+      <div>Số điện thoại: <span id="sdt" class="font-medium">Không có</span></div>
+      <div>Ngày lập: <span id="ngaylap" class="font-medium">Không có</span></div>
+      <div>Tình trạng thanh toán: <span id="tinhTrang" class="font-medium">Không có</span></div>
+      <div>Loại khách hàng: <span id="loaiKhachHang" class="font-medium">Không có</span></div>
+      <div>Số lượng: <span id="soLuong" class="font-medium">Không có</span></div>
     </div>
   </div>
 
   <!-- Thông tin đăng ký -->
-  <div id="dangKySection" class="hidden">
+  <div id="dangKySection">
     <div class="flex justify-between items-center">
       <h2 class="text-lg font-semibold">Thông tin đăng ký</h2>
-      <button class="bg-gray-500 text-white text-sm px-3 py-1 rounded hover:bg-gray-600">
+      <button id="thanhtoantructuyen" class="bg-blue hover:bg-babyblue hover:text-black text-white text-sm px-3 py-1 rounded">
         Thanh toán trực tuyến
       </button>
     </div>
@@ -34,7 +38,7 @@
   </div>
 
   <!-- Tổng kết thanh toán -->
-  <div id="thanhToanSection" class="hidden grid grid-cols-2 gap-4 text-sm font-medium">
+  <div id="thanhToanSection" class="grid grid-cols-2 gap-4 text-sm font-medium">
     <div class="space-y-1">
       <div>Tổng tiền: <span id="tongTien" class="font-bold"></span></div>
       <div>Tiền giảm: <span id="giamGia" class="font-bold">0</span></div>
@@ -49,9 +53,12 @@
         <span>Tiền thối:</span>
         <span id="tienThoi">0</span>
       </div>
-      <button id="btnThanhToan" class="mt-2 w-full bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded">
+      <button id="btnThanhToan" class="mt-2 w-full bg-blue hover:bg-babyblue hover:text-black text-white px-3 py-1 rounded">
         Xác nhận thanh toán
       </button>
     </div>
   </div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
