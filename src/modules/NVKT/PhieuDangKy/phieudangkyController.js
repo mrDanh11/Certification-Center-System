@@ -91,13 +91,42 @@ const phieudangkyController = {
   },
 
   TaoPhieuDangKy: async (req, res) => {
-    const { khachHangID } = req.body;
+    const { khachHangID, loaiPhieu, baiThiInfo, soLuong } = req.body;
 
     if (!khachHangID) {
       return res.status(400).json({ error: 'KhachHangID is required' });
     }
-    // TODO: add nhan vien tiep nhan lap and loai phieu
-    const result = await PhieuDangKy.TaoPhieuDangKy(khachHangID);
+
+    if (!loaiPhieu) {
+      return res.status(400).json({ error: 'loaiPhieu is required' });
+    }
+
+    if (loaiPhieu === "Đơn Vị") {
+      if (!baiThiInfo) {
+        return res.status(400).json({ error: 'baiThiInfo is required' });
+      }
+      if (!baiThiInfo.loaiBaiThi) {
+        return res.status(400).json({ error: 'loaiBaiThi is required' });
+      }
+      if (!baiThiInfo.ngayThi) {
+        return res.status(400).json({ error: 'ngayThi is required' });
+      }
+      if (!baiThiInfo.yeuCau) {
+        return res.status(400).json({ error: 'yeuCau is required' });
+      }
+      if (!soLuong) {
+        return res.status(400).json({ error: 'soLuong is required' });
+      }
+    }
+
+    // TODO: add nhan vien tiep nhan lap 
+    const result = await PhieuDangKy.TaoPhieuDangKy(
+      khachHangID,
+      loaiPhieu,
+      undefined,
+      baiThiInfo,
+      soLuong
+    );
 
     if (result.success) {
       res.status(201).json({ phieuID: result.phieuID });
