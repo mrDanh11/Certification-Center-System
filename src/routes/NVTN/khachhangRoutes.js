@@ -5,4 +5,6 @@ const khachhangController = require('../../modules/NVKT/KhachHang/khachhangContr
 router.get('/', khachhangController.LayThongTinKH);
 router.get('/:MaKH', khachhangController.TimKH);
 
+router.post('/', khachhangController.ThemKH);
+
 module.exports = router;
