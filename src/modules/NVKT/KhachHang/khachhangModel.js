@@ -64,6 +64,35 @@ const KhachHang = {
 			throw new Error('Error get information in khachhang: ' + err.message);
 		}
 	},
+
+  TimKHCCCD: async (cccd) => {
+    const conn = await pool.connect();
+    const result = await conn.request()
+      .input("CCCD", cccd)
+      .query("SELECT KhachHangID FROM KhachHang WHERE CCCD = @CCCD");
+
+    return result.recordset.length > 0 ? result.recordset[0] : null;
+  },
+
+  ThemKH: async (data) => {
+    const { tenKhachHang, gioiTinh, cccd, sdt, email, loaiKhachHang } = data;
+
+    const conn = await pool.connect();
+    const result = await conn.request()
+      .input("HoTen", tenKhachHang)
+      .input("Phai", gioiTinh)
+      .input("CCCD", cccd)
+      .input("Dienthoai", sdt)
+      .input("Email", email)
+      .input("LoaiKH", loaiKhachHang)
+      .query(`
+        INSERT INTO KhachHang (HoTen, Phai, CCCD, Dienthoai, Email, LoaiKH)
+        OUTPUT INSERTED.KhachHangID
+        VALUES (@HoTen, @Phai, @CCCD, @DienThoai, @Email, @LoaiKH)
+      `);
+
+    return result.recordset[0].KhachHangID;
+  }
 }
 
 module.exports = KhachHang;

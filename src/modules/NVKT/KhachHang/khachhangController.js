@@ -19,7 +19,6 @@ const khachhangController = {
             res.status(500).json({ error: err.message });
         }
     },
-
     LayKHChuaThanhToan: async (req, res) => {
         try {
             const {maDangKy, ngayLap} = req.query;
@@ -28,6 +27,35 @@ const khachhangController = {
         } catch (err) {
             res.status(500).json({ error: err.message });
         }
+    },
+  ThemKH: async(req, res) => {
+    try {
+      const { tenKhachHang, gioiTinh, cccd, sdt, email, loaiKhachHang } = req.body;
+
+      if (!tenKhachHang || !gioiTinh || !cccd || !sdt || !email || !loaiKhachHang) {
+        return res.status(400).json({ error: "Thiếu thông tin khách hàng." });
+      }
+
+      const existing = await KhachHang.TimKHCCCD(cccd);
+      if (existing) {
+        return res.status(409).json({ error: "⚠️ CCCD đã tồn tại trong hệ thống." });
+      }
+
+      const newID = await KhachHang.ThemKH({
+        tenKhachHang,
+        gioiTinh,
+        cccd,
+        sdt,
+        email,
+        loaiKhachHang
+      });
+
+      res.status(201).json({ message: "Thêm khách hàng thành công.", khachHangID: newID });
+
+    } catch (err) {
+      console.error("❌ Lỗi khi thêm khách hàng:", err);
+      res.status(500).json({ error: "Lỗi máy chủ." });
     }
+  },
 }
 module.exports = khachhangController;
