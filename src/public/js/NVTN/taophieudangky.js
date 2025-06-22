@@ -103,13 +103,13 @@ const addThiSinhBtn_Click = async () => {
   newRow.className = "max-w-full flex flex-row gap-4 space-y-2 relative thiSinhRow";
 
   newRow.innerHTML = `
-    <div class="flex flex-col items-left w-[40%]">
+    <div class="flex flex-col items-left min-w-[30%]">
       <input type="text" name="thiSinhHoTen" class="mt-auto ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg" value="">
     </div>
-    <div class="flex flex-col items-left w-[40%]">
+    <div class="flex flex-col items-left min-w-[30%]">
       <input type="text" name="thiSinhCCCD" minlength="12" maxlength="12" name="thiSinhCCCD" class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg" required>
     </div>
-    <div class="flex flex-col items-left w-[15%]">
+    <div class="flex flex-col items-left min-w-[15%]">
       <select name="thiSinhGioiTinh" class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg">
         <option value="">Phái</option>
         <option value="Nam">Nam</option>
@@ -141,6 +141,11 @@ const btnDangKy_Click = async () => {
   btnDangKy.classList.add("opacity-50", "cursor-not-allowed");
 
   const khachHangID = document.querySelector('#maKhachHang')?.value?.trim();
+  const loaiKhachHang = document.querySelector('#loaiKhachHang')?.value?.trim();
+  const thiSinhElements = document.querySelectorAll('.thiSinhRow');
+  const soLuong = thiSinhElements.length;
+  const thiSinhList = [];
+  let hasMissingField = false;
 
   if (!khachHangID) {
     alert('⚠️ Vui lòng chọn hoặc tạo khách hàng trước khi đăng ký.');
@@ -148,15 +153,17 @@ const btnDangKy_Click = async () => {
     return;
   }
 
-  const thiSinhElements = document.querySelectorAll('.thiSinhRow');
+  if (!loaiKhachHang) {
+    alert(`⚠️ Thiếu loại khách hàng trong dữ liệu, hãy thông báo với quản trị viên với Mã khách hàng: ${khachHangID}.`);
+    resetButton();
+    return;
+  }
+
   if (thiSinhElements.length === 0) {
     alert('⚠️ Vui lòng thêm ít nhất một thí sinh trước khi đăng ký.');
     resetButton();
     return;
   }
-
-  const thiSinhList = [];
-  let hasMissingField = false;
 
   thiSinhElements.forEach(row => {
     const hoTenInput = row.querySelector('input[name="thiSinhHoTen"]');
@@ -198,10 +205,25 @@ const btnDangKy_Click = async () => {
 
   try {
     // Step 1: Create PhieuDangKy
+    const phieuBody = { khachHangID, loaiPhieu: loaiKhachHang };
+
+    // Add extra info if đơn vị
+    if (loaiKhachHang === 'Đơn Vị') {
+      phieuBody.baiThiInfo = {
+        loaiBaiThi: document.querySelector('#loaiBaiThi')?.value?.trim(),
+        ngayThi: document.querySelector('#ngayThi')?.value,
+        yeuCau: document.querySelector('#yeuCau')?.value?.trim(),
+      };
+
+      phieuBody.soLuong = soLuong;
+    }
+
+    console.log(phieuBody);
+
     const phieuResponse = await fetch('/NVTN/api/phieudangky', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ khachHangID })
+      body: JSON.stringify(phieuBody)
     });
 
     const phieuResult = await phieuResponse.json();
@@ -240,8 +262,7 @@ const btnDangKy_Click = async () => {
   }
 };
 
-// OnLoad() function
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() { // OnLoad() function
   const btnTimKiem = document.querySelector('#btnTimKiemKH');
   const addButton = document.getElementById("addThiSinhBtn");
   const container = document.getElementById("thiSinhContainer");
