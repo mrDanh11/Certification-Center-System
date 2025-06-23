@@ -110,6 +110,7 @@ CREATE TABLE PhieuDangKy (
     KhachHangID INT,
     ThoiGianLap DATETIME,
     TinhTrangThanhToan BIT DEFAULT 0,
+    TinhTrangHuy BIT,
     LoaiPhieu NVARCHAR(50),
     NVTiepNhanLap INT,
     PRIMARY KEY (PhieuID),
@@ -145,7 +146,6 @@ GO
 CREATE TABLE PhieuDonVi (
     PhieuID INT,
     SoLuong INT,
-    TinhTrangHuy BIT,
     NVKeToanHuy INT,
     PRIMARY KEY (PhieuID),
     FOREIGN KEY (PhieuID) REFERENCES PhieuDangKy(PhieuID),
@@ -182,10 +182,10 @@ GO
 
 CREATE TABLE DanhSachCho (
     STT INT IDENTITY(1, 1),
-    SoBaoDanh INT,
+    ThiSinhID INT,
     TinhTrang BIT,
     PRIMARY KEY(STT),
-    FOREIGN KEY(SoBaoDanh) REFERENCES PhieuDuThi(SoBaoDanh),
+    FOREIGN KEY(ThiSinhID) REFERENCES ThiSinh(ThiSinhID),
 );
 
 CREATE TABLE KetQuaChungChi (
@@ -216,11 +216,11 @@ CREATE TABLE PhieuGiaHan (
     PhieuGiaHanID INT IDENTITY(1, 1),
     TinhTrang NVARCHAR(100),
     NgayLap DATETIME,
-    SoBaoDanh INT,
+    PhieuID INT,
     LichThiTruoc INT,
     LichThiSau INT,
     PRIMARY KEY(PhieuGiaHanID),
-    FOREIGN KEY(SoBaoDanh) REFERENCES PhieuDuThi(SoBaoDanh),
+    FOREIGN KEY(PhieuID) REFERENCES PhieuDangKy(PhieuID),
     FOREIGN KEY(LichThiTruoc) REFERENCES LichThi(BaiThiID),
     FOREIGN KEY(LichThiSau) REFERENCES LichThi(BaiThiID),
 );
