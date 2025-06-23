@@ -1,6 +1,11 @@
+DROP USER NVHT;
+
 CREATE LOGIN NVHT WITH PASSWORD = '1234@';
 CREATE USER NVHT FOR LOGIN NVHT;
 ALTER ROLE db_owner ADD MEMBER NVHT;
+GO
+
+DROP DATABASE QuanLyDangKyThi
 GO
 
 CREATE DATABASE QuanLyDangKyThi
@@ -102,6 +107,7 @@ CREATE TABLE PhieuDangKy (
     TinhTrangThanhToan BIT DEFAULT 0,
     LoaiPhieu NVARCHAR(50),
     NVTiepNhanLap INT,
+	TinhTrangHuy BIT,
     PRIMARY KEY (PhieuID),
     CONSTRAINT CHK_LoaiPhieu_type CHECK (LoaiPhieu IN (N'Cá Nhân', N'Đơn Vị')),
     FOREIGN KEY(NVTiepNhanLap) REFERENCES TiepNhan(NhanVienID),
@@ -135,7 +141,6 @@ GO
 CREATE TABLE PhieuDonVi (
     PhieuID INT,
     SoLuong INT,
-    TinhTrangHuy BIT,
     NVKeToanHuy INT,
     PRIMARY KEY (PhieuID),
     FOREIGN KEY (PhieuID) REFERENCES PhieuDangKy(PhieuID),
@@ -279,12 +284,12 @@ INSERT INTO KhachHang(Hoten, CCCD, Phai, Email, Dienthoai, LoaiKH) VALUES
 (N'Công ty XYZ', N'CN12345678', N'Nam', N'xyz@company.com', N'0988776655', N'Đơn Vị');
 
 -- 7. PhieuDangKy (NVTiepNhanLap thuộc TiepNhan (id=2), KhachHangID: 1-5)
-INSERT INTO PhieuDangKy(KhachHangID, ThoiGianLap, TinhTrangThanhToan, LoaiPhieu, NVTiepNhanLap) VALUES
-(1, '2025-06-01', 1, N'Cá Nhân', 2),
-(2, '2025-06-01', 0, N'Cá Nhân', 2),
-(3, '2025-06-02', 1, N'Đơn Vị', 2),
-(4, '2025-06-03', 0, N'Cá Nhân', 2),
-(5, '2025-06-03', 1, N'Đơn Vị', 2);
+INSERT INTO PhieuDangKy(KhachHangID, ThoiGianLap, TinhTrangThanhToan, LoaiPhieu, NVTiepNhanLap, TinhTrangHuy) VALUES
+(1, '2025-06-01', 0, N'Cá Nhân', 2, 0),
+(2, '2025-06-01', 0, N'Cá Nhân', 2, 0),
+(3, '2025-06-02', 0, N'Đơn Vị', 2, 0),
+(4, '2025-06-03', 0, N'Cá Nhân', 2, 0),
+(5, '2025-06-03', 0, N'Đơn Vị', 2, 0);
 
 -- 8. HoaDon (PhieuID 1-5, NVKeToanLap: 3)
 /*INSERT INTO HoaDon(PhieuID, ThoiGianLap, SoTienTong, SoTienGiam, ThanhTien, TienNhan, NVKeToanLap) VALUES
@@ -298,9 +303,9 @@ INSERT INTO PhieuDangKy(KhachHangID, ThoiGianLap, TinhTrangThanhToan, LoaiPhieu,
 INSERT INTO PhieuCaNhan(PhieuID) VALUES (1), (2), (4);
 
 -- 10. PhieuDonVi (PhieuID 3,5), NVKeToanHuy: 3
-INSERT INTO PhieuDonVi(PhieuID, SoLuong, TinhTrangHuy, NVKeToanHuy) VALUES
-(3, 5, 0, 3),
-(5, 10, 0, 3);
+INSERT INTO PhieuDonVi(PhieuID, SoLuong, NVKeToanHuy) VALUES
+(3, 5, 3),
+(5, 10, 3);
 
 -- 11. ThiSinh (PhieuID: 1-5)
 INSERT INTO ThiSinh(PhieuID, CCCD, Hoten, Phai) VALUES

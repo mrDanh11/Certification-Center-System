@@ -1,64 +1,173 @@
-<div class="max-w-4xl mx-auto px-6 py-10 space-y-8 text-gray-800">
+<div class="max-w-4xl mx-auto px-6 py-10 space-y-10 text-gray-800 bg-white rounded-xl shadow-lg">
+
   <!-- Tiêu đề -->
-  <h1 class="text-center text-2xl font-semibold border-b pb-2">Thanh toán đăng ký</h1>
+  <h1 class="text-center text-3xl font-bold text-blue-700 border-b pb-4">Thanh toán đăng ký</h1>
 
   <!-- Mã đăng ký -->
-  <div class="flex items-center space-x-2">
-    <label for="maDangKy" class="font-medium">Mã đăng ký</label>
-    <input type="text" id="maDangKy" class="border rounded px-3 py-1 w-40" />
-    <button id="btnTraCuu" class="p-2 rounded bg-blue hover:bg-babyblue hover:text-black text-white">Tìm kiếm</button>
+  <div class="flex items-center space-x-3">
+    <label for="maDangKy" class="font-semibold">Mã đăng ký</label>
+    <input type="text" id="maDangKy" class="border border-gray-300 rounded-lg px-4 py-2 w-40 focus:ring-2 focus:ring-blue-400 outline-none" />
+    <button id="btnTraCuu"
+      class="bg-blue hover:bg-babyblue hover:text-black text-white px-4 py-2 rounded-lg shadow transition-all duration-200">
+      Tìm kiếm
+    </button>
   </div>
 
   <!-- Thông tin khách hàng -->
-  <div id="khachHangSection">
-    <h2 class="text-lg font-semibold mb-2">Thông tin khách hàng</h2>
-    <div class="grid grid-cols-2 gap-y-1 text-sm">
-      <div>Căn cước công dân: <span id="cccd" class="font-medium">Không có</span></div>
-      <div>Họ tên: <span id="hoten" class="font-medium">Không có</span></div>
-      <div>Email: <span id="email" class="font-medium">Không có</span></div>
-      <div>Số điện thoại: <span id="sdt" class="font-medium">Không có</span></div>
-      <div>Ngày lập: <span id="ngaylap" class="font-medium">Không có</span></div>
-      <div>Tình trạng thanh toán: <span id="tinhTrang" class="font-medium">Không có</span></div>
-      <div>Loại khách hàng: <span id="loaiKhachHang" class="font-medium">Không có</span></div>
-      <div>Số lượng: <span id="soLuong" class="font-medium">Không có</span></div>
+  <div id="khachHangSection" class="bg-gray-50 p-10 rounded-lg shadow-inner space-y-3">
+    <div class="flex justify-between items-center">
+      <h2 class="text-xl font-semibold text-gray-700">Thông tin khách hàng</h2>
+      <button id="huyPhieuDangKy"
+        class="bg-blue hover:bg-babyblue hover:text-black text-white text-sm px-4 py-2 rounded-md transition-all duration-200 shadow">
+        Hủy phiếu đăng ký
+      </button>
     </div>
+    <div class="grid grid-cols-2 gap-y-4 gap-x-10 text-sm text-gray-700">
+
+    <div>
+      Căn cước công dân: 
+      <input id="cccd" type="text" class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1 text-gray-800" readonly value="Không có">
+    </div>
+
+    <div>
+      Họ tên: 
+      <input id="hoten" type="text" class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1 text-gray-800" readonly value="Không có">
+    </div>
+
+    <div>
+      Email: 
+      <input id="email" type="text" class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1 text-gray-800" readonly value="Không có">
+    </div>
+
+    <div>
+      Số điện thoại: 
+      <input id="sdt" type="text" class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1 text-gray-800" readonly value="Không có">
+    </div>
+
+    <div>
+      Ngày đăng ký: 
+      <input id="ngaylap" type="text" class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1 text-gray-800" readonly value="Không có">
+    </div>
+
+    <div>
+      Tình trạng thanh toán: 
+      <input id="tinhTrang" type="text" class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1 text-gray-800" readonly value="Không có">
+    </div>
+
+    <div>
+      Loại khách hàng: 
+      <input id="loaiKhachHang" type="text" class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1 text-gray-800" readonly value="Không có">
+    </div>
+
+    <div>
+      Số lượng: 
+      <input id="soLuong" type="text" class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1 text-gray-800" readonly value="Không có">
+    </div>
+
+  </div>
+
   </div>
 
   <!-- Thông tin đăng ký -->
-  <div id="dangKySection">
+  <div id="dangKySection" class="bg-gray-50 p-10 rounded-lg shadow-inner space-y-3">
     <div class="flex justify-between items-center">
-      <h2 class="text-lg font-semibold">Thông tin đăng ký</h2>
-      <button id="thanhtoantructuyen" class="bg-blue hover:bg-babyblue hover:text-black text-white text-sm px-3 py-1 rounded">
+      <h2 class="text-xl font-semibold text-gray-700">Thông tin đăng ký</h2>
+      <button id="thanhtoantructuyen"
+        class="bg-blue hover:bg-babyblue hover:text-black text-white text-sm px-4 py-2 rounded-md transition-all duration-200 shadow">
         Thanh toán trực tuyến
       </button>
     </div>
-
-    <!-- Danh sách bài thi -->
-    <div id="dsBaiThi" class="border mt-2 max-h-56 overflow-y-auto p-2 space-y-4 bg-white"></div>
+    <div id="dsBaiThi" class="border mt-2 max-h-56 overflow-y-auto p-3 space-y-4 bg-white rounded-md shadow-inner">
+      <!-- Nội dung bài thi -->
+    </div>
   </div>
 
   <!-- Tổng kết thanh toán -->
-  <div id="thanhToanSection" class="grid grid-cols-2 gap-4 text-sm font-medium">
-    <div class="space-y-1">
-      <div>Tổng tiền: <span id="tongTien" class="font-bold"></span></div>
-      <div>Tiền giảm: <span id="giamGia" class="font-bold">0</span></div>
-      <div>Thành tiền: <span id="thanhTien" class="font-bold"></span></div>
+  <div id="thanhToanSection" class="grid grid-cols-1 md:grid-cols-2 gap-32 text-sm font-medium bg-gray-50 py-5 px-10 rounded-lg shadow-inner">
+    <div class="grid grid-cols-2 gap-3 text-sm items-center">
+      <div class="pr-2">Tổng tiền:</div>
+      <input id="tongTien" type="text" class="w-full bg-gray-100 border border-gray-300 rounded px-2 py-1 text-gray-800" readonly value="0">
+
+      <div class="pr-2">Tiền giảm:</div>
+      <input id="giamGia" type="text" class="w-full bg-gray-100 border border-gray-300 rounded px-2 py-1 text-gray-800" readonly value="0">
+
+      <div class="pr-2">Thành tiền:</div>
+      <input id="thanhTien" type="text" class="w-full bg-gray-100 border border-gray-300 rounded px-2 py-1 text-gray-800" readonly value="0">
     </div>
-    <div class="space-y-1">
-      <div class="flex items-center justify-between">
-        <span>Tiền nhận:</span>
-        <input id="tienNhan" type="text" class="border rounded px-2 py-1 w-32 text-right" />
-      </div>
-      <div class="flex items-center justify-between">
-        <span>Tiền thối:</span>
-        <span id="tienThoi">0</span>
-      </div>
-      <button id="btnThanhToan" class="mt-2 w-full bg-blue hover:bg-babyblue hover:text-black text-white px-3 py-1 rounded">
-        Xác nhận thanh toán
-      </button>
+    <div class="grid grid-cols-2 gap-3 text-sm items-center">
+        <div class="pr-2">Tiền nhận:</div>
+        <input id="tienNhan" type="text" class="border rounded px-3 py-2 w-36 text-right focus:ring-2 focus:ring-blue-400" />
+
+        <div class="pr-2">Tiền thối:</div>
+        <input id="tienThoi" type="text" class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1 text-gray-800" readonly value="0">
+ 
+        <span></span>
+        <button id="btnThanhToan"
+          class="w-full h-9 bg-blue hover:bg-babyblue hover:text-black text-white px-2 py-2 rounded-lg shadow transition-all duration-200">
+          Xác nhận thanh toán
+        </button>
     </div>
   </div>
 </div>
 
+
+<!-- Dialog thanh toán trực tuyến -->
+<div id="dialogThanhToan" class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50">
+  <div class="bg-white rounded-xl shadow-2xl p-8 max-w-2xl w-full space-y-6 relative animate-fade-in">
+
+    <!-- Nút Thoát -->
+    <button id="btnHuyDialog"
+      class="absolute top-3 right-3 bg-darkblue hover:bg-midnightblue hover:text-black text-white transition px-2 py-1 rounded-full">
+      ✕
+    </button>
+
+    <!-- Tiêu đề -->
+    <h1 class="text-center text-2xl font-bold text-gray-800">Thanh toán trực tuyến</h1>
+
+    <!-- Gửi phiếu thanh toán -->
+    <div class="space-y-3 bg-gray-50 p-4 rounded-lg border">
+      <h2 class="text-lg font-semibold text-gray-700 border-b pb-2">Gửi phiếu thanh toán</h2>
+      <div class="flex flex-col md:flex-row justify-between gap-4 items-center text-sm text-gray-700">
+        <div class="space-y-1">
+          <p>Đã Gửi: <input id="given" type="text" class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1 text-gray-800" readonly value="Chưa gửi"></p>
+          <p>Ngày gửi: <input id="ngayGui" type="text" class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1 text-gray-800" readonly value="Không rõ"></p>
+        </div>
+        <button id="guiPhieuThanhToan"
+          class="w-full md:w-48 bg-blue hover:bg-babyblue hover:text-black text-white font-medium py-2 rounded-md transition shadow">
+          Gửi phiếu thanh toán
+        </button>
+      </div>
+    </div>
+
+    <!-- Duyệt phiếu thanh toán -->
+    <div class="space-y-3 bg-gray-50 p-4 rounded-lg border">
+      <h2 class="text-lg font-semibold text-gray-700 border-b pb-2">Duyệt thanh toán</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+        <div class="flex flex-col space-y-1">
+          <label for="maThanhToan" class="text-sm text-gray-600">Mã thanh toán</label>
+          <input id="maThanhToan" type="text"
+            class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+        </div>
+        <div class="flex flex-col space-y-1">
+          <label for="tienNhanDialog" class="text-sm text-gray-600">Tiền nhận</label>
+          <input id="tienNhanDialog" type="text"
+            class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm">
+        </div>
+        <div class="flex items-end">
+          <button id="duyetPhieuThanhToan"
+            class="w-full bg-blue hover:bg-babyblue hover:text-black text-white font-medium py-2 rounded-md transition shadow">
+            Duyệt phiếu thanh toán
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+<script src="/js/NVKT/thanhtoantructuyen.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>

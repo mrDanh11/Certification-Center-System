@@ -12,8 +12,19 @@ const config = {
     }
 };
 
-const pool = new mssql.ConnectionPool(config)
-
-module.exports = {
-    pool,
-};
+try {
+    const pool = new mssql.ConnectionPool(config);
+    console.log('hello, db is connected');
+    module.exports = {
+        pool,
+        sql_Int: mssql.Int,
+        sql_Str: mssql.NVarChar,
+        sql_Bool: mssql.Bit,
+        sql_Date: mssql.Date,
+        sql_DateTime: mssql.DateTime,
+    };
+}
+catch (error) {
+    console.log(error);
+    throw(error);
+}

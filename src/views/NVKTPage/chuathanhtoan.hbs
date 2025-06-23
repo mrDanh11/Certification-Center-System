@@ -1,0 +1,66 @@
+<div class="w-2/3 mx-auto px-6 py-10 space-y-10 text-gray-800 bg-white rounded-xl shadow-xl">
+
+  <!-- Tiêu đề -->
+  <h1 class="text-center text-3xl font-bold text-blue-700 pb-4 border-b border-gray-200">Danh sách chưa thanh toán</h1>
+
+  <!-- Bộ lọc -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 bg-gray-50 p-6 rounded-lg shadow-inner border border-gray-200">
+    <div>
+      <label for="maDangKy" class="block text-sm font-semibold text-gray-600">Mã đăng ký</label>
+      <input id="maDangKy" type="text"
+        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm" />
+    </div>
+
+    <div>
+      <label for="ngayDangKy" class="block text-sm font-semibold text-gray-600">Ngày đăng ký</label>
+      <input id="ngayDangKy" type="date"
+        class="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm" />
+    </div>
+
+    <div class="flex items-end justify-end space-x-3">
+      <button id="btnTimKiem" class="bg-blue hover:bg-babyblue hover:text-black text-white px-5 py-2 rounded-lg shadow transition font-semibold">
+        Tìm kiếm
+      </button>
+    </div>
+  </div>
+
+  <!-- Bộ lọc thời gian -->
+  <div class="flex flex-col md:flex-row justify-between items-center bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
+    <label class="inline-flex items-center space-x-2 text-sm font-medium text-gray-700">
+      <input type="checkbox" id="filterOverdue" class="accent-blue-500 w-4 h-4" />
+      <span>Chọn tất cả</span>
+    </label>
+
+    <select id="filterTime"
+      class="mt-2 md:mt-0 border border-gray-300 rounded-lg px-4 py-2 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <option>Tất cả</option>
+      <option>Quá thời gian</option>
+      <option>Chưa quá thời gian</option>
+    </select>
+
+    <button id="btnHuyDangKy" class="bg-red-500 text-white px-5 py-2 rounded-lg shadow hover:bg-red-600 transition font-semibold">
+        Hủy đăng ký
+      </button>
+  </div>
+
+  <!-- Bảng danh sách -->
+  <div class="overflow-x-auto rounded-lg border border-gray-200 shadow bg-white">
+  <table class="w-full table-fixed text-sm text-gray-800 text-center">
+    <thead class="bg-blue-50 text-gray-700 uppercase">
+      <tr>
+        <th class="w-12 px-4 py-3 border text-center">#</th>
+        <th class="w-32 px-4 py-3 border">Mã đăng ký</th>
+        <th class="w-40 px-4 py-3 border">CCCD</th>
+        <th class="w-48 px-4 py-3 border">Họ tên</th>
+        <th class="w-40 px-4 py-3 border">Ngày đăng ký</th>
+        <th class="w-40 px-4 py-3 border">Tình trạng</th>
+      </tr>
+    </thead>
+    <tbody id="tbodyDanhSach" class="divide-y divide-gray-100">
+    </tbody>
+  </table>
+</div>
+
+<div id="pagination-controls" class="flex justify-center gap-2"></div>
+
+</div>

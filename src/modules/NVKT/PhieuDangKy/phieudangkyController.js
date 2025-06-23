@@ -43,6 +43,21 @@ const phieudangkyController = {
         } catch (err) {
             res.status(500).json({ error: err.message });
         }
-    }
+    },
+
+    LayDSChuaThanhToan: async (req, res) => {
+        try {
+            const { maDangKy, ngayLap} = req.query;
+            const infoDK = await PhieuDangKy.LayDSChuaThanhToan(maDangKy,ngayLap);
+
+            if (!infoDK || infoDK.length === 0) {
+                return res.status(404).json({ error: "Không tìm thấy phiếu đăng ký" });
+            }
+
+            res.json(infoDK);
+        } catch (err) {
+            res.status(500).json({ error: err.message });
+        }
+    },
 }
 module.exports = phieudangkyController;
