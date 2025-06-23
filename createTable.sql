@@ -76,8 +76,18 @@ CREATE TABLE LichThi (
     ThoiGianLamBai TIME,
     ThoiGianThi Date,
     DiaDiemThi NVARCHAR(100),
+    PhongThi NVARCHAR(50),
     PRIMARY KEY(BaiThiID),
     FOREIGN KEY(ChungChiID) REFERENCES ChungChi(ChungChiID)
+);
+GO
+
+CREATE TABLE NhanVienCoiThi (
+    NhanVienID INT,
+    BaiThiID INT,
+    PRIMARY KEY(NhanVienID, BaiThiID)
+    FOREIGN KEY(NhanVienID) REFERENCES NhanVien(NhanVienID),
+    FOREIGN KEY(ChungChiID) REFERENCES LichThi(BaiThiID)
 );
 GO
 
