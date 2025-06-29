@@ -1,4 +1,5 @@
 const viewsRoutes = require("./viewsRoutes");
+const giahanRoutes = require('./giahanRoutes');
 const tiepnhankhachhangRoutes = require('./tiepnhankhachhangRoutes');
 const taophieudangkyRoutes = require('./taophieudangkyRoutes');
 const khachhangRoutes = require('./khachhangRoutes');
@@ -21,4 +22,6 @@ module.exports = (app) => {
     app.use('/NVTN/api/phieudangky', phieudangkyRoutes);
     app.use('/NVTN/api/lichthi', lichthiRoutes);
     app.use('/NVTN/api/danhsachDKThi', danhsachDKthiRoutes);
+    app.use('/NVTN/lichthi', lichthiRoutes);
+    app.use('/NVTN/quanligiahan', giahanRoutes);
 }

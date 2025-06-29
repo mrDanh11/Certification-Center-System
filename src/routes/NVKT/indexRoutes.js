@@ -7,7 +7,10 @@ const lichthiRoutes = require("./lichthiRoutes");
 const hoadonRoutes = require("./hoadonRoutes");
 const phieuthanhtoanRoutes = require("./phieuthanhtoanRoutes");
 const sendemailRoutes = require("./sendemailRoutes");
+const giahanRoutes = require('./giahanRoutes');
 module.exports = (app) => {
+
+    app.use('/NVKT/quanligiahan', giahanRoutes);
 
     app.use('/NVKT/ThanhToan', thanhtoanRoutes)
 
