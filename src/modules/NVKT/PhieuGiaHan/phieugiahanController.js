@@ -47,11 +47,6 @@ const phieugiahanController = {
             const chiTietGiaHan = await PhieuGiaHanModel.LayChiTietPhieuGiaHan(id);
             console.log('Chi tiết gia hạn từ database:', chiTietGiaHan);
             
-            // Normalize field names để đảm bảo tương thích với view
-            chiTietGiaHan.tinhTrang = chiTietGiaHan.TinhTrang;
-            
-            console.log('Trạng thái sau khi normalize:', chiTietGiaHan.tinhTrang);
-            
             res.render('NVKTPage/chitietgiahan', {
                 chiTietGiaHan,
                 layout: 'NVKT/NVKTMain'
@@ -82,22 +77,15 @@ const phieugiahanController = {
             }
             
             console.log('Trạng thái hiện tại:', phieuGiaHan.TinhTrang);
-            console.log('Chiều dài chuỗi trạng thái:', phieuGiaHan.TinhTrang.length);
-            console.log('Trạng thái sau khi trim:', `"${phieuGiaHan.TinhTrang.trim()}"`);
             console.log('Kiểm tra trạng thái === "Chờ duyệt":', phieuGiaHan.TinhTrang === 'Chờ duyệt');
-            console.log('Kiểm tra trạng thái === "Đã thanh toán":', phieuGiaHan.TinhTrang === 'Đã thanh toán');
-            console.log('Kiểm tra trạng thái.trim() === "Đã thanh toán":', phieuGiaHan.TinhTrang.trim() === 'Đã thanh toán');
-            
-            // Normalize trạng thái (loại bỏ khoảng trắng thừa)
-            const normalizedStatus = phieuGiaHan.TinhTrang.trim();
             
             // Kiểm tra trạng thái có thể duyệt
             // Theo nghiệp vụ: "Chờ duyệt" và "Đã thanh toán" có thể được duyệt
-            if (normalizedStatus !== 'Chờ duyệt' && normalizedStatus !== 'Đã thanh toán') {
-                console.log('Phiếu gia hạn không ở trạng thái có thể duyệt. Trạng thái hiện tại:', normalizedStatus);
+            if (phieuGiaHan.TinhTrang !== 'Chờ duyệt' && phieuGiaHan.TinhTrang !== 'Đã thanh toán') {
+                console.log('Phiếu gia hạn không ở trạng thái có thể duyệt. Trạng thái hiện tại:', phieuGiaHan.TinhTrang);
                 
                 let errorMessage = '';
-                switch(normalizedStatus) {
+                switch(phieuGiaHan.TinhTrang) {
                     case 'Đã duyệt':
                         errorMessage = 'Phiếu gia hạn đã được duyệt trước đó';
                         break;
@@ -105,7 +93,7 @@ const phieugiahanController = {
                         errorMessage = 'Phiếu gia hạn đã bị từ chối, không thể duyệt';
                         break;
                     default:
-                        errorMessage = `Phiếu gia hạn đang ở trạng thái "${normalizedStatus}", không thể duyệt`;
+                        errorMessage = `Phiếu gia hạn đang ở trạng thái "${phieuGiaHan.TinhTrang}", không thể duyệt`;
                 }
                 
                 return res.status(400).json({ 

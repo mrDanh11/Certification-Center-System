@@ -84,7 +84,7 @@ const PhieuGiaHanModel = {
                         ELSE N'Lý do khác'
                     END as liDoGiaHan,
                     ISNULL(FORMAT(lt_sau.ThoiGianThi, 'yyyy-MM-dd'), '') as ngayThayThe,
-                    LTRIM(RTRIM(pgh.TinhTrang)) as TinhTrang
+                    pgh.TinhTrang
                 FROM PhieuGiaHan pgh
                 INNER JOIN PhieuDangKy pd ON pgh.PhieuID = pd.PhieuID
                 INNER JOIN ThiSinh ts ON pd.PhieuID = ts.PhieuID
@@ -127,20 +127,15 @@ const PhieuGiaHanModel = {
             
             const currentStatus = checkResult.recordset[0].TinhTrang;
             console.log('Current status:', currentStatus);
-            console.log('Current status length:', currentStatus.length);
-            console.log('Current status after trim:', `"${currentStatus.trim()}"`);
-            
-            // Normalize trạng thái
-            const normalizedStatus = currentStatus.trim();
             
             let newStatus;
             
             // Logic duyệt theo trạng thái hiện tại
             // Theo nghiệp vụ mới: "Chờ duyệt" và "Đã thanh toán" đều có thể được duyệt thành "Đã duyệt"
-            if (normalizedStatus === 'Chờ duyệt' || normalizedStatus === 'Đã thanh toán') {
+            if (currentStatus === 'Chờ duyệt' || currentStatus === 'Đã thanh toán') {
                 newStatus = 'Đã duyệt';
             } else {
-                throw new Error(`Không thể duyệt phiếu gia hạn ở trạng thái: ${normalizedStatus}`);
+                throw new Error(`Không thể duyệt phiếu gia hạn ở trạng thái: ${currentStatus}`);
             }
             
             // Cập nhật trạng thái
@@ -151,7 +146,7 @@ const PhieuGiaHanModel = {
             `;
             
             console.log('Executing query:', updateQuery);
-            console.log('Chuyển trạng thái từ:', normalizedStatus, '→', newStatus);
+            console.log('Chuyển trạng thái từ:', currentStatus, '→', newStatus);
             
             const result = await pool.request().query(updateQuery);
             
