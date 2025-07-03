@@ -1,6 +1,22 @@
 const { pool, sql_Int, sql_Str, sql_DateTime, sql_Date } = require('../../../config/db');
 
 const PhieuDangKy = {
+
+  LayDanhSachDK: async () => {
+    const query = `
+		select * from PhieuDangKy pdk
+    join khachhang kh on pdk.KhachHangID = kh.KhachHangID
+		`;
+    try {
+      await pool.connect()
+      const result = await pool.request().query(query);
+      const test = result.recordset;
+      return test;
+    } catch (err) {
+      throw new Error('Error get information in phieudangky: ' + err.message);
+    }
+  },
+
   LayThongTinDK: async (maDangKy) => {
     const query = `
 		select * from PhieuDangKy pdk

@@ -5,6 +5,8 @@ const dsdkt = {
 	LayDanhSachBaiThi: async (maDangKy) => {
 		const query = `
 		SELECT * FROM DanhSachDKThi dsbt
+    JOIN LichThi lt ON dsbt.BaiThiID = lt.BaiThiID
+    JOIN ChungChi cc ON lt.ChungChiID = cc.ChungChiID
         WHERE dsbt.PhieuID = '${maDangKy}'
 		`;
 		try {
