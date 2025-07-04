@@ -9,7 +9,7 @@ const phieugiahanController = {
             const searchValue = req.query.search || '';
 
             const result = await PhieuGiaHanModel.LayDanhSachPhieuGiaHan(page, limit, searchValue);
-            
+            console.log('Danh sách phiếu gia hạn từ database:', result);
             // Tạo dữ liệu phân trang
             const pages = [];
             for (let i = 1; i <= result.totalPages; i++) {
@@ -46,6 +46,10 @@ const phieugiahanController = {
             
             const chiTietGiaHan = await PhieuGiaHanModel.LayChiTietPhieuGiaHan(id);
             console.log('Chi tiết gia hạn từ database:', chiTietGiaHan);
+            
+            if (!chiTietGiaHan) {
+                return res.status(404).json({ error: 'Không tìm thấy phiếu gia hạn' });
+            }
             
             res.render('NVKTPage/chitietgiahan', {
                 chiTietGiaHan,

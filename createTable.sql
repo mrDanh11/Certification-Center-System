@@ -12,6 +12,8 @@ CREATE DATABASE QuanLyDangKyThi
 GO
 
 USE QuanLyDangKyThi;
+CREATE LOGIN NVHT WITH PASSWORD = '1234@';
+CREATE USER NVHT FOR LOGIN NVHT;
 ALTER ROLE db_owner ADD MEMBER NVHT;
 GO
 
@@ -90,9 +92,9 @@ GO
 CREATE TABLE NhanVienCoiThi (
     NhanVienID INT,
     BaiThiID INT,
-    PRIMARY KEY(NhanVienID, BaiThiID)
+    PRIMARY KEY(NhanVienID, BaiThiID),
     FOREIGN KEY(NhanVienID) REFERENCES NhanVien(NhanVienID),
-    FOREIGN KEY(ChungChiID) REFERENCES LichThi(BaiThiID)
+    FOREIGN KEY(BaiThiID) REFERENCES LichThi(BaiThiID)
 );
 GO
 
@@ -189,9 +191,10 @@ GO
 CREATE TABLE DanhSachCho (
     STT INT IDENTITY(1, 1),
     ThiSinhID INT,
+	PhieuID INT,
     TinhTrang BIT,
     PRIMARY KEY(STT),
-    FOREIGN KEY(ThiSinhID) REFERENCES ThiSinh(ThiSinhID),
+    FOREIGN KEY(ThiSinhID, PhieuID) REFERENCES ThiSinh(ThiSinhID, PhieuID),
 );
 
 CREATE TABLE KetQuaChungChi (
@@ -223,6 +226,7 @@ CREATE TABLE PhieuGiaHan (
     TinhTrang NVARCHAR(100),
     NgayLap DATETIME,
     PhieuID INT,
+    LoaiGiaHan NVARCHAR(50),
     LichThiTruoc INT,
     LichThiSau INT,
     PRIMARY KEY(PhieuGiaHanID),
@@ -302,6 +306,7 @@ INSERT INTO PhieuDangKy(KhachHangID, ThoiGianLap, TinhTrangThanhToan, LoaiPhieu,
 (4, '2025-06-03', 0, N'Cá Nhân', 2, 0),
 (5, '2025-06-03', 0, N'Đơn Vị', 2, 0);
 
+
 -- 8. HoaDon (PhieuID 1-5, NVKeToanLap: 3)
 /*INSERT INTO HoaDon(PhieuID, ThoiGianLap, SoTienTong, SoTienGiam, ThanhTien, TienNhan, NVKeToanLap) VALUES
 (1, '2025-06-01', 500000, 0, 500000, 500000, 3),
@@ -335,12 +340,12 @@ INSERT INTO PhieuDuThi(ThiSinhID, PhieuID, NgayLap, Diem, LichThi, NVQuanLyLap) 
 (5, 5, '2025-06-09', 8.0, 5, 1);
 
 -- 13. DanhSachCho (SoBaoDanh: 1-5)
-INSERT INTO DanhSachCho(SoBaoDanh, TinhTrang) VALUES
-(1, 0),
-(2, 1),
-(3, 0),
-(4, 1),
-(5, 0);
+INSERT INTO DanhSachCho(ThiSinhID, PhieuID, TinhTrang) VALUES
+(1, 1, 0),
+(2, 2, 1),
+(3, 3, 0),
+(4, 4, 1),
+(5, 5, 0);
 
 -- 14. KetQuaChungChi (NguoiNhanID: KhachHangID 1-5, NVNhapLieu: 4, NVKeToanGui: 3)
 INSERT INTO KetQuaChungChi(NgayCap, TrangThai, XacNhanKhachHang, NgayGui, NguoiNhanID, NVNhapLieu, NVKeToanGui) VALUES
@@ -359,12 +364,12 @@ INSERT INTO DanhSachDKThi(PhieuID, BaiThiID) VALUES
 (5, 5);
 
 -- 16. PhieuGiaHan (SoBaoDanh: 1-5, LichThiTruoc: 1-5, LichThiSau: 2-5,1)
-INSERT INTO PhieuGiaHan(TinhTrang, NgayLap, SoBaoDanh, LichThiTruoc, LichThiSau) VALUES
-(N'Chờ duyệt', '2025-06-21', 1, 1, 2),
-(N'Đã duyệt', '2025-06-22', 2, 2, 3),
-(N'Đã duyệt', '2025-06-23', 3, 3, 4),
-(N'Từ chối', '2025-06-24', 4, 4, 5),
-(N'Chờ duyệt', '2025-06-25', 5, 5, 1);
+INSERT INTO PhieuGiaHan(LoaiGiaHan, TinhTrang, NgayLap, PhieuID, LichThiTruoc, LichThiSau) VALUES
+(N'Đặc biệt', N'Chờ duyệt', '2025-06-21', 1, 1, 2),
+(N'Bình Thường', N'Đã duyệt', '2025-06-22', 2, 2, 3),
+(N'Đặc biệt', N'Đã duyệt', '2025-06-23', 3, 3, 4),
+(N'Bình Thường', N'Từ chối', '2025-06-24', 4, 4, 5),
+(N'Đặc biệt', N'Chờ duyệt', '2025-06-25', 5, 5, 1);
 
 -- 17. PhieuThanhToan (PhieuDonViID: 3,5; NVKeToanLap: 3)
 /*INSERT INTO PhieuThanhToan(SoTienTong, SoTienGiam, ThanhTien, NgayLap, MaThanhToan, TinhTrangDuyet, PhieuDonViID, NVKeToanLap) VALUES

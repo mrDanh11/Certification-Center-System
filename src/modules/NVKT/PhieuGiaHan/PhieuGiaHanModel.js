@@ -19,10 +19,8 @@ const PhieuGiaHanModel = {
                     kh.Hoten as hoTenKhachHang,
                     pd.PhieuID as maPhieu,
                     FORMAT(lt_truoc.ThoiGianThi, 'HH:mm dd/MM/yyyy') as ngayThiGoc,
-                    CASE 
-                        WHEN pgh.TinhTrang = N'Chờ duyệt' THEN N'Bình thường'
-                        ELSE N'Đặc biệt'
-                    END as liDoGiaHan,
+                    pgh.LoaiGiaHan as liDoGiaHan,
+                    pgh.LoaiGiaHan as loaiGiaHan,
                     pgh.TinhTrang as tinhTrang,
                     CASE 
                         WHEN pgh.TinhTrang = N'Chờ duyệt' THEN 'status-pending'
@@ -76,13 +74,14 @@ const PhieuGiaHanModel = {
                     'TS' + RIGHT('000' + CAST(ts.ThiSinhID AS VARCHAR), 3) as maThiSinh,
                     FORMAT(lt_truoc.ThoiGianThi, 'dd/MM/yyyy') as ngayThiCu,
                     ts.CCCD as cccd,
-                    FORMAT(lt_truoc.ThoiGianLamBai, 'HH:mm') as gioThiCu,
+                    CONVERT(VARCHAR(5), lt_truoc.ThoiGianLamBai, 108) as gioThiCu,
                     ts.Hoten as hoTen,
                     lt_truoc.DiaDiemThi + ' - ' + ISNULL(lt_truoc.PhongThi, 'Phòng chưa xác định') as diaDiemCu,
                     CASE 
                         WHEN pgh.TinhTrang = N'Chờ duyệt' THEN N'Bệnh nặng'
                         ELSE N'Lý do khác'
                     END as liDoGiaHan,
+                    pgh.LoaiGiaHan as loaiGiaHan,
                     ISNULL(FORMAT(lt_sau.ThoiGianThi, 'yyyy-MM-dd'), '') as ngayThayThe,
                     pgh.TinhTrang
                 FROM PhieuGiaHan pgh
@@ -95,11 +94,10 @@ const PhieuGiaHanModel = {
             `;
             
             const result = await pool.request().query(query);
-            
             if (result.recordset.length === 0) {
                 throw new Error('Không tìm thấy phiếu gia hạn');
             }
-            
+            console.log('Chi tiết phiếu gia hạn:', result.recordset[0]);
             return result.recordset[0];
             
         } catch (err) {

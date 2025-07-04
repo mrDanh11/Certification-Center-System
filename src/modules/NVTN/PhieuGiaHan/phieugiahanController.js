@@ -9,7 +9,7 @@ const phieugiahanController = {
             const searchValue = req.query.search || '';
 
             const result = await PhieuGiaHanModel.LayDanhSachPhieuGiaHan(page, limit, searchValue);
-            
+            console.log('LayDanhSachPhieuGiaHan result:', result);
             // Tạo dữ liệu phân trang
             const pages = [];
             for (let i = 1; i <= result.totalPages; i++) {
@@ -105,13 +105,28 @@ const phieugiahanController = {
         try {
             console.log('TaoPhieuGiaHan request body:', req.body);
             
-            const { sbd, thongTinThiSinh } = req.body;
+            const { sbd, maBaiThi, loaiGiaHan, ngayThayThe, thongTinThiSinh } = req.body;
             
             // Validate input
             if (!thongTinThiSinh) {
                 return res.status(400).json({ 
                     success: false,
                     error: 'Thiếu thông tin thí sinh' 
+                });
+            }
+            
+            if (!loaiGiaHan) {
+                return res.status(400).json({ 
+                    success: false,
+                    error: 'Vui lòng chọn loại gia hạn' 
+                });
+            }
+            
+            // Validate loại gia hạn
+            if (!['Bình Thường', 'Đặc biệt'].includes(loaiGiaHan)) {
+                return res.status(400).json({ 
+                    success: false,
+                    error: 'Loại gia hạn không hợp lệ' 
                 });
             }
             
@@ -146,8 +161,9 @@ const phieugiahanController = {
             const phieuGiaHanID = await PhieuGiaHanModel.TaoPhieuGiaHan(
                 studentInfo.PhieuID,    // PhieuID từ thông tin thí sinh
                 lichThiTruoc,           // LichThiTruoc (lịch thi hiện tại)
-                null,                   // LichThiSau (sẽ được cập nhật sau khi chọn lịch thi)
-                'Chờ duyệt'            // TinhTrang
+                maBaiThi,                   // LichThiSau (sẽ được cập nhật sau khi chọn lịch thi)
+                'Chờ duyệt',           // TinhTrang
+                loaiGiaHan             // LoaiGiaHan
             );
             
             res.json({ 

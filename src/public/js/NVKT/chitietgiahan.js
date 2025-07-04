@@ -212,7 +212,12 @@ function renderActionButtons(tinhTrang) {
     // 3. Đã duyệt, Từ chối: Chỉ có thể xem (chỉ nút Quay lại)
     
     if (normalizedStatus === 'Chờ duyệt') {
-        console.log('Status: Chờ duyệt - Adding approve, reject, and payment buttons');
+        console.log('Status: Chờ duyệt - Adding approve, reject buttons');
+        
+        // Lấy loại gia hạn để quyết định có hiển thị nút thanh toán không
+        const chiTietGiaHan = window.chiTietGiaHan || {};
+        const loaiGiaHan = chiTietGiaHan.loaiGiaHan ? chiTietGiaHan.loaiGiaHan.trim() : '';
+        console.log('Loại gia hạn:', loaiGiaHan);
         
         // Nút Duyệt
         actionButtons.innerHTML += `
@@ -244,20 +249,25 @@ function renderActionButtons(tinhTrang) {
             </button>
         `;
         
-        // Nút Thanh toán
-        actionButtons.innerHTML += `
-            <button 
-                id="paymentBtn"
-                type="button" 
-                onclick="handlePayment()"
-                class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-semibold rounded-md text-sky-900 bg-sky-200 hover:bg-sky-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-colors duration-200 min-w-24"
-            >
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                </svg>
-                Thanh toán
-            </button>
-        `;
+        // Nút Thanh toán - chỉ hiển thị khi LoaiGiaHan = "Bình Thường"
+        if (loaiGiaHan === 'Bình Thường') {
+            console.log('Loại gia hạn là Bình Thường - Adding payment button');
+            actionButtons.innerHTML += `
+                <button 
+                    id="paymentBtn"
+                    type="button" 
+                    onclick="handlePayment()"
+                    class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-semibold rounded-md text-sky-900 bg-sky-200 hover:bg-sky-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-colors duration-200 min-w-24"
+                >
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                    </svg>
+                    Thanh toán
+                </button>
+            `;
+        } else {
+            console.log('Loại gia hạn là Đặc biệt - Payment button will not be shown');
+        }
     } 
     else if (normalizedStatus === 'Đã thanh toán') {
         console.log('Status: Đã thanh toán - Adding only approve button');
