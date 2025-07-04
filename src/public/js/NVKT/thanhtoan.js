@@ -2,8 +2,9 @@ function tinhTienBanDau(TTBaiThi, TTKhachHang) {
   let TongTien = 0;
   let TienGiam = 0;
   let ThanhTien = 0;
+  const soluongKH = Number(TTKhachHang.SoLuong) || 1;
   for (let i = 0; i < TTBaiThi.length; i++) {
-  TongTien += Number(TTBaiThi[i].Gia) || 0;
+  TongTien += Number(TTBaiThi[i].Gia) * soluongKH || 0;
   }
 
   TienGiam = (TTKhachHang.SoLuong && TTKhachHang.SoLuong > 20) ? TongTien * 0.15 : TTKhachHang.SoLuong ? TongTien * 0.1 : 0;
@@ -14,9 +15,9 @@ function tinhTienBanDau(TTBaiThi, TTKhachHang) {
   const thanhtienLabel = document.getElementById("thanhTien");
 
   if (tongtienLabel && giamgiaLabel && thanhtienLabel) {
-    tongtienLabel.textContent = TongTien;
-    giamgiaLabel.textContent = TienGiam;
-    thanhtienLabel.textContent = ThanhTien;
+    tongtienLabel.value = TongTien;
+    giamgiaLabel.value = TienGiam;
+    thanhtienLabel.value = ThanhTien;
   } else {
     console.warn("Không tìm thấy thẻ DOM cần cập nhật");
   }
@@ -45,25 +46,24 @@ async function traCuuThongTinKhachHang(maDangKy,TTKhachHang) {
 
     const responseKH = await fetch(`/NVKT/KhachHang?maDangKy=${encodeURIComponent(maDangKy)}`);
     if (!responseKH.ok) throw new Error("Không tìm thấy thông tin khách hàng.");
-
     const dataKH = await responseKH.json();
     Object.assign(TTKhachHang, {...dataKH, ...dataPDK});
     TTKhachHang.ThoiGianLap = new Date(TTKhachHang.ThoiGianLap).toLocaleDateString("vi-VN")
     // Hiển thị thông tin
-
-    cccdSpan.textContent = dataKH.CCCD || "Không rõ";
-    tinhTrangSpan.textContent = dataPDK.TinhTrangThanhToan === true ? "Đã thanh toán" : "Chưa thanh toán";
-    loaiKhachHangSpan.textContent = dataPDK.LoaiPhieu || "Không rõ";
-    soLuongSpan.textContent = dataPDK.SoLuong || 1;
-    hotenSpan.textContent = dataKH.Hoten || "Không rõ";
-    emailSpan.textContent = dataKH.Email || "Không rõ";
-    sdtSpan.textContent = dataKH.Dienthoai || "Không rõ";
-    ngayLapSpan.textContent = ngayLap || "Không rõ";
+    cccdSpan.value = dataKH.CCCD || "Không rõ";
+    tinhTrangSpan.value = dataPDK.TinhTrangThanhToan === true ? "Đã thanh toán" : "Chưa thanh toán";
+    loaiKhachHangSpan.value = dataPDK.LoaiPhieu || "Không rõ";
+    soLuongSpan.value = dataPDK.SoLuong || 1;
+    hotenSpan.value = dataKH.Hoten || "Không rõ";
+    emailSpan.value = dataKH.Email || "Không rõ";
+    sdtSpan.value = dataKH.Dienthoai || "Không rõ";
+    ngayLapSpan.value = ngayLap || "Không rõ";
     return true;
   } catch (error) {
     return false;
   }
 }
+
 
 
 // Hiển thị danh sách bài thi ra giao diện
@@ -122,25 +122,21 @@ async function renderDanhSachBaiThi(maDangKy, arrTTBaiThi) {
   }
 }
 
-function tinhTienThoi(tiennhan) {
+function txtTienNhan_Changed(tiennhan) {
   const thanhTienSection = document.getElementById("thanhTien");
   const tienthoiSpan = document.getElementById("tienThoi");
-  const tongTien =  thanhTienSection.textContent;
+  const tongTien =  thanhTienSection.value;
   console.log(tongTien, tiennhan)
-  tienthoiSpan.textContent = tiennhan - Number(tongTien);
+  tienthoiSpan.value = tiennhan - Number(tongTien);
 }
 
 async function updateTinhTrangThanhToan() {
   try {
-    const TTThanhToan = document.getElementById("tinhTrang").textContent.trim();
+    const TTThanhToan = document.getElementById("tinhTrang").value.trim();
     if (TTThanhToan === "Đã thanh toán") {
       return;
     }
     const maDangKy = document.getElementById("maDangKy").value.trim();
-    if (!maDangKy) {
-      alert("Vui lòng nhập mã đăng ký trước khi xác nhận thanh toán.");
-      return;
-    }
     const TinhTrangThanhToan = 1;
     const response = await fetch(`/NVKT/PhieuDangKy/xacnhanthanhtoan?maDangKy=${encodeURIComponent(maDangKy)}`, {
       method: "PUT",
@@ -164,19 +160,15 @@ async function updateTinhTrangThanhToan() {
 
 async function saveHoaDon(){
   try {
-    const TinhTrangThanhToan = document.getElementById("tinhTrang").textContent.trim();
+    const TinhTrangThanhToan = document.getElementById("tinhTrang").value.trim();
     if (TinhTrangThanhToan === "Đã thanh toán") {
       return;
     } 
     const maDangKy = document.getElementById("maDangKy").value.trim();
-    if (!maDangKy) {
-      alert("Vui lòng nhập mã đăng ký trước khi lưu hóa đơn.");
-      return;
-    }
-    const TongTien = Number(document.getElementById("tongTien").textContent);
-    const TiemGiam = Number(document.getElementById("giamGia").textContent);
-    const ThanhTien = Number(document.getElementById("thanhTien").textContent);
-    const TienNhan = Number(document.getElementById("tienNhan").value.trim());
+    const TongTien = Number(document.getElementById("tongTien").value);
+    const TiemGiam = Number(document.getElementById("giamGia").value);
+    const ThanhTien = Number(document.getElementById("thanhTien").value);
+    const TienNhan = Number(document.getElementById("tienNhan").value.trim())||Number(document.getElementById("tienNhanDialog").value.trim());
     const HinhThucThanhToan = "Trực tiếp";
     const NVKeToanLap = sessionStorage.getItem("userID") || null;
     const response = await fetch(`/NVKT/HoaDon`, {
@@ -194,7 +186,6 @@ async function saveHoaDon(){
     if (result.error) {
       throw new Error(result.error);
     }
-    console.log(1);
     alert("Thanh toán thành công!");
   } catch (error) {
     console.error("Lỗi lưu hóa đơn:", error);
@@ -219,11 +210,11 @@ async function printHoaDonPDF(){
           <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">Thông tin khách hàng</h3>
           <div style="display: grid; grid-template-columns: 1fr 1fr; row-gap: 8px;">
             <p><strong>Mã đăng ký:</strong> ${document.getElementById("maDangKy").value}</p>
-            <p><strong>Họ tên:</strong> ${document.getElementById("hoten").textContent}</p>
-            <p><strong>Email:</strong> ${document.getElementById("email").textContent}</p>
+            <p><strong>Họ tên:</strong> ${document.getElementById("hoten").value}</p>
+            <p><strong>Email:</strong> ${document.getElementById("email").value}</p>
             <p><strong>Ngày thanh toán:</strong> ${formattedDateTime}</p>
-            <p><strong>Loại khách hàng:</strong> ${document.getElementById("loaiKhachHang").textContent}</p>
-            <p><strong>Số lượng người thi:</strong> ${document.getElementById("soLuong").textContent}</p>
+            <p><strong>Loại khách hàng:</strong> ${document.getElementById("loaiKhachHang").value}</p>
+            <p><strong>Số lượng người thi:</strong> ${document.getElementById("soLuong").value}</p>
           </div>
         </div>
 
@@ -239,11 +230,11 @@ async function printHoaDonPDF(){
         <div>
           <h3 style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">Thông tin thanh toán</h3>
           <div style="display: grid; grid-template-columns: 1fr 1fr; row-gap: 8px;">
-            <p><strong>Tổng tiền:</strong> ${document.getElementById("tongTien").textContent}</p>
-            <p><strong>Tiền nhận:</strong> ${document.getElementById("tienNhan").value}</p>
-            <p><strong>Tiền giảm:</strong> ${document.getElementById("giamGia").textContent}</p>
-            <p><strong>Tiền thối:</strong> ${document.getElementById("tienThoi").textContent}</p>
-            <p><strong>Thành tiền:</strong> ${document.getElementById("thanhTien").textContent}</p>
+            <p><strong>Tổng tiền:</strong> ${document.getElementById("tongTien").value}</p>
+            <p><strong>Tiền nhận:</strong> ${document.getElementById("tienNhan").value||document.getElementById("tienNhanDialog").value}</p>
+            <p><strong>Tiền giảm:</strong> ${document.getElementById("giamGia").value}</p>
+            <p><strong>Tiền thối:</strong> ${document.getElementById("tienNhanDialog").value?Number(document.getElementById("tienNhanDialog").value) - Number(document.getElementById("thanhTien").value): document.getElementById("tienThoi").value}</p>
+            <p><strong>Thành tiền:</strong> ${document.getElementById("thanhTien").value}</p>
           </div>
         </div>
       </div>
@@ -274,50 +265,134 @@ async function printHoaDonPDF(){
   }
 }
 
+async function btnTimKiem_Click() {
+  const maDangKyInput = document.getElementById("maDangKy");
+  const maDangKy = maDangKyInput.value.trim();
+  if (!maDangKy) {
+    alert("Vui lòng nhập mã đăng ký.");
+    return;
+  }
+  let TTKhachHang = {};
+  let TTBaiThi = [];
+  const checkPDK = await traCuuThongTinKhachHang(maDangKy,TTKhachHang);
+  if (!checkPDK) {
+    alert("Không tìm thấy thông tin đăng ký hoặc khách hàng.");
+    return;
+  }
+  await renderDanhSachBaiThi(maDangKy,TTBaiThi);
+  tinhTienBanDau(TTBaiThi,TTKhachHang);
+}
+
+async function huyPhieuDangKy(maDangKy) {
+  try {
+    const TinhTrangHuy = 1;
+    const response = await fetch(`/NVKT/PhieuDangKy/huyphieudangky?maDangKy=${encodeURIComponent(maDangKy)}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ TinhTrangHuy })
+    });
+    if (!response.ok) {
+      throw new Error("Không thể hủy phiếu đăng ký.");
+    }
+    const result = await response.json();
+    if (result.error) {
+      throw new Error(result.error);
+    }
+    alert("Đã hủy phiếu đăng ký thành công!");
+  } catch (error) {
+    console.error("Lỗi hủy phiếu đăng ký:", error);
+    alert("Đã xảy ra lỗi khi hủy phiếu đăng ký.");
+  }
+}
+
+async function btnThanhToan_Click() {
+  const maDangKyInput = document.getElementById("maDangKy");
+  const maDangKy = maDangKyInput.value.trim();
+  if (!maDangKy) {
+    alert("Vui lòng nhập mã đăng ký.");
+    return;
+  }
+  if (!document.getElementById("tienNhan").value || document.getElementById("tienNhan").value < Number(document.getElementById("thanhTien").value)) {
+    alert("Vui lòng nhận đủ tiền trước khi xác nhận thanh toán và in hóa đơn.");
+    return;
+  }
+  updateTinhTrangThanhToan();
+  saveHoaDon();
+  printHoaDonPDF();
+}
+
+async function btnHuyPhieuDangKy_Click() {
+  const maDangKyInput = document.getElementById("maDangKy");
+  const maDangKy = maDangKyInput.value.trim();
+    if (!maDangKy) {
+    alert("Vui lòng nhập mã đăng ký.");
+    return;
+  }
+  const NgayLapext = document.getElementById("ngaylap").value.trim();
+  const [day, month, year] = NgayLapext.split('/');
+  const ngayLap = new Date(`${year}-${month}-${day}`);
+  const today = new Date();
+
+  // Tính số ngày chênh lệch
+  const msPerDay = 1000 * 60 * 60 * 24;
+  const diffDays = Math.floor((today - ngayLap) / msPerDay);
+
+  if (diffDays < 3) {
+    alert("Thời gian đăng ký chưa đủ thời gian để hủy.");
+    return;
+  }
+  huyPhieuDangKy(maDangKy);
+  location.reload();
+}
+
 document.addEventListener("DOMContentLoaded",function () {
   const btnTraCuu = document.getElementById("btnTraCuu");
-  const maDangKyInput = document.getElementById("maDangKy");
   const tiennhanInput = document.getElementById("tienNhan");
+  const dialog = document.getElementById("dialogThanhToan");
+  const btnDongDialog = document.getElementById("btnHuyDialog");
+
+  // Đóng dialog khi nhấn "Hủy"
+  btnDongDialog.addEventListener("click", () => {
+    dialog.classList.add("hidden");
+  });
+
   btnTraCuu.addEventListener("click",async function () {
-    const maDangKy = maDangKyInput.value.trim();
-    if (!maDangKy) {
-      alert("Vui lòng nhập mã đăng ký.");
-      return;
-    }
-    let TTKhachHang = {};
-    let TTBaiThi = [];
-    const checkPDK = await traCuuThongTinKhachHang(maDangKy,TTKhachHang);
-    if (!checkPDK) {
-      alert("Không tìm thấy thông tin đăng ký hoặc khách hàng.");
-      return;
-    }
-    await renderDanhSachBaiThi(maDangKy,TTBaiThi);
-    tinhTienBanDau(TTBaiThi,TTKhachHang);
+    await btnTimKiem_Click();
   });
 
   tiennhanInput.addEventListener("input",async function () {
     const tiennhan = Number(tiennhanInput.value.trim());
-    tinhTienThoi(tiennhan);
+    txtTienNhan_Changed(tiennhan);
+  });
+
+  document.getElementById("huyPhieuDangKy").addEventListener("click",async function () {
+    if(document.getElementById("cccd").value.trim() === "Không có"){
+      alert("Vui lòng chọn phiếu đăng ký.");
+      return;
+    }
+    btnHuyPhieuDangKy_Click()
   });
 
   document.getElementById("btnThanhToan").addEventListener("click",async function () {
-    if (!document.getElementById("tienNhan").value || document.getElementById("tienNhan").value < Number(document.getElementById("thanhTien").textContent)) {
-      alert("Vui lòng nhận đủ tiền trước khi xác nhận thanh toán và in hóa đơn.");
+    if(document.getElementById("cccd").value.trim() === "Không có"){
+      alert("Vui lòng chọn phiếu đăng ký.");
       return;
     }
-    updateTinhTrangThanhToan();
-    saveHoaDon();
-    printHoaDonPDF();
+    const tienNhan = Number(document.getElementById("tienNhan").value);
+    if (isNaN(tienNhan)) {
+      alert("Tiền nhận không hợp lệ.");
+      return;
+    }
+    btnThanhToan_Click();
   });
 
   document.getElementById("thanhtoantructuyen").addEventListener("click",async function () {
-    const loaiKhachHang = document.getElementById("loaiKhachHang").textContent.trim();
-    console.log(loaiKhachHang);
-    if (loaiKhachHang !== "Đơn Vị") {
-      alert("Không phải là khách hàng đơn vị, không thể thanh toán trực tuyến.");
+    if(document.getElementById("cccd").value.trim() === "Không có"){
+      alert("Vui lòng chọn phiếu đăng ký.");
       return;
-    } 
-    // Chuyển hướng đến trang thanh toán trực tuyến
-    location.href = `/NVKT/ThanhToan/thanhtoantructuyen`;
+    }
+    loadForm();
   });
 });
