@@ -1,3 +1,22 @@
+const FilterBaiThiDaDangKy = async () => {
+  const firstListBtns = document.querySelectorAll('.btn_xoaDangKy[data-baithi-id]');
+  const registeredBaiThiIDs = Array.from(firstListBtns).map(btn => btn.dataset.baithiId);
+
+  // Then, find all rows in the second list and filter them
+  const secondListRows = document.querySelectorAll('.cardBaiThi[data-mabaithi]');
+
+  secondListRows.forEach(row => {
+    const baiThiID = row.dataset.mabaithi;
+    if (registeredBaiThiIDs.includes(baiThiID)) {
+      // This BaiThiID is already in the first list → hide this row
+      row.style.display = 'none';
+    }
+    else{
+      row.style.display = '';
+    }
+  });
+}
+
 const LayDSBaiThiDaDangKy = async (PhieuID) => {
   const daDangKyContainer = document.getElementById('daDangKyContainer');
 
@@ -25,6 +44,8 @@ const LayDSBaiThiDaDangKy = async (PhieuID) => {
       </button>
     </div>
   `).join('');
+
+  FilterBaiThiDaDangKy();
 
   const btnXoaDangKy = document.querySelectorAll('.btn_xoaDangKy');
   btnXoaDangKy.forEach(item => {
@@ -109,6 +130,8 @@ document.addEventListener('DOMContentLoaded', function() {
           </tr>
         `).join('');
 
+        FilterBaiThiDaDangKy();
+
         const btnDangKy = document.querySelectorAll('.btn-dang-ky');
         btnDangKy.forEach(btnDK => {
           btnDK.addEventListener('click', async function() {
@@ -126,14 +149,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: JSON.stringify(DSDangKyThi),
               });
 
-              if (!response.ok) throw new Error('Có lỗi khi đăng ký bài thi cho phiếu');
+              let datatemp = await response.json();
+              console.log(datatemp);
+              if (!response.ok) throw new Error(`${datatemp.message}`);
 
               LayDSBaiThiDaDangKy(DSDangKyThi.phieuID);
               alert('🎉 Đăng ký thành công!');
 
-            } catch (error) {
-              console.error(error);
-              alert('Có lỗi khi đăng ký lịch thi');
+            } catch ({ name, message }) {
+              console.log(message);
+              alert(`Có lỗi khi đăng ký lịch thi: ${message}`);
             }
           })
         });
@@ -159,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const textGia = item.dataset.gia.toLowerCase();
       const textID = item.dataset.chungchiid.toLowerCase();
 
-      const match = 
+      const match =
         textTen.includes(query) ||
         textLoai.includes(query) ||
         textGia.includes(query) ||
@@ -182,8 +207,8 @@ document.addEventListener('DOMContentLoaded', function() {
       const textNgayThi = item.dataset.ngaythi.toLowerCase();
 
       console.log(textDiaDiem);
-      
-      const match = 
+
+      const match =
         textMa.includes(query) ||
         textDiaDiem.includes(query) ||
         textNgayThi.includes(query);

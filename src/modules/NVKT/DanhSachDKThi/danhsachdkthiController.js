@@ -13,8 +13,9 @@ const dsdktController = {
     DangKyBaiThiMoi: async (req, res) => {
       try {
         const {phieuID, BaiThiID} = req.body;
-        if (!phieuID || !BaiThiID || isNaN(phieuID) || isNaN(BaiThiID)){
-          res.status(400).json({
+        console.log(phieuID.length, BaiThiID);
+        if (!phieuID || !BaiThiID || phieuID.length == 0 || phieuID === '' || BaiThiID === ''){
+          return res.status(400).json({
             success: false,
             message: 'PhieuID or BaiThiID is empty or invalid',
           })
@@ -47,8 +48,8 @@ const dsdktController = {
     XoaDangKyThi: async (req, res) => {
       try {
         const {phieuID, BaiThiID} = req.body;
-        if (!phieuID || !BaiThiID || isNaN(phieuID) || isNaN(BaiThiID)){
-          res.status(400).json({
+        if (!phieuID || !BaiThiID || isNaN(phieuID) || isNaN(BaiThiID) || phieuID.length == 0){
+          return res.status(400).json({
             success: false,
             message: 'PhieuID or BaiThiID is empty or invalid',
           })

@@ -1,6 +1,4 @@
-const { Query } = require('pg');
 const {pool, sql_Int} = require('../../../config/db');
-const { XoaDangKyThi } = require('./danhsachdkthiController');
 
 const dsdkt = {
 	LayDanhSachBaiThi: async (maDangKy) => {
