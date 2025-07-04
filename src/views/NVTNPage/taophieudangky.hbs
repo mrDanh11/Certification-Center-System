@@ -1,0 +1,132 @@
+<div class="min-h-[calc(100vh-32rem)] max-w-[750px] py-5 mx-auto overflow-y-scroll">
+  <form>
+    <h2 class="text-center font-bold text-xl mb-4">Tạo phiếu và tiếp nhận thí sinh</h2>
+
+    <!-- Chọn khách hàng -->
+    <section class="mb-6 border-2 border-gray-100 bg-white shadow-md py-6 px-9 rounded-lg">
+      <h3 class="font-semibold text-lg mb-2">📝 Chọn khách hàng</h3>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="flex flex-col items-left space-y-2 w-[calc(100%-1.5rem)]">
+          <label for="maKhachHang" class="w-50 flex-initial font-bold">Mã khách hàng</label>
+          <input id="maKhachHang" name="maDonVi" type="text"
+            class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg" value="{{maKhachHang}}" />
+        </div>
+        <div class="flex flex-col items-left space-y-2 w-full">
+          <label class="w-50 flex-initial font-bold">Tên khách hàng</label>
+          <input id="tenKhachHang" type="text" readonly
+            class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg" value="{{tenKhachHang}}">
+        </div>
+        <div class="flex flex-col items-left space-y-2 w-[calc(100%-1.5rem)]">
+          <label class="w-50 flex-initial font-bold">Giới tính</label>
+          <input id="gioiTinh" type="text" readonly class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg"
+            value="{{gioiTinh}}">
+        </div>
+        <div class="flex flex-col items-left space-y-2 w-full">
+          <label class="w-50 flex-initial font-bold">CCCD</label>
+          <input id="cccd" type="text" readonly class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg"
+            value="{{cccd}}" oninput="">
+        </div>
+        <div class="flex flex-col items-left space-y-2 w-[calc(100%-1.5rem)]">
+          <label class="w-50 flex-initial font-bold">Số điện thoại</label>
+          <input id="sdt" type="text" readonly class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg"
+            value="{{sdt}}">
+        </div>
+        <div class="flex flex-col items-left space-y-2 w-full">
+          <label class="w-50 flex-initial font-bold">Email</label>
+          <input id="email" type="email" readonly class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg"
+            value="{{email}}">
+        </div>
+        <div class="flex flex-col items-left space-y-2 w-[calc(100%-1.5rem)]">
+          <label class="w-50 flex-initial font-bold">Loại khách hàng</label>
+          <input id="loaiKhachHang" type="text" readonly
+            class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg" value="{{loaiKhachHang}}">
+        </div>
+        <button type="button"
+          class="relative h-12 min-w-[50%] ml-auto mt-auto p-2 rounded-lg text-white font-bold bg-[#2E8BC0] hover:-translate-y-1 active:-translate-y-0.5 shadow-xl transition-all"
+          id="btnTimKiemKH">Tìm Kiếm</button>
+      </div>
+    </section>
+
+    <!-- Thông tin bài thi -->
+    <section id="secThongTinBaiThi"
+      class="border-2 border-gray-100 bg-white shadow-md px-9 rounded-lg transition-all overflow-y-hidden duration-300 ease-in-out">
+      <h3 class="font-semibold text-lg mb-2">📄 Thông tin bài thi (phần dành cho đơn vị)</h3>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="flex flex-col items-left space-y-2 w-[calc(100%-1.5rem)]">
+          <label class="font-semibold text-lg">Loại bài thi</label>
+          <select id="loaiBaiThi" class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg">
+            <!-- {{#each danhSachBaiThi}} -->
+            <!-- <option value="{{this.id}}">{{this.ten}}</option> -->
+            <!-- {{/each}} -->
+          </select>
+        </div>
+        <div class="flex flex-col items-left space-y-2 w-[calc(100%-1.5rem)]">
+          <label class="font-semibold text-lg">Ngày thi mong muốn</label>
+          <input type="date" id="ngayThi" class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg"
+            value="{{ngayThi}}">
+        </div>
+        <div class="flex flex-col items-left space-y-2 w-[calc(100%-1.5rem)]">
+          <label class="font-semibold text-lg">Yêu cầu</label>
+          <input type="text" id="yeuCau" class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg"
+            placeholder="Yêu cầu của khách hàng (nếu có)" value="{{yeuCau}}">
+        </div>
+      </div>
+    </section>
+
+    <!-- Danh sách thí sinh -->
+    <section class="mb-6 border-2 border-gray-100 bg-white shadow-md py-6 px-9 rounded-lg">
+      <div class="flex justify-between items-center mb-2">
+        <h3 class="font-semibold text-lg">👥 Danh sách thí sinh</h3>
+        <div>
+          <button id="addThiSinhBtn" type="button"
+            class="p-2 rounded-lg text-white font-bold bg-[#2E8BC0] hover:-translate-y-1 active:-translate-y-0.5 shadow-xl transition-all">+
+            Thêm thí
+            sinh</button>
+        </div>
+      </div>
+
+      <div id="thiSinhContainer">
+        <div class="min-w-full flex flex-row  space-y-2 relative">
+          <div class="flex flex-col items-left w-[40%]">
+            <label class="font-semibold mt-auto text-lg">Họ tên</label>
+          </div>
+          <div class="flex flex-col items-left w-[40%]">
+            <label class="font-semibold text-lg">CCCD (Chỉ số)</label>
+          </div>
+          <div class="flex flex-col items-left w-[20%]">
+            <label class="font-semibold text-lg">Giới tính</label>
+          </div>
+        </div>
+        <!--     <div class="grid grid-cols-3 gap-4 m-4 relative thiSinhRow"> -->
+        <!--       <div> -->
+        <!--         <label>* Họ tên</label> -->
+        <!--         <input type="text" name="thiSinhHoTen" -->
+        <!--           class="ml-auto w-50 px-2 border border-gray-200 bg-gray-100 rounded-lg" value=""> -->
+        <!--       </div> -->
+        <!--       <div> -->
+        <!--         <label>* CCCD</label> -->
+        <!--         <input type="number"  name="thiSinhCCCD" -->
+        <!--           class="ml-auto w-50 px-2 border border-gray-200 bg-gray-100 rounded-lg" value=""> -->
+        <!--       </div> -->
+        <!--       <div> -->
+        <!--         <label>* Giới tính</label> -->
+        <!--         <select name="thiSinhGioiTinh" class="ml-auto w-60 px-2 border border-gray-200 bg-gray-100 rounded-lg"> -->
+        <!--           <option value="">Chọn giới tính</option> -->
+        <!--           <option value="Nam">Nam</option> -->
+        <!--           <option value="Nữ">Nữ</option> -->
+        <!--         </select> -->
+        <!--       </div> -->
+        <!--       <button type="button" -->
+        <!--         class="absolute -right-10 top-4 p-1 px-2 bg-red-500 text-white rounded deleteBtn">X</button> -->
+        <!--     </div> -->
+      </div>
+      <div class="flex justify-end gap-4 mt-5 ml-auto">
+        <!-- <button type="reset" class="p-2 rounded-lg text-white font-bold bg-[#2E8BC0]">Huỷ</button> -->
+        <button id="btnDangKy" type="button"
+          class="p-2 rounded-lg text-white font-bold bg-[#2E8BC0] hover:-translate-y-1 active:-translate-y-0.5 shadow-xl transition-all">Đăng
+          ký</button>
+      </div>
+    </section>
+    <!-- Footer -->
+  </form>
+</div>

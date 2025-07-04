@@ -1,0 +1,109 @@
+<div class="container mx-auto p-4 bg-gray-50 min-h-screen">
+  <h1 class="text-2xl mb-4 font-semibold text-center ">Màn hình chọn bài thi</h1>
+
+  <div class="flex gap-4">
+    <!-- Left Sidebar -->
+    <div class="bg-white p-4 rounded shadow w-1/5">
+      <h2 class="text-xl font-semibold mb-4">Chọn Bài Thi</h2>
+
+      <div class="mb-4">
+        <label class="block text-sm mb-1" for="phieuDangKyInput">Chọn Phiếu Đăng Ký</label>
+        <input list="phieuDangKy" id="phieuDangKyInput" name="phieuDangKy" class="w-full border rounded px-2 py-1" />
+        <datalist id="phieuDangKy">
+          {{#each phieuDangKyList}}
+          <option value="{{PhieuID}}" data-hoten="{{Hoten}}">{{Hoten}} ({{PhieuID}})</option>
+          {{/each}}
+        </datalist>
+      </div>
+
+      <p class="text-sm mb-4">
+        <span class="font-medium">Tên khách hàng:</span> <span id="tenKhachHang">{{tenKhachHang}}</span>
+      </p>
+
+      <h3 class="text-sm font-semibold mb-2">Danh sách bài thi đã đăng ký</h3>
+      <div class="space-y-2" id="daDangKyContainer">
+        <!-- {{#each baiThiDaDangKy}} -->
+        <!-- <div class="border rounded p-2 flex justify-between items-center"> -->
+        <!--   <div> -->
+        <!--     <p class="font-semibold">{{tenBaiThi}}</p> -->
+        <!--     <p class="text-xs text-gray-500">{{ngayThi}}<br>{{phong}}</p> -->
+        <!--   </div> -->
+        <!--   <button class="text-gray-500 hover:text-red-500"> -->
+        <!--     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"> -->
+        <!--       <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /> -->
+        <!--     </svg> -->
+        <!--   </button> -->
+        <!-- </div> -->
+        <!-- {{/each}} -->
+      </div>
+    </div>
+
+    <!-- Right Main Content -->
+    <div class="bg-white p-4 rounded-lg shadow flex-1 min-h-[calc(100vh-15rem)]">
+      <div class="mb-4 flex flex-row items-center gap-2 max-h-full overflow-x-scroll">
+        <input id="txtTimChungChi" type="text" placeholder="Tìm chứng chỉ" class="border rounded-lg px-2 py-1 w-48 mr-4" />
+        <input id="txtTimBaiThi" type="text" placeholder="Tìm bài thi" class="flex-1 border rounded-lg px-2 py-1" />
+        <button>
+          <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="flex flex-row gap-4 h-[calc(100%-3rem)] overflow-x-scroll">
+        <div id="ChungChiContainer" class="min-w-48 flex flex-col gap-4">
+          {{#each ChungChi}}
+          <div class="flex items-center gap-4 border rounded-lg p-3 cardChungChi " data-tenchungchi="{{TenChungChi}}"
+            data-loaichungchi="{{LoaiChungChi}}" data-gia="{{Gia}}" data-chungchiid="{{ChungChiID}}">
+            <div class="flex-shrink-0 w-44 text-left">
+              <div class="flex flex-row px-1">
+                <div class="flex flex-col w-3/5">
+                  <p class="font-bold">{{TenChungChi}}</p>
+                  <p class="text-blue-600 font-bold">đ {{Gia}}</p>
+                </div>
+                <div class="flex flex-col px-1">
+                  <p class="text-blue-600 font-bold">{{LoaiChungChi}}</p>
+                  <!-- Optional: show ChungChiID to the user -->
+                  <p class="text-xs text-gray-400">ID: {{ChungChiID}}</p>
+                </div>
+              </div>
+
+              <!-- Button carries ChungChiID in data attribute -->
+              <button class="mt-2 bg-blue text-white text-xs rounded px-2 py-1 btn-chon-lich-thi w-full"
+                data-chungchi-id={{ChungChiID}} data-tenchungchi='{{TenChungChi}}'>
+                Chọn lịch thi
+              </button>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+        <div class="flex-1 overflow-x-auto min-h-full border-babyblue border rounded-lg">
+          <table class="min-w-full text-sm text-left">
+            <thead class="bg-[#E6F0FF] text-gray-700 uppercase">
+              <tr>
+                <th class="py-2 px-3">Mã bài thi</th>
+                <th class="py-2 px-3">Tên chứng chỉ</th>
+                <th class="py-2 px-3">Địa điểm thi</th>
+                <th class="py-2 px-3">Ngày thi</th>
+                <th class="py-2 px-3 text-right"></th>
+              </tr>
+            </thead>
+            <tbody id="lichThiContainer">
+              {{#each lichThi}}
+              <tr class="border-b last:border-none {{#if @odd}}bg-blue-50{{/if}}">
+                <td class="py-2 px-3 whitespace-nowrap">{{maBaiThi}}</td>
+                <td class="py-2 px-3">{{diaDiem}}</td>
+                <td class="py-2 px-3">{{ngay}}</td>
+                <td class="py-2 px-3 text-right">
+                  <button
+                    class="bg-blue-600 hover:bg-blue-700 transition text-white text-xs rounded px-3 py-1">Chọn</button>
+                </td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

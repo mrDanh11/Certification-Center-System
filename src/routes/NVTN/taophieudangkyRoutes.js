@@ -1,17 +1,17 @@
 const express = require('express');
 const router = express.Router();
 
-//Route connect Home Page
 router.get('/', async (req, res) => {
     try {
-        res.render('NVTNPage/home', {
+        res.render('NVTNPage/taophieudangky', {
             layout: 'NVTN/NVTNmain',
-            title: 'Nhân viên tiếp nhận Page',
+            title: 'Tiếp nhận khách hàng Page',
+            scripts: '<script src="/js/NVTN/taophieudangky.js"></script>',
         });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
 });
 
-
 module.exports = router;
+
