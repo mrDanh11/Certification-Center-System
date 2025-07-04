@@ -6,9 +6,10 @@ const lichthi = {
 		const query = `
 		SELECT * FROM LichThi lt
         JOIN ChungChi cc ON cc.ChungChiID=lt.ChungChiID
-        WHERE lt.ChungChiID = '${maLichThi}';
+        WHERE lt.BaiThiID = '${maLichThi}';
 		`;
 		try {
+			console.log(query);
             await pool.connect()
 			const result = await pool.request().query(query);
             const test = result.recordset

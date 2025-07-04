@@ -19,13 +19,64 @@
                     Danh sách chưa thanh toán</a></li>
         </ul>
 
-        <ul class="flex space-x-8 justify-items-end ml-auto items-center">
-            <li>
-                <a href="/" class="flex items-center justify-center text-gray-500">
-                    <i class="fa-solid fa-user text-3xl"></i>
+        <ul class="flex space-x-4 ml-auto items-center relative">
+            <li id="userNameContainer" class="text-white font-semibold hidden md:block"></li>
+
+            <!-- Icon và dropdown -->
+            <li class="relative">
+                <button id="userMenuBtn" class="flex items-center justify-center text-white focus:outline-none">
+                <i class="fa-solid fa-user text-3xl"></i>
+                </button>
+
+                <!-- Dropdown -->
+                <div id="userDropdown" class="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg z-20 hidden">
+                <a href="/" id="logoutBtn"
+                    class="block px-4 py-2 text-gray-800 hover:bg-gray-200 hover:text-red-600">
+                    Đăng xuất
                 </a>
+                </div>
             </li>
         </ul>
 
+
     </nav>
 </header>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const userName = sessionStorage.getItem('userName');
+    const role = sessionStorage.getItem('role');
+    const nameContainer = document.getElementById('userNameContainer');
+
+    if (!userName || role !== 'ke toan') {
+      window.location.href = "/";
+      return;
+    }
+
+    if (nameContainer) {
+      nameContainer.textContent = `${userName}`;
+    }
+
+    // Toggle dropdown khi bấm icon
+    const menuBtn = document.getElementById('userMenuBtn');
+    const dropdown = document.getElementById('userDropdown');
+
+    menuBtn.addEventListener('click', function () {
+      dropdown.classList.toggle('hidden');
+    });
+
+    // Logout: xóa sessionStorage & chuyển trang
+    document.getElementById('logoutBtn').addEventListener('click', function () {
+      sessionStorage.removeItem('userID');
+      sessionStorage.removeItem('userName');
+      sessionStorage.removeItem('role');
+    });
+
+    // Click ra ngoài thì ẩn dropdown
+    window.addEventListener('click', function (e) {
+      if (!menuBtn.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.add('hidden');
+      }
+    });
+  });
+</script>

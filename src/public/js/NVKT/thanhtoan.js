@@ -2,8 +2,9 @@ function tinhTienBanDau(TTBaiThi, TTKhachHang) {
   let TongTien = 0;
   let TienGiam = 0;
   let ThanhTien = 0;
+  const soluongKH = Number(TTKhachHang.SoLuong) || 1;
   for (let i = 0; i < TTBaiThi.length; i++) {
-  TongTien += Number(TTBaiThi[i].Gia) || 0;
+  TongTien += Number(TTBaiThi[i].Gia) * soluongKH || 0;
   }
 
   TienGiam = (TTKhachHang.SoLuong && TTKhachHang.SoLuong > 20) ? TongTien * 0.15 : TTKhachHang.SoLuong ? TongTien * 0.1 : 0;

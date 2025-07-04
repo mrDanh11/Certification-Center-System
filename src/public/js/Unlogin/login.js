@@ -23,6 +23,7 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
             
             sessionStorage.setItem('userID', result.userID);
             sessionStorage.setItem('userName', username);
+            sessionStorage.setItem('role', result.role);
             // Check user role and redirect accordingly
             switch (result.role) {
                 case 'ke toan':
