@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const lichthiController = require('../../modules/NVKT/LichThi/lichthiController');
-router.get('/', lichthiController.LayDSLichThi);
+const lichthiController = require('../../modules/NVTN/LichThi/lichthiController');
+
 // Route cho trang lịch thi
 router.get('/', lichthiController.LayTatCaLichThi);
 
@@ -10,5 +10,6 @@ router.get('/loai/:chungChiId', lichthiController.APILayLichThiTheoLoai);
 
 // Route cho chi tiết lịch thi
 router.get('/chitiet/:lichThiId', lichthiController.APILayChiTietLichThi);
+
 module.exports = router;
 
