@@ -3,7 +3,7 @@
 
   <div class="flex gap-4">
     <!-- Left Sidebar -->
-    <div class="bg-white p-4 rounded shadow w-1/4">
+    <div class="bg-white p-4 rounded shadow w-1/5">
       <h2 class="text-xl font-semibold mb-4">Chọn Bài Thi</h2>
 
       <div class="mb-4">
@@ -53,16 +53,22 @@
         <div id="ChungChiContainer" class="flex flex-col gap-4">
           {{#each ChungChi}}
           <div class="flex items-center gap-4 border rounded-lg p-3">
-            <div class="flex-shrink-0 w-32 text-center">
-              <p class="font-bold">{{TenChungChi}}</p>
-              <p class="text-blue-600 font-bold">{{Gia}}</p>
-              <p class="text-blue-600 font-bold">{{LoaiChungChi}}</p>
-              <!-- Optional: show ChungChiID to the user -->
-              <p class="text-xs text-gray-400">ID: {{ChungChiID}}</p>
+            <div class="flex-shrink-0 w-44 text-left">
+              <div class="flex flex-row px-1">
+                <div class="flex flex-col w-3/5">
+                  <p class="font-bold">{{TenChungChi}}</p>
+                  <p class="text-blue-600 font-bold">đ {{Gia}}</p>
+                </div>
+                <div class="flex flex-col px-1">
+                  <p class="text-blue-600 font-bold">{{LoaiChungChi}}</p>
+                  <!-- Optional: show ChungChiID to the user -->
+                  <p class="text-xs text-gray-400">ID: {{ChungChiID}}</p>
+                </div>
+              </div>
 
               <!-- Button carries ChungChiID in data attribute -->
-              <button class="mt-2 bg-blue text-white text-xs rounded px-2 py-1 btn-chon-lich-thi"
-                data-chungchi-id={{ChungChiID}}>
+              <button class="mt-2 bg-blue text-white text-xs rounded px-2 py-1 btn-chon-lich-thi w-full"
+                data-chungchi-id={{ChungChiID}} data-tenchungchi='{{TenChungChi}}'>
                 Chọn lịch thi
               </button>
             </div>
@@ -71,9 +77,10 @@
         </div>
         <div class="flex-1 overflow-x-auto min-h-full border-babyblue border rounded-lg">
           <table class="min-w-full text-sm text-left">
-            <thead class="bg-babyblue text-gray-700 uppercase">
+            <thead class="bg-[#E6F0FF] text-gray-700 uppercase">
               <tr>
                 <th class="py-2 px-3">Mã bài thi</th>
+                <th class="py-2 px-3">Tên chứng chỉ</th>
                 <th class="py-2 px-3">Địa điểm thi</th>
                 <th class="py-2 px-3">Ngày thi</th>
                 <th class="py-2 px-3 text-right"></th>

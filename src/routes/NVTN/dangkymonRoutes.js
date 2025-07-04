@@ -8,7 +8,13 @@ const ChungChi = require('../../modules/NVTN/ChungChi/chungchiModel');
 router.get('/', async (req, res) => {
     try {
         const phieuDangKyList = await phieudangkyModel.LayDanhSachDK();
-        const ChungChiList = await ChungChi.LayDSChungChi();
+        let ChungChiList = await ChungChi.LayDSChungChi();
+        ChungChiList = ChungChiList.map(item => ({
+            TenChungChi: item.TenChungChi,
+            LoaiChungChi: item.LoaiChungChi,
+            ChungChiID: item.ChungChiID,  
+            Gia: item.Gia.toLocaleString('vi-VN'),
+        }));
         res.render('NVTNPage/dangkymon', {
             layout: 'NVTN/NVTNmain',
             title: 'Đăng ký môn thi page',

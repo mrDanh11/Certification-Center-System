@@ -7,6 +7,7 @@ const LayDSBaiThiDaDangKy = async (PhieuID) => {
   console.log(response);
 
   const daDangKyList = await response.json();
+  console.log(daDangKyList);
 
   daDangKyContainer.innerHTML = daDangKyList.map((item, index) => `
     <div class="border rounded p-2 flex justify-between items-center">
@@ -14,13 +15,43 @@ const LayDSBaiThiDaDangKy = async (PhieuID) => {
         <p class="font-semibold">${item.TenChungChi}</p>
         <p class="text-xs text-gray-500">${new Date(item.ThoiGianThi).toLocaleDateString('vi-VN')}<br>${item.DiaDiemThi}</p>
       </div>
-      <button class="text-gray-500 hover:text-red-500">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <button class="rounded shadow-lg text-gray-500 hover:text-red-500 btn_xoaDangKy"
+      data-baithi-id=${item.BaiThiID}
+      data-phieu-id=${PhieuID}
+      >
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
     </div>
   `).join('');
+
+  const btnXoaDangKy = document.querySelectorAll('.btn_xoaDangKy');
+  btnXoaDangKy.forEach(item => {
+    item.addEventListener('click', async function() {
+      try {
+        const baithiId = this.dataset.baithiId;
+        const phieuID = this.dataset.phieuId;
+        const url = `/NVTN/api/danhsachDKThi`
+        const response = await fetch(url, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            BaiThiID: baithiId,
+            phieuID: phieuID
+          })
+        })
+
+        if (!response.ok) throw new Error('Lỗi không thể xóa môn đăng ký thi');
+        alert('🎉 Xóa môn thành công!');
+
+        LayDSBaiThiDaDangKy(PhieuID);
+      } catch (error) {
+        console.error(error);
+        alert('Có lỗi khi xóa đăng ký thi');
+      }
+    })
+  })
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -48,6 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
   btnChonChungChi.forEach(btn => {
     btn.addEventListener('click', async function() {
       const chungChiID = this.dataset.chungchiId;
+      const TenChungChi = this.dataset.tenchungchi;
 
       try {
         const response = await fetch(`/NVTN/api/lichthi?chungChiID=${encodeURIComponent(chungChiID)}`);
@@ -59,13 +91,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Here you could render the fetched data into the page, e.g.:
         document.getElementById('lichThiContainer').innerHTML = lichthiList.map((item, index) => `
-          <tr class="border-b last:border-none even:bg-babyblue">
+          <tr class="border-b last:border-none even:bg-[#E6F0FF]">
             <td class="py-2 px-3 whitespace-nowrap">${item.BaiThiID}</td>
+            <td class="py-2 px-3 whitespace-nowrap">${TenChungChi}</td>
             <td class="py-2 px-3">${item.DiaDiemThi}</td>
             <td class="py-2 px-3">${new Date(item.ThoiGianThi).toLocaleDateString('vi-VN')}</td>
             <td class="py-2 px-3 text-left">
               <button
-                class="bg-blue hover:bg-darkblue hover:text-white transition text-xs rounded px-3 py-1 btn-dang-ky"
+                class="bg-babyblue hover:bg-darkblue hover:text-white transition text-xs rounded px-3 py-1 btn-dang-ky"
                 data-baithi-id=${item.BaiThiID}
               >Đăng Ký</button>
             </td>
@@ -107,5 +140,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     // const { errorMonitor } = require("nodemailer/lib/xoauth2");
   });
+
 });
 
