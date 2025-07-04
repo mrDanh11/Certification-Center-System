@@ -91,7 +91,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Here you could render the fetched data into the page, e.g.:
         document.getElementById('lichThiContainer').innerHTML = lichthiList.map((item, index) => `
-          <tr class="border-b last:border-none even:bg-[#E6F0FF]">
+          <tr class="border-b last:border-none even:bg-[#E6F0FF] cardBaiThi"
+            data-mabaithi=${item.BaiThiID}
+            data-diadiemthi="${item.DiaDiemThi}"
+            data-ngaythi=${new Date(item.ThoiGianThi).toLocaleDateString('vi-VN')}
+          >
             <td class="py-2 px-3 whitespace-nowrap">${item.BaiThiID}</td>
             <td class="py-2 px-3 whitespace-nowrap">${TenChungChi}</td>
             <td class="py-2 px-3">${item.DiaDiemThi}</td>
@@ -138,8 +142,54 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('Có lỗi khi lấy lịch thi');
       }
     });
-    // const { errorMonitor } = require("nodemailer/lib/xoauth2");
   });
 
+  const ChungChiSearchInput = document.getElementById('txtTimChungChi');
+  const ChungChiContainer = document.getElementById('ChungChiContainer');
+  const ChungChiItems = Array.from(ChungChiContainer.querySelectorAll('.cardChungChi'));
+
+  console.log(ChungChiItems);
+
+  ChungChiSearchInput.addEventListener('input', function() {
+    const query = this.value.trim().toLowerCase();
+
+    ChungChiItems.forEach(item => {
+      const textTen = item.dataset.tenchungchi.toLowerCase();
+      const textLoai = item.dataset.loaichungchi.toLowerCase();
+      const textGia = item.dataset.gia.toLowerCase();
+      const textID = item.dataset.chungchiid.toLowerCase();
+
+      const match = 
+        textTen.includes(query) ||
+        textLoai.includes(query) ||
+        textGia.includes(query) ||
+        textID.includes(query);
+
+      item.style.display = match ? '' : 'none';
+    });
+  });
+
+  const BaiThiSearchInput = document.getElementById('txtTimBaiThi');
+
+  BaiThiSearchInput.addEventListener('input', function() {
+    const query = this.value.toLowerCase();
+    // console.log(query);
+    const BaiThiItems = Array.from(document.querySelectorAll('.cardBaiThi'));
+
+    BaiThiItems.forEach(item => {
+      const textMa = item.dataset.mabaithi.toLowerCase();
+      const textDiaDiem = item.dataset.diadiemthi.toLowerCase();
+      const textNgayThi = item.dataset.ngaythi.toLowerCase();
+
+      console.log(textDiaDiem);
+      
+      const match = 
+        textMa.includes(query) ||
+        textDiaDiem.includes(query) ||
+        textNgayThi.includes(query);
+
+      item.style.display = match ? '' : 'none';
+    });
+  });
 });
 
