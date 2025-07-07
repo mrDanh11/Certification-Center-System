@@ -1,23 +1,61 @@
-DROP USER NVHT;
-
-CREATE LOGIN NVHT WITH PASSWORD = '1234@';
-CREATE USER NVHT FOR LOGIN NVHT;
-ALTER ROLE db_owner ADD MEMBER NVHT;
+-- 1) Chuyển vào master để thao tác cấp server
+USE [master];
 GO
 
-DROP DATABASE QuanLyDangKyThi
+-- 2) Nếu database tồn tại thì set SINGLE_USER + ROLLBACK IMMEDIATE rồi DROP
+IF EXISTS (SELECT 1 FROM sys.databases WHERE name = N'QuanLyDangKyThi')
+BEGIN
+    ALTER DATABASE [QuanLyDangKyThi]
+        SET SINGLE_USER 
+        WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE [QuanLyDangKyThi];
+    PRINT 'Database QuanLyDangKyThi đã được xoá.';
+END
+ELSE
+    PRINT 'Database QuanLyDangKyThi không tồn tại.';
 GO
 
-CREATE DATABASE QuanLyDangKyThi
+-- 3) Nếu login NVHT tồn tại ở cấp server thì DROP
+IF EXISTS (SELECT 1 FROM sys.server_principals WHERE name = N'NVHT')
+BEGIN
+    DROP LOGIN [NVHT];
+    PRINT 'Login NVHT đã được xoá.';
+END
+ELSE
+    PRINT 'Login NVHT không tồn tại.';
 GO
 
-USE QuanLyDangKyThi;
-ALTER ROLE db_owner ADD MEMBER NVHT;
+-- 4.1) Tạo login NVHT
+CREATE LOGIN [NVHT] WITH PASSWORD = '1234@';
 GO
 
-USE QuanLyDangKyThi;
-SELECT * FROM sys.database_principals WHERE name = 'NVHT';
+-- 4.2) Tạo database mới
+CREATE DATABASE [QuanLyDangKyThi];
+GO
 
+-- 4.3) Chuyển vào database mới
+USE [QuanLyDangKyThi];
+GO
+
+-- 4.4) Nếu user NVHT đang tồn tại (thường thì không) thì DROP
+IF EXISTS (SELECT 1 FROM sys.database_principals WHERE name = N'NVHT')
+BEGIN
+    DROP USER [NVHT];
+    PRINT 'Database user NVHT đã được xoá.';
+END
+GO
+
+-- 4.5) Tạo user NVHT và gán quyền db_owner
+CREATE USER [NVHT] FOR LOGIN [NVHT];
+ALTER ROLE [db_owner] ADD MEMBER [NVHT];
+GO
+
+-- 4.6) Kiểm tra user NVHT đã có trong database
+SELECT * 
+FROM sys.database_principals 
+WHERE name = N'NVHT';
+GO
+-----------------------------------------------------------------------------------------------------------
 CREATE TABLE NhanVien (
     NhanVienID INT IDENTITY(1, 1),
     Hoten NVARCHAR(100),
@@ -81,23 +119,13 @@ CREATE TABLE LichThi (
     ThoiGianLamBai TIME,
     ThoiGianThi Date,
     DiaDiemThi NVARCHAR(100),
-    PhongThi NVARCHAR(50),
     PRIMARY KEY(BaiThiID),
     FOREIGN KEY(ChungChiID) REFERENCES ChungChi(ChungChiID)
 );
 GO
 
-CREATE TABLE NhanVienCoiThi (
-    NhanVienID INT,
-    BaiThiID INT,
-    PRIMARY KEY(NhanVienID, BaiThiID)
-    FOREIGN KEY(NhanVienID) REFERENCES NhanVien(NhanVienID),
-    FOREIGN KEY(ChungChiID) REFERENCES LichThi(BaiThiID)
-);
-GO
-
 CREATE TABLE KhachHang (
-    KhachHangID INT IDENTITY(1, 1),
+    KhachHangID INT IDENTITY(1, 1), 
     Hoten NVARCHAR(100),
     CCCD NVARCHAR(50),
     Phai NVARCHAR(10),
@@ -115,7 +143,6 @@ CREATE TABLE PhieuDangKy (
     KhachHangID INT,
     ThoiGianLap DATETIME,
     TinhTrangThanhToan BIT DEFAULT 0,
-    TinhTrangHuy BIT,
     LoaiPhieu NVARCHAR(50),
     NVTiepNhanLap INT,
 	TinhTrangHuy BIT,
@@ -177,6 +204,7 @@ CREATE TABLE PhieuDuThi (
     PhieuID INT,
     NgayLap DATETIME,
     Diem REAL,
+	KQ NVARCHAR(50), --
     LichThi INT,
     NVQuanLyLap INT,
     PRIMARY KEY(SoBaoDanh),
@@ -188,10 +216,10 @@ GO
 
 CREATE TABLE DanhSachCho (
     STT INT IDENTITY(1, 1),
-    ThiSinhID INT,
+    SoBaoDanh INT,
     TinhTrang BIT,
     PRIMARY KEY(STT),
-    FOREIGN KEY(ThiSinhID) REFERENCES ThiSinh(ThiSinhID),
+    FOREIGN KEY(SoBaoDanh) REFERENCES PhieuDuThi(SoBaoDanh),
 );
 
 CREATE TABLE KetQuaChungChi (
@@ -203,10 +231,12 @@ CREATE TABLE KetQuaChungChi (
     NguoiNhanID INT,
     NVNhapLieu INT,
     NVKeToanGui INT,
+    PhieuID INT NOT NULL,--
     PRIMARY KEY(KetQuaID),
     FOREIGN KEY(NguoiNhanID) REFERENCES KhachHang(KhachHangID),
     FOREIGN KEY(NVNhapLieu) REFERENCES NhapLieu(NhanVienID),
-    FOREIGN KEY(NVKeToanGui) REFERENCES KeToan(NhanVienID)
+    FOREIGN KEY(NVKeToanGui) REFERENCES KeToan(NhanVienID),
+	FOREIGN KEY (PhieuID) REFERENCES PhieuDangKy(PhieuID)
 );
 
 CREATE TABLE DanhSachDKThi (
@@ -222,11 +252,11 @@ CREATE TABLE PhieuGiaHan (
     PhieuGiaHanID INT IDENTITY(1, 1),
     TinhTrang NVARCHAR(100),
     NgayLap DATETIME,
-    PhieuID INT,
+    SoBaoDanh INT,
     LichThiTruoc INT,
     LichThiSau INT,
     PRIMARY KEY(PhieuGiaHanID),
-    FOREIGN KEY(PhieuID) REFERENCES PhieuDangKy(PhieuID),
+    FOREIGN KEY(SoBaoDanh) REFERENCES PhieuDuThi(SoBaoDanh),
     FOREIGN KEY(LichThiTruoc) REFERENCES LichThi(BaiThiID),
     FOREIGN KEY(LichThiSau) REFERENCES LichThi(BaiThiID),
 );
@@ -284,7 +314,9 @@ INSERT INTO LichThi(ChungChiID, ThoiGianLamBai, ThoiGianThi, DiaDiemThi) VALUES
 (2, '12:30:00', '2025-06-11', N'Hồ Chí Minh'),
 (3, '08:00:00', '2025-06-12', N'Đà Nẵng'),
 (4, '09:45:00', '2025-06-13', N'Hải Phòng'),
-(5, '10:15:00', '2025-06-14', N'Cần Thơ');
+(5, '10:15:00', '2025-06-14', N'Cần Thơ'),
+(3, '10:15:00', '2025-06-24', N'Hà Nội'),
+(3, '10:15:00', '2025-06-24', N'Hà Nội');
 
 -- 6. KhachHang
 INSERT INTO KhachHang(Hoten, CCCD, Phai, Email, Dienthoai, LoaiKH) VALUES
@@ -300,7 +332,10 @@ INSERT INTO PhieuDangKy(KhachHangID, ThoiGianLap, TinhTrangThanhToan, LoaiPhieu,
 (2, '2025-06-01', 0, N'Cá Nhân', 2, 0),
 (3, '2025-06-02', 0, N'Đơn Vị', 2, 0),
 (4, '2025-06-03', 0, N'Cá Nhân', 2, 0),
-(5, '2025-06-03', 0, N'Đơn Vị', 2, 0);
+(5, '2025-06-03', 0, N'Đơn Vị', 2, 0),
+(5, '2025-06-04', 0, N'Đơn Vị', 2, 0),
+(1, '2025-06-01', 0, N'Cá Nhân', 2, 0);
+
 
 -- 8. HoaDon (PhieuID 1-5, NVKeToanLap: 3)
 /*INSERT INTO HoaDon(PhieuID, ThoiGianLap, SoTienTong, SoTienGiam, ThanhTien, TienNhan, NVKeToanLap) VALUES
@@ -324,15 +359,28 @@ INSERT INTO ThiSinh(PhieuID, CCCD, Hoten, Phai) VALUES
 (2, N'222222222', N'Lê Thị Lan', N'Nữ'),
 (3, N'333333333', N'Ngô Văn Tài', N'Nam'),
 (4, N'444444444', N'Phạm Thị Hồng', N'Nữ'),
-(5, N'555555555', N'Trần Văn Kỳ', N'Nam');
+(5, N'555555555', N'Trần Văn Kỳ', N'Nam'),
+(5,  N'666111222', N'Hoàng Minh Tuấn', N'Nam'),
+(5,  N'777222333', N'Phạm Thị Mai',   N'Nữ'),
+(5,  N'888333444', N'Nguyễn Văn Hoàng', N'Nam'),
+(6,  N'888331114', N'Nguyễn Văn Lên', N'Nam'),
+(7,  N'888331114', N'Nguyễn Văn Lên', N'Nam');
+
+
+
 
 -- 12. PhieuDuThi (ThiSinhID, PhieuID từ ThiSinh, LichThi 1-5, NVQuanLyLap: 1)
-INSERT INTO PhieuDuThi(ThiSinhID, PhieuID, NgayLap, Diem, LichThi, NVQuanLyLap) VALUES
-(1, 1, '2025-06-05', 8.5, 1, 1),
-(2, 2, '2025-06-06', 7.0, 2, 1),
-(3, 3, '2025-06-07', 9.0, 3, 1),
-(4, 4, '2025-06-08', 6.5, 4, 1),
-(5, 5, '2025-06-09', 8.0, 5, 1);
+INSERT INTO PhieuDuThi(ThiSinhID, PhieuID, NgayLap, Diem, KQ, LichThi, NVQuanLyLap) VALUES
+(1, 1, '2025-06-05', 8.5, 'B1', 1, 1),
+(2, 2, '2025-06-06', 7.0, 'B2', 2, 1),
+(3, 3, '2025-06-07', 9.0, 'A', 3, 1),
+(4, 4, '2025-06-08', 6.5, 'B1', 4, 1),
+(5, 5, '2025-06-09', 8.0, 'B2', 5, 1),
+(6, 5, '2025-06-07', 9.0, 'A', 5, 1),
+(7, 5, '2025-06-08', 6.5, 'B1', 5, 1),
+(8, 5, '2025-06-09', 8.0, 'B2', 5, 1),
+(9, 6, '2025-06-09', 6.0, 'C2', 6, 1),
+(10, 7, '2025-06-05', 9.5, 'A1', 7, 1);
 
 -- 13. DanhSachCho (SoBaoDanh: 1-5)
 INSERT INTO DanhSachCho(SoBaoDanh, TinhTrang) VALUES
@@ -343,12 +391,15 @@ INSERT INTO DanhSachCho(SoBaoDanh, TinhTrang) VALUES
 (5, 0);
 
 -- 14. KetQuaChungChi (NguoiNhanID: KhachHangID 1-5, NVNhapLieu: 4, NVKeToanGui: 3)
-INSERT INTO KetQuaChungChi(NgayCap, TrangThai, XacNhanKhachHang, NgayGui, NguoiNhanID, NVNhapLieu, NVKeToanGui) VALUES
-('2025-06-15', N'Đã Cấp', 1, '2025-06-16', 1, 4, 3),
-('2025-06-16', N'Chờ Xác Nhận', 0, NULL, 2, 4, 3),
-('2025-06-17', N'Đã Cấp', 1, '2025-06-18', 3, 4, 3),
-('2025-06-18', N'Chờ Xác Nhận', 0, NULL, 4, 4, 3),
-('2025-06-19', N'Đã Cấp', 1, '2025-06-20', 5, 4, 3);
+INSERT INTO KetQuaChungChi(NgayCap, TrangThai, XacNhanKhachHang, NgayGui, NguoiNhanID, NVNhapLieu, NVKeToanGui, PhieuID) VALUES
+('2025-06-15', N'Chờ xác nhận', 1, '2025-06-16', 1, 4, 3,1),
+('2025-06-16', N'Chờ xác nhận', 0, NULL, 2, 4, 3,2),
+('2025-06-17', N'Chờ xác nhận', 1, '2025-06-18', 3, 4, 3,3),
+('2025-06-18', N'Chờ xác nhận', 0, NULL, 4, 4, 3,4),
+('2025-06-19', N'Chờ xác nhận', 1, '2025-06-20', 5, 4, 3,5),
+('2025-06-19', N'Chờ xác nhận', 1, '2025-06-20', 5, 4, 3,6),
+('2025-06-15', N'Chờ xác nhận', 1, '2025-06-16', 1, 4, 3,7);
+
 
 -- 15. DanhSachDKThi (PhieuID: 1-5, BaiThiID: 1-5)
 INSERT INTO DanhSachDKThi(PhieuID, BaiThiID) VALUES
@@ -375,3 +426,5 @@ INSERT INTO PhieuGiaHan(TinhTrang, NgayLap, SoBaoDanh, LichThiTruoc, LichThiSau)
 (1100000, 100000, 1000000, '2025-06-30', 1005, 0, 3, 3);*/
 
 -- Lưu ý: Các ID tự động tăng (IDENTITY) bạn cần kiểm tra lại số thứ tự nếu đã có dữ liệu trước đó!
+
+

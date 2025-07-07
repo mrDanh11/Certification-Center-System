@@ -1,0 +1,85 @@
+<div class="max-w-4xl mx-auto px-6 py-10 space-y-10 text-gray-800 bg-white rounded-xl shadow-lg">
+
+  <!-- Tiêu đề -->
+  <h1 class="text-center text-3xl font-bold text-blue-700 border-b pb-4">
+    Xác nhận tình trạng chứng chỉ
+  </h1>
+
+  <!-- Thông tin khách hàng -->
+  <div class="bg-gray-50 p-10 rounded-lg shadow-inner space-y-3">
+    <h2 class="text-xl font-semibold text-gray-700">Thông tin khách hàng</h2>
+    <div class="grid grid-cols-2 gap-y-4 gap-x-10 text-sm text-gray-700">
+      <div>
+        CCCD:
+        <input type="text"
+               value="{{customer.CCCD}}"
+               class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1"
+               readonly/>
+      </div>
+      <div>
+        Họ tên:
+        <input type="text"
+               value="{{customer.Hoten}}"
+               class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1"
+               readonly/>
+      </div>
+      <div>
+        Email:
+        <input type="text"
+               value="{{customer.Email}}"
+               class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1"
+               readonly/>
+      </div>
+      <div>
+        Loại khách hàng:
+        <input type="text"
+               value="{{customer.LoaiKH}}"
+               class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1"
+               readonly/>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chi tiết chứng chỉ -->
+  <div class="bg-gray-50 p-10 rounded-lg shadow-inner space-y-3">
+    <h2 class="text-xl font-semibold text-gray-700">Thông tin chi tiết chứng chỉ</h2>
+    <form method="POST" action="/NVTN/KetQuaChungChi/confirm/save">
+      <div class="overflow-x-auto">
+        <table class="min-w-full border-collapse text-sm text-gray-800 mb-4">
+          <thead class="bg-white">
+            <tr>
+              <th class="border px-4 py-2">STT</th>
+              <th class="border px-4 py-2">CCCD</th>
+              <th class="border px-4 py-2">Tên</th>
+              <th class="border px-4 py-2">Giới tính</th>
+              <th class="border px-4 py-2">Điểm</th>
+              <th class="border px-4 py-2">Chứng chỉ đạt được</th>
+              <th class="border px-4 py-2">Tình trạng</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#each details}}
+            <tr>
+              <td class="border px-4 py-2 text-center">{{this.STT}}</td>
+              <td class="border px-4 py-2">{{this.CCCD}}</td>
+              <td class="border px-4 py-2">{{this.Hoten}}</td>
+              <td class="border px-4 py-2">{{this.Phai}}</td>
+              <td class="border px-4 py-2">{{this.Diem}}</td>
+              <td class="border px-4 py-2">{{this.KQ}}</td>
+              <td class="border px-4 py-2 text-center font-semibold">Đã cấp</td>
+            </tr>
+            <input type="hidden" name="ketQuaIDs" value="{{this.KetQuaID}}" />
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+      <div class="text-right">
+        <button
+          type="submit"
+          class="w-32 bg-black hover:bg-gray-700 text-white px-4 py-2 rounded-lg shadow transition duration-200"
+        >Lưu</button>
+      </div>
+    </form>
+  </div>
+
+</div>
