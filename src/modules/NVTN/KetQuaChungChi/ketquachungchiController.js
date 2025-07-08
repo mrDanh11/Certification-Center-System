@@ -9,7 +9,7 @@ const kqcController = {
       ? `<script>alert("Cập nhật thành công");</script>`
       : '';
     res.render('NVTNPage/ketquachungchi', {
-      layout: 'NVTN/NVTNMain',
+      layout: 'NVTN/NVTNmain',
       title: 'Cấp chứng chỉ',
       scripts: alertScript + '<script src="/js/NVTN/ketquachungchi.js"></script>'
     });

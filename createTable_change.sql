@@ -17,7 +17,7 @@ CREATE TABLE NhanVien (
     Diachi NVARCHAR(200),
     loaiNV NVARCHAR(50),
     PRIMARY KEY (NhanVienID),
-    CONSTRAINT CHK_nhanvien_type CHECK (loaiNV IN (N'quan ly', N'tiep nhan', N'ke toan', N'nhap lieu')), 
+    CONSTRAINT CHK_nhanvien_type CHECK (loaiNV IN (N'quan ly', N'tiep nhan', N'ke toan', N'nhap lieu'))
 );
 GO
 
@@ -67,24 +67,33 @@ CREATE TABLE ChungChi (
 );
 GO
 
+CREATE TABLE PhongThi (
+    MaPhongThi INT IDENTITY(1,1) PRIMARY KEY,
+    TenPhong   NVARCHAR(100) NOT NULL
+);
+GO
+
 CREATE TABLE LichThi (
     BaiThiID INT IDENTITY(1, 1),
     ChungChiID INT,
     ThoiGianLamBai TIME,
     ThoiGianThi Date,
     DiaDiemThi NVARCHAR(100),
-    PhongThi NVARCHAR(50),
-    PRIMARY KEY(BaiThiID),
-    FOREIGN KEY(ChungChiID) REFERENCES ChungChi(ChungChiID)
+    MaPhongThi INT,
+    PRIMARY KEY (BaiThiID),
+    CONSTRAINT FK_LichThi_ChungChiID FOREIGN KEY (ChungChiID) REFERENCES ChungChi(ChungChiID),
+    CONSTRAINT FK_LichThi_MaPhongThi FOREIGN KEY (MaPhongThi) REFERENCES PhongThi(MaPhongThi)
 );
 GO
 
 CREATE TABLE NhanVienCoiThi (
     NhanVienID INT,
     BaiThiID INT,
+    MaPhongThi INT NULL,
     PRIMARY KEY(NhanVienID, BaiThiID),
-    FOREIGN KEY(NhanVienID) REFERENCES NhanVien(NhanVienID),
-    FOREIGN KEY(BaiThiID) REFERENCES LichThi(BaiThiID)
+    CONSTRAINT FK_NVCoiThi_NhanVienID FOREIGN KEY(NhanVienID) REFERENCES NhanVien(NhanVienID),
+    CONSTRAINT FK_NVCoiThi_BaiThiID FOREIGN KEY(BaiThiID) REFERENCES LichThi(BaiThiID),
+    CONSTRAINT FK_NVCoiThi_MaPhongThi FOREIGN KEY (MaPhongThi) REFERENCES PhongThi(MaPhongThi)
 );
 GO
 
@@ -112,8 +121,8 @@ CREATE TABLE PhieuDangKy (
     NVTiepNhanLap INT,
     PRIMARY KEY (PhieuID),
     CONSTRAINT CHK_LoaiPhieu_type CHECK (LoaiPhieu IN (N'Cá Nhân', N'Đơn Vị')),
-    FOREIGN KEY(NVTiepNhanLap) REFERENCES TiepNhan(NhanVienID),
-    FOREIGN KEY(KhachHangID) REFERENCES KhachHang(KhachHangID),
+    CONSTRAINT FK_PhieuDangKy_tiepnhan FOREIGN KEY(NVTiepNhanLap) REFERENCES TiepNhan(NhanVienID),
+    CONSTRAINT FK_PhieuDangKy_khachhang FOREIGN KEY(KhachHangID) REFERENCES KhachHang(KhachHangID)
 );
 GO
 
@@ -125,7 +134,7 @@ CREATE TABLE HoaDon (
     SoTienGiam INT,
     ThanhTien INT,
     TienNhan INT,
-	HinhThucThanhToan  NVARCHAR(50),
+    HinhThucThanhToan  NVARCHAR(50),
     NVKeToanLap INT,
     PRIMARY KEY(HoaDonID),
     FOREIGN KEY(PhieuID) REFERENCES PhieuDangKy(PhieuID),
@@ -143,10 +152,14 @@ GO
 CREATE TABLE PhieuDonVi (
     PhieuID INT,
     SoLuong INT,
+    ChungChiID INT,
+    NgayMongMuon DATETIME, 
+    YeuCau NVARCHAR(500),
     NVKeToanHuy INT,
     PRIMARY KEY (PhieuID),
     FOREIGN KEY (PhieuID) REFERENCES PhieuDangKy(PhieuID),
-    FOREIGN KEY(NVKeToanHuy) REFERENCES KeToan(NhanVienID)
+    FOREIGN KEY(NVKeToanHuy) REFERENCES KeToan(NhanVienID),
+    FOREIGN KEY (ChungChiID) REFERENCES ChungChi(ChungChiID)
 );
 GO
 
@@ -158,7 +171,7 @@ CREATE TABLE ThiSinh (
     Phai NVARCHAR(10),
     PRIMARY KEY(ThiSinhID, PhieuID),
     FOREIGN KEY(PhieuID) REFERENCES PhieuDangKy(PhieuID),
-    CONSTRAINT CHK_TS_gender CHECK (Phai IN (N'Nam', N'Nữ')),
+    CONSTRAINT CHK_TS_gender CHECK (Phai IN (N'Nam', N'Nữ'))
 );
 GO
 
@@ -180,7 +193,7 @@ GO
 CREATE TABLE DanhSachCho (
     STT INT IDENTITY(1, 1),
     ThiSinhID INT,
-	PhieuID INT,
+    PhieuID INT,
     TinhTrang BIT,
     PRIMARY KEY(STT),
     FOREIGN KEY(ThiSinhID, PhieuID) REFERENCES ThiSinh(ThiSinhID, PhieuID),
@@ -217,6 +230,7 @@ CREATE TABLE PhieuGiaHan (
     PhieuID INT,
     LichThiTruoc INT,
     LichThiSau INT,
+    LoaiGiaHan NVARCHAR(50),
     PRIMARY KEY(PhieuGiaHanID),
     FOREIGN KEY(PhieuID) REFERENCES PhieuDangKy(PhieuID),
     FOREIGN KEY(LichThiTruoc) REFERENCES LichThi(BaiThiID),
@@ -230,7 +244,7 @@ CREATE TABLE PhieuThanhToan (
     SoTienGiam INT,
     ThanhTien INT,
     NgayLap DATETIME,
-    MaThanhToan  NVARCHAR(100),
+    MaThanhToan NVARCHAR(100),
     TinhTrangDuyet BIT,
     PhieuDonViID INT,
     NVKeToanLap INT,
@@ -270,13 +284,32 @@ INSERT INTO ChungChi(LoaiChungChi, TenChungChi, Gia) VALUES
 (N'Kế toán', N'Chứng chỉ Kế toán trưởng', 1200000),
 (N'CNTT', N'Chứng chỉ Lập trình', 1000000);
 
+
+INSERT INTO PhongThi (TenPhong) VALUES
+  (N'Phòng A101'),
+  (N'Phòng A102'),
+  (N'Phòng B201'),
+  (N'Phòng B202'),
+  (N'Phòng C301'),
+  (N'Phòng C302');
+GO
 -- 5. LichThi (tham chiếu ChungChiID)
-INSERT INTO LichThi(ChungChiID, ThoiGianLamBai, ThoiGianThi, DiaDiemThi) VALUES
-(1, '13:00:00', '2025-06-10', N'Hà Nội'),
-(2, '12:30:00', '2025-06-11', N'Hồ Chí Minh'),
-(3, '08:00:00', '2025-06-12', N'Đà Nẵng'),
-(4, '09:45:00', '2025-06-13', N'Hải Phòng'),
-(5, '10:15:00', '2025-06-14', N'Cần Thơ');
+INSERT INTO LichThi(ChungChiID, ThoiGianLamBai, ThoiGianThi, DiaDiemThi, MaPhongThi) VALUES
+(1, '13:00:00', '2025-06-10', N'Hà Nội', 1),
+(2, '12:30:00', '2025-06-11', N'Hồ Chí Minh', 2),
+(3, '08:00:00', '2025-06-12', N'Đà Nẵng', 3),
+(4, '09:45:00', '2025-06-13', N'Hải Phòng', 4),
+(5, '10:15:00', '2025-06-14', N'Cần Thơ', 5);
+GO
+
+INSERT INTO NhanVienCoiThi (NhanVienID, BaiThiID) VALUES
+(1, 1),
+(5, 1),
+(1, 2),
+(5, 3),
+(1, 4),
+(5, 5);
+GO
 
 -- 6. KhachHang
 INSERT INTO KhachHang(Hoten, CCCD, Phai, Email, Dienthoai, LoaiKH) VALUES
@@ -285,6 +318,7 @@ INSERT INTO KhachHang(Hoten, CCCD, Phai, Email, Dienthoai, LoaiKH) VALUES
 (N'Công ty ABC', N'CN01234567', N'Nam', N'abc@company.com', N'0999888777', N'Đơn Vị'),
 (N'Nguyễn Văn Cường', N'0033445566', N'Nam', N'cuong@gmail.com', N'0922333444', N'Cá Nhân'),
 (N'Công ty XYZ', N'CN12345678', N'Nam', N'xyz@company.com', N'0988776655', N'Đơn Vị');
+GO
 
 -- 7. PhieuDangKy (NVTiepNhanLap thuộc TiepNhan (id=2), KhachHangID: 1-5)
 INSERT INTO PhieuDangKy(KhachHangID, ThoiGianLap, TinhTrangThanhToan, TinhTrangHuy ,LoaiPhieu, NVTiepNhanLap) VALUES
@@ -374,104 +408,21 @@ INSERT INTO PhieuGiaHan(TinhTrang, NgayLap, PhieuID, LichThiTruoc, LichThiSau) V
 ------CHỈNH SỬA:------
 ------------------------------------
 -- 1. Tạo bảng PhongThi
-CREATE TABLE PhongThi (
-    MaPhongThi INT IDENTITY(1,1) PRIMARY KEY,
-    TenPhong   NVARCHAR(100) NOT NULL
-);
-GO
 
 -- 2. Thêm cột MaPhongThi vào LichThi và tạo FK
-ALTER TABLE LichThi
-ADD MaPhongThi INT NULL;   -- hoặc NOT NULL nếu luôn có phòng
-
-ALTER TABLE LichThi
-ADD CONSTRAINT FK_LichThi_PhongThi
-    FOREIGN KEY (MaPhongThi)
-    REFERENCES PhongThi(MaPhongThi);
-GO
 
 -- 3. Thêm cột MaPhongThi vào NhanVienCoiThi và tạo FK
-ALTER TABLE NhanVienCoiThi
-ADD MaPhongThi INT NULL;   -- nếu bạn muốn ghi ca coi thi theo phòng cụ thể
-
-ALTER TABLE NhanVienCoiThi
-ADD CONSTRAINT FK_NVCT_PhongThi
-    FOREIGN KEY (MaPhongThi)
-    REFERENCES PhongThi(MaPhongThi);
-GO
 
 -- 4) Thêm cột ChungChiID vào PhieuDonVi (cho phép NULL hoặc NOT NULL tuỳ nghiệp vụ)
-ALTER TABLE PhieuDonVi
-ADD ChungChiID INT NULL;
-GO
-
--- 5) Tạo foreign key ràng buộc PhieuDonVi.ChungChiID → ChungChi.ChungChiID
-ALTER TABLE PhieuDonVi
-ADD CONSTRAINT FK_PhieuDonVi_ChungChi
-    FOREIGN KEY (ChungChiID)
-    REFERENCES ChungChi(ChungChiID);
-GO
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ------
 ------------------------------------
 ------INSERT DATA:------
 ------------------------------------
 -- insert data:
-INSERT INTO PhongThi (TenPhong) VALUES
-  (N'Phòng A101'),
-  (N'Phòng A102'),
-  (N'Phòng B201'),
-  (N'Phòng B202'),
-  (N'Phòng C301'),
-  (N'Phòng C302');
-GO
 
 -- update data
-UPDATE LichThi
-SET MaPhongThi = 1
-WHERE BaiThiID = 1;
-
-UPDATE LichThi
-SET MaPhongThi = 2
-WHERE BaiThiID = 2;
-
-UPDATE LichThi
-SET MaPhongThi = 3
-WHERE BaiThiID = 3;
-
-UPDATE LichThi
-SET MaPhongThi = 4
-WHERE BaiThiID = 4;
-
-UPDATE LichThi
-SET MaPhongThi = 5
-WHERE BaiThiID = 5;
-
 -- 
-UPDATE NhanVienCoiThi
-SET MaPhongThi = 1
-WHERE NhanVienID = 1 AND BaiThiID = 1;
-
-UPDATE NhanVienCoiThi
-SET MaPhongThi = 1
-WHERE NhanVienID = 5 AND BaiThiID = 1;
-
-UPDATE NhanVienCoiThi
-SET MaPhongThi = 2
-WHERE NhanVienID = 1 AND BaiThiID = 2;
-
-UPDATE NhanVienCoiThi
-SET MaPhongThi = 3
-WHERE NhanVienID = 5 AND BaiThiID = 3;
-
-UPDATE NhanVienCoiThi
-SET MaPhongThi = 4
-WHERE NhanVienID = 1 AND BaiThiID = 4;
-
-UPDATE NhanVienCoiThi
-SET MaPhongThi = 5
-WHERE NhanVienID = 5 AND BaiThiID = 5;
-GO
 --
 SELECT * FROM NhanVienCoiThi;
 SELECT * FROM LichThi;

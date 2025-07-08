@@ -13,6 +13,7 @@ const PhieuGiaHanModel = {
     // Lấy danh sách phiếu gia hạn với phân trang
     LayDanhSachPhieuGiaHan: async (page = 1, limit = 10, searchValue = '') => {
         try {
+            await pool.connect();
             const offset = (page - 1) * limit;
             
             let whereCondition = '';
@@ -74,6 +75,7 @@ const PhieuGiaHanModel = {
     // Lấy chi tiết phiếu gia hạn
     LayChiTietPhieuGiaHan: async (id) => {
         try {
+            await pool.connect();
             const query = `
                 SELECT 
                     pgh.PhieuGiaHanID as id,

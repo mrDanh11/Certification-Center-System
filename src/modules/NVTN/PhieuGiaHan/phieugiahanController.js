@@ -29,7 +29,7 @@ const phieugiahanController = {
                 prevPage: result.currentPage > 1 ? result.currentPage - 1 : 1,
                 nextPage: result.currentPage < result.totalPages ? result.currentPage + 1 : result.totalPages,
                 searchValue: searchValue,
-                layout: 'NVTN/NVTNMain'
+                layout: 'NVTN/NVTNmain'
             });
             
         } catch (err) {
@@ -47,7 +47,7 @@ const phieugiahanController = {
             
             res.render('NVTNPage/chitietgiahan', {
                 chiTietGiaHan,
-                layout: 'NVTN/NVTNMain'
+                layout: 'NVTN/NVTNmain'
             });
             
         } catch (err) {
@@ -72,7 +72,7 @@ const phieugiahanController = {
                 giaHanId: giaHanId || null,
                 chungChiID: chungChiID || null,
                 title: 'Chọn lịch thi thay thế',
-                layout: 'NVTN/NVTNMain'
+                layout: 'NVTN/NVTNmain'
             });
             
         } catch (err) {
@@ -287,7 +287,7 @@ chiTietPhieuGiaHan: async (req, res) => {
                 title: 'Tạo phiếu gia hạn mới',
                 isNewExtension: true,
                 chiTietGiaHan: {}, // Empty object for new creation,
-                layout: 'NVTN/NVTNMain'
+                layout: 'NVTN/NVTNmain'
             });
         }
         
@@ -304,12 +304,12 @@ chiTietPhieuGiaHan: async (req, res) => {
             title: 'Chi tiết phiếu gia hạn',
             isNewExtension: false,
             chiTietGiaHan: chiTietGiaHan,
-            layout: 'NVTN/NVTNMain'
+            layout: 'NVTN/NVTNmain'
         });
         
     } catch (error) {
         console.error('Error in chiTietPhieuGiaHan:', error);
-        res.status(500).render('error', { 
+        res.status(500).json({ 
             message: 'Có lỗi xảy ra khi hiển thị chi tiết phiếu gia hạn' 
         });
     }

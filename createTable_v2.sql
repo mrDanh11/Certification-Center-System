@@ -67,7 +67,6 @@ CREATE TABLE ChungChi (
 );
 GO
 
-
 CREATE TABLE PhongThi(
     PhongThiID INT IDENTITY(1, 1),
     TenPhongThi NVARCHAR(50),
@@ -242,7 +241,7 @@ CREATE TABLE PhieuThanhToan (
     SoTienGiam INT,
     ThanhTien INT,
     NgayLap DATETIME,
-    MaThanhToan  NVARCHAR(100),
+    MaThanhToan NVARCHAR(100),
     TinhTrangDuyet BIT,
     PhieuDonViID INT,
     NVKeToanLap INT,
@@ -251,7 +250,6 @@ CREATE TABLE PhieuThanhToan (
     FOREIGN KEY(NVKeToanLap) REFERENCES KeToan(NhanVienID)
 );
 GO
-
 
 -- 1. NhanVien (bảng cha gốc)
 INSERT INTO NhanVien(Hoten, Ngaysinh, Diachi, loaiNV) VALUES
