@@ -67,15 +67,23 @@ CREATE TABLE ChungChi (
 );
 GO
 
+
+CREATE TABLE PhongThi(
+    PhongThiID INT IDENTITY(1, 1),
+    TenPhongThi NVARCHAR(50),
+);
+GO
+
 CREATE TABLE LichThi (
     BaiThiID INT IDENTITY(1, 1),
     ChungChiID INT,
     ThoiGianLamBai TIME,
     ThoiGianThi Date,
     DiaDiemThi NVARCHAR(100),
-    PhongThi NVARCHAR(50),
+    PhongThiID INT,
     PRIMARY KEY(BaiThiID),
     FOREIGN KEY(ChungChiID) REFERENCES ChungChi(ChungChiID)
+    FOREIGN KEY(PhongThiID) REFERENCES PhongThi(PhongThiID)
 );
 GO
 
@@ -125,7 +133,7 @@ CREATE TABLE HoaDon (
     SoTienGiam INT,
     ThanhTien INT,
     TienNhan INT,
-	HinhThucThanhToan  NVARCHAR(50),
+    HinhThucThanhToan  NVARCHAR(50),
     NVKeToanLap INT,
     PRIMARY KEY(HoaDonID),
     FOREIGN KEY(PhieuID) REFERENCES PhieuDangKy(PhieuID),
@@ -143,10 +151,14 @@ GO
 CREATE TABLE PhieuDonVi (
     PhieuID INT,
     SoLuong INT,
+    LoaiBaiThi INT,
+    NgayMongMuon DATETIME, 
+    YeuCau NVARCHAR(500),
     NVKeToanHuy INT,
     PRIMARY KEY (PhieuID),
     FOREIGN KEY (PhieuID) REFERENCES PhieuDangKy(PhieuID),
     FOREIGN KEY(NVKeToanHuy) REFERENCES KeToan(NhanVienID)
+    FOREIGN KEY(LoaiBaiThi) REFERENCES ChungChi(ChungChiID)
 );
 GO
 
@@ -180,7 +192,7 @@ GO
 CREATE TABLE DanhSachCho (
     STT INT IDENTITY(1, 1),
     ThiSinhID INT,
-	PhieuID INT,
+    PhieuID INT,
     TinhTrang BIT,
     PRIMARY KEY(STT),
     FOREIGN KEY(ThiSinhID, PhieuID) REFERENCES ThiSinh(ThiSinhID, PhieuID),
@@ -239,6 +251,7 @@ CREATE TABLE PhieuThanhToan (
     FOREIGN KEY(NVKeToanLap) REFERENCES KeToan(NhanVienID)
 );
 GO
+
 
 -- 1. NhanVien (bảng cha gốc)
 INSERT INTO NhanVien(Hoten, Ngaysinh, Diachi, loaiNV) VALUES
