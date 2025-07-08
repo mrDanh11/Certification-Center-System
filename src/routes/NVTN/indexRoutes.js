@@ -9,6 +9,7 @@ const phieudangkyRoutes = require('./phieudangkyRoutes');
 const dangkymonRoutes = require('./dangkymonRoutes');
 const lichthiRoutes = require('./lichthiRoutes');
 const danhsachDKthiRoutes = require('./danhsachDKthiRoutes')
+const kqcRoutes = require('./ketquachungchiRoutes');
 
 module.exports = (app) => {
 
@@ -24,4 +25,5 @@ module.exports = (app) => {
     app.use('/NVTN/api/danhsachDKThi', danhsachDKthiRoutes);
     app.use('/NVTN/lichthi', lichthiRoutes);
     app.use('/NVTN/quanligiahan', giahanRoutes);
+    app.use('/NVTN/KetQuaChungChi', kqcRoutes);
 }

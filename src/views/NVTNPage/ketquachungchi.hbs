@@ -1,0 +1,95 @@
+<div class="max-w-4xl mx-auto px-6 py-10 space-y-10 text-gray-800 bg-white rounded-xl shadow-lg">
+
+  <!-- Tiêu đề -->
+  <h1 class="text-center text-3xl font-bold text-blue-700 border-b pb-4">Cấp chứng chỉ</h1>
+
+  <!-- Nhập CCCD -->
+  <div class="flex items-center space-x-3">
+    <label for="cccdInput" class="font-semibold">CCCD</label>
+    <input
+      id="cccdInput"
+      type="text"
+      class="border border-gray-300 rounded-lg px-4 py-2 w-64 focus:ring-2 focus:ring-blue-400 outline-none"
+      placeholder="Nhập CCCD khách hàng"
+    />
+    <button
+      id="btnSearch"
+      class="bg-blue hover:bg-babyblue hover:text-black text-white px-4 py-2 rounded-lg shadow transition duration-200"
+    >Tìm kiếm</button>
+  </div>
+
+  <!-- Thông tin khách hàng -->
+  <div id="customerSection" class="hidden bg-gray-50 p-10 rounded-lg shadow-inner space-y-3">
+    <h2 class="text-xl font-semibold text-gray-700">Thông tin khách hàng</h2>
+    <div class="grid grid-cols-2 gap-y-4 gap-x-10 text-sm text-gray-700">
+      <div>
+        Căn cước công dân:
+        <input id="c_cccd" type="text"
+               class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1"
+               readonly/>
+      </div>
+      <div>
+        Họ tên:
+        <input id="c_hoten" type="text"
+               class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1"
+               readonly/>
+      </div>
+      <div>
+        Email:
+        <input id="c_email" type="text"
+               class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1"
+               readonly/>
+      </div>
+      <div>
+        Số điện thoại:
+        <input id="c_phone" type="text"
+               class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1"
+               readonly/>
+      </div>
+      <div>
+        Loại khách hàng:
+        <input id="c_type" type="text"
+               class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1"
+               readonly/>
+      </div>
+      <div>
+        Số lượng chứng chỉ:
+        <input id="c_count" type="text"
+               class="mt-1 w-full bg-gray-100 border border-gray-300 rounded px-2 py-1"
+               readonly/>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thông tin chứng chỉ -->
+  <div id="certTableSection" class="hidden bg-gray-50 p-10 rounded-lg shadow-inner space-y-3">
+    <h2 class="text-xl font-semibold text-gray-700">Thông tin chứng chỉ</h2>
+    <div class="overflow-x-auto">
+      <table class="min-w-full border-collapse text-sm text-gray-800 mb-4">
+        <thead class="bg-white">
+          <tr>
+            <th class="border px-4 py-2">#</th>
+            <th class="border px-4 py-2">Loại chứng chỉ</th>
+            <th class="border px-4 py-2">Tên chứng chỉ</th>
+            <th class="border px-4 py-2">Ngày thi</th>
+            <th class="border px-4 py-2">Địa điểm thi</th>
+            <th class="border px-4 py-2">Tình trạng</th>
+            <th class="border px-4 py-2">Chọn cấp</th>
+          </tr>
+        </thead>
+        <tbody id="certTableBody">
+          {{!-- JS sẽ đổ dữ liệu vào đây --}}
+        </tbody>
+      </table>
+    </div>
+    <div class="text-right">
+      <button
+        id="btnProceedConfirm"
+        class="bg-blue hover:bg-babyblue-700 hover:text-black text-white px-4 py-2 rounded-lg shadow transition duration-200"
+      >Nhận chứng chỉ</button>
+    </div>
+  </div>
+
+</div>
+
+

@@ -67,23 +67,15 @@ CREATE TABLE ChungChi (
 );
 GO
 
-
-CREATE TABLE PhongThi(
-    PhongThiID INT IDENTITY(1, 1),
-    TenPhongThi NVARCHAR(50),
-);
-GO
-
 CREATE TABLE LichThi (
     BaiThiID INT IDENTITY(1, 1),
     ChungChiID INT,
     ThoiGianLamBai TIME,
     ThoiGianThi Date,
     DiaDiemThi NVARCHAR(100),
-    PhongThiID INT,
+    PhongThi NVARCHAR(50),
     PRIMARY KEY(BaiThiID),
     FOREIGN KEY(ChungChiID) REFERENCES ChungChi(ChungChiID)
-    FOREIGN KEY(PhongThiID) REFERENCES PhongThi(PhongThiID)
 );
 GO
 
@@ -133,7 +125,7 @@ CREATE TABLE HoaDon (
     SoTienGiam INT,
     ThanhTien INT,
     TienNhan INT,
-    HinhThucThanhToan  NVARCHAR(50),
+	HinhThucThanhToan  NVARCHAR(50),
     NVKeToanLap INT,
     PRIMARY KEY(HoaDonID),
     FOREIGN KEY(PhieuID) REFERENCES PhieuDangKy(PhieuID),
@@ -151,14 +143,10 @@ GO
 CREATE TABLE PhieuDonVi (
     PhieuID INT,
     SoLuong INT,
-    LoaiBaiThi INT,
-    NgayMongMuon DATETIME, 
-    YeuCau NVARCHAR(500),
     NVKeToanHuy INT,
     PRIMARY KEY (PhieuID),
     FOREIGN KEY (PhieuID) REFERENCES PhieuDangKy(PhieuID),
     FOREIGN KEY(NVKeToanHuy) REFERENCES KeToan(NhanVienID)
-    FOREIGN KEY(LoaiBaiThi) REFERENCES ChungChi(ChungChiID)
 );
 GO
 
@@ -192,7 +180,7 @@ GO
 CREATE TABLE DanhSachCho (
     STT INT IDENTITY(1, 1),
     ThiSinhID INT,
-    PhieuID INT,
+	PhieuID INT,
     TinhTrang BIT,
     PRIMARY KEY(STT),
     FOREIGN KEY(ThiSinhID, PhieuID) REFERENCES ThiSinh(ThiSinhID, PhieuID),
@@ -251,7 +239,6 @@ CREATE TABLE PhieuThanhToan (
     FOREIGN KEY(NVKeToanLap) REFERENCES KeToan(NhanVienID)
 );
 GO
-
 
 -- 1. NhanVien (bảng cha gốc)
 INSERT INTO NhanVien(Hoten, Ngaysinh, Diachi, loaiNV) VALUES
@@ -380,3 +367,114 @@ INSERT INTO PhieuGiaHan(TinhTrang, NgayLap, PhieuID, LichThiTruoc, LichThiSau) V
 (1100000, 100000, 1000000, '2025-06-30', 1005, 0, 3, 3);*/
 
 -- Lưu ý: Các ID tự động tăng (IDENTITY) bạn cần kiểm tra lại số thứ tự nếu đã có dữ liệu trước đó!
+
+
+--------------------------------------------------------------------------------------------------------------------------------
+------------------------------------
+------CHỈNH SỬA:------
+------------------------------------
+-- 1. Tạo bảng PhongThi
+CREATE TABLE PhongThi (
+    MaPhongThi INT IDENTITY(1,1) PRIMARY KEY,
+    TenPhong   NVARCHAR(100) NOT NULL
+);
+GO
+
+-- 2. Thêm cột MaPhongThi vào LichThi và tạo FK
+ALTER TABLE LichThi
+ADD MaPhongThi INT NULL;   -- hoặc NOT NULL nếu luôn có phòng
+
+ALTER TABLE LichThi
+ADD CONSTRAINT FK_LichThi_PhongThi
+    FOREIGN KEY (MaPhongThi)
+    REFERENCES PhongThi(MaPhongThi);
+GO
+
+-- 3. Thêm cột MaPhongThi vào NhanVienCoiThi và tạo FK
+ALTER TABLE NhanVienCoiThi
+ADD MaPhongThi INT NULL;   -- nếu bạn muốn ghi ca coi thi theo phòng cụ thể
+
+ALTER TABLE NhanVienCoiThi
+ADD CONSTRAINT FK_NVCT_PhongThi
+    FOREIGN KEY (MaPhongThi)
+    REFERENCES PhongThi(MaPhongThi);
+GO
+
+-- 4) Thêm cột ChungChiID vào PhieuDonVi (cho phép NULL hoặc NOT NULL tuỳ nghiệp vụ)
+ALTER TABLE PhieuDonVi
+ADD ChungChiID INT NULL;
+GO
+
+-- 5) Tạo foreign key ràng buộc PhieuDonVi.ChungChiID → ChungChi.ChungChiID
+ALTER TABLE PhieuDonVi
+ADD CONSTRAINT FK_PhieuDonVi_ChungChi
+    FOREIGN KEY (ChungChiID)
+    REFERENCES ChungChi(ChungChiID);
+GO
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+------
+------------------------------------
+------INSERT DATA:------
+------------------------------------
+-- insert data:
+INSERT INTO PhongThi (TenPhong) VALUES
+  (N'Phòng A101'),
+  (N'Phòng A102'),
+  (N'Phòng B201'),
+  (N'Phòng B202'),
+  (N'Phòng C301'),
+  (N'Phòng C302');
+GO
+
+-- update data
+UPDATE LichThi
+SET MaPhongThi = 1
+WHERE BaiThiID = 1;
+
+UPDATE LichThi
+SET MaPhongThi = 2
+WHERE BaiThiID = 2;
+
+UPDATE LichThi
+SET MaPhongThi = 3
+WHERE BaiThiID = 3;
+
+UPDATE LichThi
+SET MaPhongThi = 4
+WHERE BaiThiID = 4;
+
+UPDATE LichThi
+SET MaPhongThi = 5
+WHERE BaiThiID = 5;
+
+-- 
+UPDATE NhanVienCoiThi
+SET MaPhongThi = 1
+WHERE NhanVienID = 1 AND BaiThiID = 1;
+
+UPDATE NhanVienCoiThi
+SET MaPhongThi = 1
+WHERE NhanVienID = 5 AND BaiThiID = 1;
+
+UPDATE NhanVienCoiThi
+SET MaPhongThi = 2
+WHERE NhanVienID = 1 AND BaiThiID = 2;
+
+UPDATE NhanVienCoiThi
+SET MaPhongThi = 3
+WHERE NhanVienID = 5 AND BaiThiID = 3;
+
+UPDATE NhanVienCoiThi
+SET MaPhongThi = 4
+WHERE NhanVienID = 1 AND BaiThiID = 4;
+
+UPDATE NhanVienCoiThi
+SET MaPhongThi = 5
+WHERE NhanVienID = 5 AND BaiThiID = 5;
+GO
+--
+SELECT * FROM NhanVienCoiThi;
+SELECT * FROM LichThi;
+SELECT * FROM ChungChi;
+SELECT * FROM PhieuDonVi;
+

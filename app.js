@@ -37,6 +37,7 @@ app.use(session({
 const NVKTRoute = require("./src/routes/NVKT/indexRoutes");
 const NVTNRoute = require("./src/routes/NVTN/indexRoutes");
 const UnloginRoute = require("./src/routes/Unlogin/indexRoutes");
+const NVQLRoute = require('./src/routes/NVQL/indexRoutes')
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -50,6 +51,7 @@ app.engine('hbs', exphbs.engine({
         path.join(__dirname, 'src', 'views', 'partials', 'Unlogin'),
         path.join(__dirname, 'src', 'views', 'partials', 'NVTN'),
         path.join(__dirname, 'src', 'views', 'partials', 'NVKT'),
+        path.join(__dirname, 'src', 'views', 'partials', 'NVQL'),
     ],
     helpers: {
         limit: function(array, limit) {
@@ -63,7 +65,7 @@ app.engine('hbs', exphbs.engine({
             args.pop(); // Remove the options object
             return args.some(Boolean);
         }
-    }
+    },
 }));
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'src', 'views'))
@@ -73,6 +75,7 @@ app.use(express.static(path.join(__dirname, 'src', 'public')));
 NVTNRoute(app);
 NVKTRoute(app);
 UnloginRoute(app);
+NVQLRoute(app)
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

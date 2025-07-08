@@ -1,0 +1,136 @@
+<div class="min-h-[calc(100vh-32rem)] max-w-[950px] px-24 py-5 mx-auto overflow-visible">
+  <form id="formTaoLichThi">
+    <h1 class="text-center font-bold text-2xl mb-4">Tạo lịch thi</h1>
+
+    {{#if error}}
+      <div class="mb-4 p-3 bg-red-100 text-red-700 rounded">{{error}}</div>
+    {{/if}}
+
+    <!-- Thông tin đăng ký -->
+    <section class="mb-6 border bg-white shadow py-6 px-9 rounded-lg">
+      <h3 class="font-semibold text-lg mb-2">📝 Thông tin đăng ký</h3>
+      <div class="grid grid-cols-2 gap-4">
+
+        <!-- Chọn phiếu đơn vị -->
+        <div class="flex flex-col space-y-2">
+          <label for="phieuDangKyInput" class="font-bold">* Chọn phiếu đơn vị</label>
+          <input list="phieuDangKy" id="phieuDangKyInput" class="h-9 px-2 border rounded-lg"/>
+          <datalist id="phieuDangKy">
+            {{#each DSachPhieuDonVi}}
+              <option
+                value="{{PhieuID}}"
+                data-chungchiid="{{ChungChiID}}"
+                data-khachhangid="{{MaDonVi}}"
+                data-tendonvi="{{TenDonVi}}"
+                data-tenchungchi="{{TenChungChi}}"
+                data-ngaymongmuon="{{NgayMongMuon}}"
+                data-sol="{{SoLuong}}"
+                data-yeucau="{{YeuCau}}"
+              >{{TenDonVi}} ({{PhieuID}})</option>
+            {{/each}}
+          </datalist>
+        </div>
+
+        <!-- Tên đơn vị -->
+        <div class="flex flex-col space-y-2">
+          <label class="font-bold">Tên đơn vị</label>
+          <input id="txtTenDonVi" readonly class="h-9 px-2 border bg-gray-100 rounded-lg"/>
+        </div>
+        <!-- Mã đơn vị -->
+        <div class="flex flex-col space-y-2">
+          <label class="font-bold">Mã đơn vị</label>
+          <input id="txtMaDonVi" readonly class="h-9 px-2 border bg-gray-100 rounded-lg"/>
+        </div>
+        <!-- Tên chứng chỉ -->
+        <div class="flex flex-col space-y-2">
+          <label class="font-bold">Tên bài thi</label>
+          <input id="txtTenChungChi" readonly class="h-9 px-2 border bg-gray-100 rounded-lg"/>
+        </div>
+        <!-- Ngày mong muốn -->
+        <div class="flex flex-col space-y-2">
+          <label class="font-bold">Ngày mong muốn</label>
+          <input id="txtNgayMongMuon" readonly class="h-9 px-2 border bg-gray-100 rounded-lg"/>
+        </div>
+        <!-- Tổng thí sinh -->
+        <div class="flex flex-col space-y-2">
+          <label class="font-bold">Tổng thí sinh</label>
+          <input id="txtSoThiSinh" readonly class="h-9 px-2 border bg-gray-100 rounded-lg"/>
+        </div>
+        <!-- Yêu cầu -->
+        <div id="yeuCauContainer" class="col-span-2 flex flex-col space-y-2 hidden">
+      <label class="font-bold">Yêu cầu</label>
+      <input
+        id="txtYeuCau"
+        name="txtYeuCau"
+        readonly
+        class="h-9 px-2 border bg-gray-100 rounded-lg w-full"
+      />
+      </div>
+      </div>
+
+      {{!-- giữ ChungChiID ở hidden field --}}
+      <input type="hidden" id="cmbChungChiID" name="cmbChungChiID" />
+    </section>
+
+    <!-- Thêm lịch thi -->
+    <section class="border bg-white shadow py-6 px-9 rounded-lg">
+      <h3 class="font-semibold text-lg mb-2">⏰ Thêm lịch thi</h3>
+      <div class="grid grid-cols-2 gap-4">
+        <!-- Ngày thi -->
+        <div class="flex flex-col space-y-2">
+          <label for="cmbNgayThi" class="font-bold">* Ngày thi</label>
+          <input id="cmbNgayThi" name="cmbNgayThi" type="date" required
+                 class="h-9 px-2 border rounded-lg"/>
+        </div>
+        <!-- Giờ bắt đầu -->
+        <div class="flex flex-col space-y-2">
+          <label for="cmbThoiGianBD" class="font-bold">* Giờ bắt đầu</label>
+          <select id="cmbThoiGianBD" name="cmbThoiGianBD" required
+                  class="h-9 px-2 border rounded-lg">
+            {{#each optionsBatDau}}
+              <option value="{{this.value}}">{{this.label}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <!-- Phòng thi -->
+        <div class="flex flex-col space-y-2">
+          <label for="cmbChonPhongThi" class="font-bold">* Phòng thi</label>
+          <select id="cmbChonPhongThi" name="cmbMaPhongThi" required
+                  class="h-9 px-2 border rounded-lg">
+            <option value="">-- Chọn phòng --</option>
+            {{#each DSPhongThi}}
+              <option value="{{MaPhongThi}}">{{TenPhong}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <!-- Địa điểm thi -->
+        <div class="flex flex-col space-y-2">
+          <label for="cmbDiaDiemThi" class="font-bold">* Địa điểm thi</label>
+          <select id="cmbDiaDiemThi" name="txtDiaDiemThi" required
+                  class="h-9 px-2 border rounded-lg">
+            <option value="">-- Chọn địa điểm --</option>
+            {{#each optionsDiaDiem}}
+              <option value="{{this.value}}">{{this.label}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <!-- Nhân viên coi thi -->
+        <div class="flex flex-col space-y-2">
+          <label for="cmbChonNhanVienCoiThi" class="font-bold">* Nhân viên coi thi</label>
+          <select id="cmbChonNhanVienCoiThi" name="cmbChonNhanVienCoiThi" required
+                  class="h-9 px-2 border rounded-lg">
+            <option value="">-- Chọn NV --</option>
+            {{#each DSNhanVien}}
+              <option value="{{NhanVienID}}">{{Hoten}}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <div class="flex justify-end gap-4 mt-6">
+      <button type="button" onclick="history.back()" class="px-4 py-2 border rounded-lg">Hủy</button>
+      <button type="submit" id="btnSubmit" class="px-4 py-2 bg-[#2E8BC0] text-white rounded-lg">Đăng ký</button>
+    </div>
+  </form>
+</div>
