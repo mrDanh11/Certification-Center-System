@@ -12,6 +12,18 @@ Handlebars.registerHelper('limit', function(array, limit) {
     return array.slice(0, limit);
 });
 
+// Đăng ký helper eq
+Handlebars.registerHelper('eq', function(a, b) {
+    return a === b;
+});
+
+// Đăng ký helper or
+Handlebars.registerHelper('or', function() {
+    const args = Array.prototype.slice.call(arguments);
+    args.pop(); // Remove the options object
+    return args.some(Boolean);
+});
+
 // Cấu hình session
 app.use(session({
     secret: 'your_secret_key',  // Chìa khóa bí mật để mã hóa session
@@ -40,7 +52,20 @@ app.engine('hbs', exphbs.engine({
         path.join(__dirname, 'src', 'views', 'partials', 'NVTN'),
         path.join(__dirname, 'src', 'views', 'partials', 'NVKT'),
         path.join(__dirname, 'src', 'views', 'partials', 'NVQL'),
-    ]
+    ],
+    helpers: {
+        limit: function(array, limit) {
+            return array.slice(0, limit);
+        },
+        eq: function(a, b) {
+            return a === b;
+        },
+        or: function() {
+            const args = Array.prototype.slice.call(arguments);
+            args.pop(); // Remove the options object
+            return args.some(Boolean);
+        }
+    },
 }));
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'src', 'views'))

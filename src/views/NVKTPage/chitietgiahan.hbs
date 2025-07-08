@@ -1,0 +1,122 @@
+<!-- filepath: d:\NAM3_HK2\PTTKHTTT\Project\DoAnPTTK_GD2_SQL\src\views\NVKTPage\chitietgiahan.hbs -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<div class="bg-gray-100 min-h-screen py-8">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <!-- Title -->
+            <div class="px-8 py-6 text-center border-b border-gray-200">
+                <h1 class="text-3xl font-bold text-gray-800">Gia hạn lịch thi</h1>
+            </div>
+            
+            <!-- Student and Exam Information Section -->
+            <div class="px-8 py-6 border-b border-gray-200">
+                <div class="bg-gradient-to-r from-blue-200 to-sky-200 rounded-lg px-5 py-4 mb-6">
+                    <h2 class="text-lg font-semibold text-gray-800 text-center">
+                        Thông tin thí sinh và kì thi
+                    </h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                    <div class="flex flex-col">
+                        <span class="text-sm font-semibold text-gray-700 mb-1">SBD:</span>
+                        <span class="text-sm text-gray-600">{{chiTietGiaHan.sbd}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-semibold text-gray-700 mb-1">Mã bài thi:</span>
+                        <span class="text-sm text-gray-600">{{chiTietGiaHan.maBaiThi}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-semibold text-gray-700 mb-1">Mã thí sinh:</span>
+                        <span class="text-sm text-gray-600">{{chiTietGiaHan.maThiSinh}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-semibold text-gray-700 mb-1">Ngày thi cũ:</span>
+                        <span class="text-sm text-gray-600">{{chiTietGiaHan.ngayThiCu}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-semibold text-gray-700 mb-1">CCCD:</span>
+                        <span class="text-sm text-gray-600">{{chiTietGiaHan.cccd}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-semibold text-gray-700 mb-1">Giờ thi cũ:</span>
+                        <span class="text-sm text-gray-600">{{chiTietGiaHan.gioThiCu}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-semibold text-gray-700 mb-1">Họ tên:</span>
+                        <span class="text-sm text-gray-600">{{chiTietGiaHan.hoTen}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-semibold text-gray-700 mb-1">Địa điểm cũ:</span>
+                        <span class="text-sm text-gray-600">{{chiTietGiaHan.diaDiemCu}}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Extension Request Information Section -->
+            <div class="px-8 py-6 border-b border-gray-200">
+                <div class="bg-gradient-to-r from-blue-200 to-sky-200 rounded-lg px-5 py-4 mb-6">
+                    <h2 class="text-lg font-semibold text-gray-800 text-center">
+                        Thông tin yêu cầu gia hạn
+                    </h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                    <div class="flex flex-col">
+                        <span class="text-sm font-semibold text-gray-700 mb-1">Loại gia hạn:</span>
+                        <span class="text-sm text-gray-600">{{chiTietGiaHan.loaiGiaHan}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-semibold text-gray-700 mb-1">Lí do gia hạn:</span>
+                        <span class="text-sm text-gray-600">{{chiTietGiaHan.liDoGiaHan}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-semibold text-gray-700 mb-1">Ngày thay thế:</span>
+                        <span class="text-sm text-gray-600">
+                            {{#if chiTietGiaHan.ngayThayThe}}
+                                {{chiTietGiaHan.ngayThayThe}}
+                            {{else}}
+                                Chưa xác định
+                            {{/if}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Status Display -->
+            <div class="px-8 py-4 border-b border-gray-200">
+                <div class="flex justify-center">
+                    <span class="px-4 py-2 rounded-full text-sm font-semibold" id="statusBadge">
+                        Trạng thái: {{chiTietGiaHan.TinhTrang}}
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="px-8 py-6 bg-gray-50">
+                <div class="flex flex-col sm:flex-row justify-center gap-4" id="actionButtons">
+                    <!-- Buttons will be rendered by JavaScript based on status -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Truyền dữ liệu cho JavaScript -->
+<script>
+    window.chiTietGiaHan = {
+        id: '{{chiTietGiaHan.id}}',
+        tinhTrang: '{{chiTietGiaHan.TinhTrang}}',
+        liDoGiaHan: '{{chiTietGiaHan.liDoGiaHan}}',
+        loaiGiaHan: '{{chiTietGiaHan.loaiGiaHan}}',
+        ngayThayThe: '{{chiTietGiaHan.ngayThayThe}}'
+    };
+    
+    // Log để debug
+    console.log('Data from server:', {
+        id: '{{chiTietGiaHan.id}}',
+        tinhTrang: '{{chiTietGiaHan.TinhTrang}}',
+        liDoGiaHan: '{{chiTietGiaHan.liDoGiaHan}}',
+        loaiGiaHan: '{{chiTietGiaHan.loaiGiaHan}}',
+        ngayThayThe: '{{chiTietGiaHan.ngayThayThe}}'
+    });
+</script>
+<script src="/js/NVKT/chitietgiahan.js"></script>

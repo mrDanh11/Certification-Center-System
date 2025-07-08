@@ -1,0 +1,267 @@
+<!-- filepath: d:\NAM3_HK2\PTTKHTTT\Project\DoAnPTTK_GD2_SQL\src\views\NVTNPage\lichthi.hbs -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<div class="bg-gray-100 min-h-screen py-8">
+    <div class="max-w-5xl mx-auto px-4">
+        <!-- Header -->
+        <div class="mb-6">
+            <p class="text-sm text-gray-500 mb-2">Chọn lịch thi</p>
+            <h1 class="text-3xl font-bold text-gray-800 text-center">Lịch thi có sẵn</h1>
+            {{#if lichThi.length}}
+            <p class="text-center text-gray-600 mt-2">Có {{lichThi.length}} lịch thi phù hợp</p>
+            {{else}}
+            <p class="text-center text-red-600 mt-2">Không có lịch thi nào phù hợp</p>
+            {{/if}}
+        </div>
+        
+        {{#if lichThi.length}}
+        <!-- Test Schedule Table -->
+        <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-8">
+            <form id="scheduleForm">
+                <!-- Hidden field for extension ID -->
+                <input type="hidden" id="giaHanId" value="{{giaHanId}}">
+                
+                <!-- Table Header -->
+                <div class="grid grid-cols-6 bg-gray-50 border-b border-gray-200">
+                    <div class="px-4 py-3 text-sm font-semibold text-gray-700 text-center">
+                        Mã bài thi
+                    </div>
+                    <div class="px-4 py-3 text-sm font-semibold text-gray-700 text-center">
+                        Loại chứng chỉ
+                    </div>
+                    <div class="px-4 py-3 text-sm font-semibold text-gray-700 text-center">
+                        Địa điểm thi
+                    </div>
+                    <div class="px-4 py-3 text-sm font-semibold text-gray-700 text-center">
+                        Ngày thi
+                    </div>
+                    <div class="px-4 py-3 text-sm font-semibold text-gray-700 text-center">
+                        Giờ thi
+                    </div>
+                    <div class="px-4 py-3 text-sm font-semibold text-gray-700 text-center">
+                        Chọn
+                    </div>
+                </div>
+                
+                <!-- Table Body -->
+                {{#each lichThi}}
+                <div class="grid grid-cols-6 schedule-row border-b border-blue-300 hover:bg-blue-300 transition-colors duration-150" data-index="{{@index}}">
+                    <div class="px-4 py-4 text-sm text-gray-800 text-center font-medium">
+                        {{this.maBaiThi}}
+                    </div>
+                    <div class="px-4 py-4 text-sm text-gray-800 text-center">
+                        {{this.tenChungChi}}
+                    </div>
+                    <div class="px-4 py-4 text-sm text-gray-800 text-center">
+                        {{this.diaDiem}}
+                    </div>
+                    <div class="px-4 py-4 text-sm text-gray-800 text-center">
+                        {{this.ngayThi}}
+                    </div>
+                    <div class="px-4 py-4 text-sm text-gray-800 text-center">
+                        {{this.gioThi}}
+                    </div>
+                    <div class="px-4 py-4 text-center">
+                        <input 
+                            type="radio" 
+                            name="selectedSchedule" 
+                            value="{{this.id}}"
+                            id="schedule_{{this.id}}"
+                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2"
+                            data-test-code="{{this.maBaiThi}}"
+                            data-location="{{this.diaDiem}}"
+                            data-date="{{this.ngayThi}}"
+                            data-time="{{this.gioThi}}"
+                            data-certificate="{{this.tenChungChi}}"
+                        >
+                        <label for="schedule_{{this.id}}" class="sr-only">Chọn lịch thi {{this.maBaiThi}}</label>
+                    </div>
+                </div>
+                {{/each}}
+            </form>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div class="flex justify-center gap-4">
+            <button 
+                type="button"
+                onclick="selectSchedule()"
+                class="bg-slate-800 hover:bg-slate-900 text-white font-medium px-8 py-3 rounded-md transition-colors duration-200 focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 outline-none"
+            >
+                Chọn lịch thi
+            </button>
+            <button 
+                type="button"
+                onclick="cancelSelection()"
+                class="bg-blue-400 hover:bg-blue-500 text-white font-medium px-8 py-3 rounded-md transition-colors duration-200 focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 outline-none"
+            >
+                Hủy
+            </button>
+        </div>
+        {{else}}
+        <!-- No data message -->
+        <div class="bg-white rounded-lg shadow-sm p-8 text-center">
+            <div class="text-gray-500 text-lg mb-4">
+                <i class="fas fa-calendar-times text-4xl mb-4 block"></i>
+                Không có lịch thi nào phù hợp
+            </div>
+            <p class="text-gray-400 mb-6">
+                Hiện tại không có lịch thi nào khả dụng cho loại chứng chỉ này sau ngày thi ban đầu.
+            </p>
+            <button 
+                type="button"
+                onclick="goBack()"
+                class="bg-blue-500 hover:bg-blue-600 text-white font-medium px-6 py-2 rounded-md transition-colors duration-200"
+            >
+                Quay lại
+            </button>
+        </div>
+        {{/if}}
+    </div>
+</div>
+
+<script>
+// Apply alternating row colors using JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    const scheduleRows = document.querySelectorAll('.schedule-row');
+    
+    scheduleRows.forEach((row, index) => {
+        if (index % 2 === 0) {
+            row.classList.add('bg-blue-200');
+        } else {
+            row.classList.add('bg-blue-100');
+        }
+    });
+});
+
+async function selectSchedule() {
+    const form = document.getElementById('scheduleForm');
+    const selectedSchedule = form.querySelector('input[name="selectedSchedule"]:checked');
+    
+    if (!selectedSchedule) {
+        alert('Vui lòng chọn một lịch thi');
+        return;
+    }
+    
+    const scheduleId = selectedSchedule.value;
+    const giaHanId = document.getElementById('giaHanId').value;
+    
+    const scheduleData = {
+        id: scheduleId,
+        maBaiThi: selectedSchedule.dataset.testCode,
+        diaDiem: selectedSchedule.dataset.location,
+        ngayThi: selectedSchedule.dataset.date,
+        gioThi: selectedSchedule.dataset.time,
+        tenChungChi: selectedSchedule.dataset.certificate
+    };
+    
+    console.log('Selected schedule:', scheduleData);
+    console.log('GiaHanId:', giaHanId);
+    
+    // Hiển thị confirm trước khi gửi request
+    if (!confirm(`Xác nhận chọn lịch thi này?\n\nMã bài thi: ${scheduleData.maBaiThi}\nLoại: ${scheduleData.tenChungChi}\nNgày: ${scheduleData.ngayThi}\nGiờ: ${scheduleData.gioThi}\nĐịa điểm: ${scheduleData.diaDiem}`)) {
+        return;
+    }
+    
+    try {
+        let apiUrl;
+        let requestData = {
+            lichThiId: scheduleId,
+            scheduleData: scheduleData
+        };
+        
+        // Nếu có giaHanId, gửi request để cập nhật phiếu gia hạn hiện có
+        if (giaHanId && giaHanId !== '' && giaHanId !== 'null' && giaHanId !== 'undefined') {
+            apiUrl = `/NVTN/quanligiahan/chonlichthi/${giaHanId}`;
+        } else {
+            // Nếu không có giaHanId, chỉ ghi nhận lựa chọn (cho trường hợp tạo mới)
+            apiUrl = `/NVTN/quanligiahan/chonlichthi`;
+        }
+        
+        console.log('Making request to:', apiUrl);
+        console.log('Request data:', requestData);
+        
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.text();
+            console.error('Server error response:', errorData);
+            throw new Error(`Không thể chọn lịch thi: ${response.status} - ${errorData}`);
+        }
+        
+        const result = await response.json();
+        console.log('Server response:', result);
+        
+        alert('Đã chọn lịch thi thành công!');
+        
+        // Close window and return data to parent
+        if (window.opener) {
+            window.opener.postMessage({
+                type: 'SCHEDULE_SELECTED',
+                data: scheduleData
+            }, '*');
+            window.close();
+        } else {
+            // If not opened in popup, redirect back
+            if (giaHanId && giaHanId !== '' && giaHanId !== 'null' && giaHanId !== 'undefined') {
+                window.location.href = `/NVTN/quanligiahan/chitiet/${giaHanId}`;
+            } else {
+                window.location.href = `/NVTN/quanligiahan`;
+            }
+        }
+        
+    } catch (error) {
+        console.error('Lỗi chọn lịch thi:', error);
+        alert('Đã xảy ra lỗi khi chọn lịch thi: ' + error.message);
+    }
+}
+
+function cancelSelection() {
+    console.log('Cancel selection clicked');
+    
+    if (confirm('Bạn có chắc chắn muốn hủy?')) {
+        goBack();
+    }
+}
+
+function goBack() {
+    // Close window or redirect back
+    if (window.opener) {
+        window.close();
+    } else {
+        const giaHanId = document.getElementById('giaHanId').value;
+        if (giaHanId) {
+            window.location.href = `/NVTN/quanligiahan/chitiet/${giaHanId}`;
+        } else {
+            window.location.href = `/NVTN/quanligiahan`;
+        }
+    }
+}
+
+// Add keyboard navigation for accessibility
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        const focusedElement = document.activeElement;
+        if (focusedElement.type === 'radio') {
+            focusedElement.checked = true;
+        }
+    }
+    
+    if (e.key === 'Escape') {
+        cancelSelection();
+    }
+});
+
+// Listen for messages from parent window
+window.addEventListener('message', function(event) {
+    if (event.data.type === 'SCHEDULE_SELECTED') {
+        console.log('Schedule selected:', event.data.data);
+    }
+});
+</script>

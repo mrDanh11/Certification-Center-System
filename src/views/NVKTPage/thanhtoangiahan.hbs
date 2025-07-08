@@ -1,0 +1,190 @@
+<script src="https://cdn.tailwindcss.com"></script>
+
+<div class="bg-gray-100 min-h-screen py-8">
+    <div class="max-w-2xl mx-auto px-4">
+        <!-- Title -->
+        <h1 class="text-4xl font-bold text-gray-800 text-center mb-12">Thanh toán</h1>
+        
+        <!-- Student and Exam Information Section -->
+        <div class="bg-white rounded-lg border border-gray-300 overflow-hidden mb-12">
+            <!-- Section Header -->
+            <div class="bg-gradient-to-r from-blue-200 to-blue-300 px-6 py-4">
+                <h2 class="text-lg font-semibold text-gray-800 text-center">
+                    Thông tin thí sinh và kì thi
+                </h2>
+            </div>
+            
+            <!-- Section Content -->
+            <div class="p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-700 text-sm mb-1">SBD:</span>
+                        <span class="text-gray-600 text-sm">{{thongTinGiaHan.sbd}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-700 text-sm mb-1">Mã bài thi:</span>
+                        <span class="text-gray-600 text-sm">{{thongTinGiaHan.maBaiThi}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-700 text-sm mb-1">Mã thí sinh:</span>
+                        <span class="text-gray-600 text-sm">{{thongTinGiaHan.maThiSinh}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-700 text-sm mb-1">Ngày thi mới:</span>
+                        <span class="text-gray-600 text-sm">{{thongTinGiaHan.ngayThiMoi}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-700 text-sm mb-1">CCCD:</span>
+                        <span class="text-gray-600 text-sm">{{thongTinGiaHan.cccd}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-700 text-sm mb-1">Giờ thi mới:</span>
+                        <span class="text-gray-600 text-sm">{{thongTinGiaHan.gioThiMoi}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-700 text-sm mb-1">Họ tên:</span>
+                        <span class="text-gray-600 text-sm">{{thongTinGiaHan.hoTen}}</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-semibold text-gray-700 text-sm mb-1">Địa điểm mới:</span>
+                        <span class="text-gray-600 text-sm">{{thongTinGiaHan.diaDiemMoi}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Payment Information Section -->
+        <div class="bg-white rounded-lg p-8">
+            <form id="paymentForm" class="space-y-6">
+                <!-- Hidden field for extension ID -->
+                <input type="hidden" id="extensionId" value="{{thongTinGiaHan.id}}">
+                
+                <!-- Amount and Received Amount Row -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="flex items-center">
+                        <label for="amount" class="text-lg font-medium text-gray-700 mr-4 min-w-fit">
+                            Thành tiền:
+                        </label>
+                        <input 
+                            type="number" 
+                            id="amount" 
+                            name="amount"
+                            value="{{thanhToan.soTien}}"
+                            class="flex-1 px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                            readonly
+                        >
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <label for="received" class="text-lg font-medium text-gray-700 mr-4 min-w-fit">
+                            Tiền nhận:
+                        </label>
+                        <input 
+                            type="number" 
+                            id="received" 
+                            name="received"
+                            class="flex-1 px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                            oninput="calculateChange()"
+                        >
+                    </div>
+                </div>
+                
+                <!-- Change Row -->
+                <div class="flex justify-end">
+                    <div class="flex items-center w-full md:w-1/2">
+                        <label for="change" class="text-lg font-medium text-gray-700 mr-4 min-w-fit">
+                            Tiền thối:
+                        </label>
+                        <input 
+                            type="number" 
+                            id="change" 
+                            name="change"
+                            value="0"
+                            class="flex-1 px-4 py-2 border border-gray-300 rounded bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                            readonly
+                        >
+                    </div>
+                </div>
+                
+                <!-- Confirm Button -->
+                <div class="flex justify-end pt-4">
+                    <button 
+                        type="button" 
+                        onclick="confirmPayment()"
+                        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg transition-colors duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 outline-none"
+                    >
+                        Xác nhận thanh toán
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function calculateChange() {
+    const amount = parseFloat(document.getElementById('amount').value) || 0;
+    const received = parseFloat(document.getElementById('received').value) || 0;
+    const change = received - amount;
+    
+    document.getElementById('change').value = Math.max(0, change);
+}
+
+async function confirmPayment() {
+    const form = document.getElementById('paymentForm');
+    const formData = new FormData(form);
+    const paymentData = Object.fromEntries(formData);
+    
+    // Validate payment
+    const amount = parseFloat(paymentData.amount) || 0;
+    const received = parseFloat(paymentData.received) || 0;
+    const extensionId = document.getElementById('extensionId').value;
+    
+    if (received < amount) {
+        alert('Số tiền nhận không đủ để thanh toán!');
+        return;
+    }
+    
+    if (!received || received <= 0) {
+        alert('Vui lòng nhập số tiền nhận!');
+        return;
+    }
+    
+    try {
+        // Handle payment confirmation logic here
+        const response = await fetch(`/NVKT/quanligiahan/thanhtoan/${extensionId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                soTien: amount,
+                tienNhan: received,
+                tienThoi: received - amount,
+                phuongThucThanhToan: 'Tiền mặt'
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error('Không thể xử lý thanh toán');
+        }
+        
+        const result = await response.json();
+        
+        if (confirm('Xác nhận thanh toán?')) {
+            alert('Thanh toán thành công!');
+            // Redirect back to extension list
+            window.location.href = '/NVKT/quanligiahan';
+        }
+        
+    } catch (error) {
+        console.error('Lỗi thanh toán:', error);
+        alert('Đã xảy ra lỗi khi xử lý thanh toán');
+    }
+}
+
+// Initialize change calculation on page load
+document.addEventListener('DOMContentLoaded', function() {
+    calculateChange();
+});
+</script>

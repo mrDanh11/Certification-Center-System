@@ -1,0 +1,52 @@
+<!-- filepath: d:\NAM3_HK2\PTTKHTTT\Project\DoAnPTTK_GD2_SQL\src\views\NVKTPage\error.hbs -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<div class="bg-gray-100 min-h-screen py-8">
+    <div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <!-- Error Icon -->
+            <div class="px-8 py-6 text-center border-b border-gray-200">
+                <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">Có lỗi xảy ra</h1>
+            </div>
+            
+            <!-- Error Message -->
+            <div class="px-8 py-6">
+                <p class="text-center text-gray-600 mb-6">
+                    {{#if message}}
+                        {{message}}
+                    {{else}}
+                        Đã xảy ra lỗi không mong muốn. Vui lòng thử lại sau.
+                    {{/if}}
+                </p>
+                
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <button 
+                        onclick="history.back()"
+                        class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+                    >
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        Quay lại
+                    </button>
+                    
+                    <button 
+                        onclick="window.location.href='/NVKT/quanligiahan'"
+                        class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 text-sm font-semibold rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+                    >
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                        </svg>
+                        Về trang quản lý
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
