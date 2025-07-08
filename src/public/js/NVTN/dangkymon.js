@@ -109,7 +109,7 @@ const btn_chonLichThi_Click = async function() {
   const TenChungChi = this.dataset.tenchungchi;
 
   try {
-    const response = await fetch(`/NVTN/api/lichthi?chungChiID=${encodeURIComponent(chungChiID)}`);
+    let response = await fetch(`/NVTN/api/lichthi?chungChiID=${encodeURIComponent(chungChiID)}`);
     if (!response.ok) throw new Error('Không thể lấy lịch thi');
 
     const data = await response.json();

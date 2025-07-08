@@ -68,7 +68,7 @@ CREATE TABLE ChungChi (
 GO
 
 CREATE TABLE PhongThi (
-    MaPhongThi INT IDENTITY(1,1) PRIMARY KEY,
+    PhongThi INT IDENTITY(1,1) PRIMARY KEY,
     TenPhong   NVARCHAR(100) NOT NULL
 );
 GO
@@ -79,21 +79,19 @@ CREATE TABLE LichThi (
     ThoiGianLamBai TIME,
     ThoiGianThi Date,
     DiaDiemThi NVARCHAR(100),
-    MaPhongThi INT,
+    PhongThi INT,
     PRIMARY KEY (BaiThiID),
     CONSTRAINT FK_LichThi_ChungChiID FOREIGN KEY (ChungChiID) REFERENCES ChungChi(ChungChiID),
-    CONSTRAINT FK_LichThi_MaPhongThi FOREIGN KEY (MaPhongThi) REFERENCES PhongThi(MaPhongThi)
+    CONSTRAINT FK_LichThi_MaPhongThi FOREIGN KEY (PhongThi) REFERENCES PhongThi(PhongThi)
 );
 GO
 
 CREATE TABLE NhanVienCoiThi (
     NhanVienID INT,
     BaiThiID INT,
-    MaPhongThi INT NULL,
     PRIMARY KEY(NhanVienID, BaiThiID),
     CONSTRAINT FK_NVCoiThi_NhanVienID FOREIGN KEY(NhanVienID) REFERENCES NhanVien(NhanVienID),
     CONSTRAINT FK_NVCoiThi_BaiThiID FOREIGN KEY(BaiThiID) REFERENCES LichThi(BaiThiID),
-    CONSTRAINT FK_NVCoiThi_MaPhongThi FOREIGN KEY (MaPhongThi) REFERENCES PhongThi(MaPhongThi)
 );
 GO
 
@@ -294,7 +292,7 @@ INSERT INTO PhongThi (TenPhong) VALUES
   (N'Phòng C302');
 GO
 -- 5. LichThi (tham chiếu ChungChiID)
-INSERT INTO LichThi(ChungChiID, ThoiGianLamBai, ThoiGianThi, DiaDiemThi, MaPhongThi) VALUES
+INSERT INTO LichThi(ChungChiID, ThoiGianLamBai, ThoiGianThi, DiaDiemThi, PhongThi) VALUES
 (1, '13:00:00', '2025-06-10', N'Hà Nội', 1),
 (2, '12:30:00', '2025-06-11', N'Hồ Chí Minh', 2),
 (3, '08:00:00', '2025-06-12', N'Đà Nẵng', 3),
