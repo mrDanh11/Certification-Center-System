@@ -20,7 +20,7 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
         const result = await response.json();
 
         if (response.ok) {
-            
+
             sessionStorage.setItem('userID', result.userID);
             sessionStorage.setItem('userName', username);
             sessionStorage.setItem('role', result.role);
@@ -31,6 +31,9 @@ document.getElementById("loginBtn").addEventListener("click", async () => {
                     break;
                 case 'tiep nhan': // Employee
                     window.location.href = "/NVTN";
+                    break;
+                case 'quan ly':
+                    window.location.href = "/NVQL";
                     break;
                 default:
                     alert("Unknown role. Contact support.");
