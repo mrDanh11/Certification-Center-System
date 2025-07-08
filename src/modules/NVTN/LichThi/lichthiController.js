@@ -16,7 +16,7 @@ const lichthiController = {
                 lichThi,
                 giaHanId,
                 title: 'Chọn lịch thi gia hạn',
-                layout: 'NVTN/NVTNMain'
+                layout: 'NVTN/NVTNmain'
             });
             
         } catch (err) {
@@ -36,7 +36,7 @@ const lichthiController = {
             res.render('NVTNPage/lichthi', {
                 lichThi,
                 title: 'Danh sách lịch thi',
-                layout: 'NVTN/NVTNMain'
+                layout: 'NVTN/NVTNmain'
             });
             
         } catch (err) {

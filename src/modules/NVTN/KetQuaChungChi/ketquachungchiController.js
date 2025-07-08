@@ -59,7 +59,7 @@ const kqcController = {
         KQ:         r.KQ
       }));
       res.render('NVTNPage/confirmKetQuaChungChi', {
-        layout: 'NVTN/NVTNMain',
+        layout: 'NVTN/NVTNmain',
         title: 'Xác nhận tình trạng chứng chỉ',
         customer: { CCCD: cccd, Hoten: kh.Hoten, Email: kh.Email, LoaiKH: kh.LoaiKH },
         details
