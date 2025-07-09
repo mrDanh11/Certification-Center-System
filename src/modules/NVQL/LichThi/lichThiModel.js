@@ -16,14 +16,15 @@ const LichThiModel = {
         .input('TG_KT',      sql_Str,  fmtTime(data.thoiGianKT))
         .input('NgayThi',    sql_Date, data.cmbNgayThi)
         .input('DiaDiemThi', sql_Str,  data.txtDiaDiemThi || '')
-        .input('PhongThi',   sql_Str,  data.txtPhongThi   || '')
+        // .input('PhongThi',   sql_Str,  data.txtPhongThi   || '')
         .input('MaPhongThi', sql_Int,  data.cmbMaPhongThi)
         .query(`
           INSERT INTO LichThi
-            (ChungChiID, ThoiGianLamBai, ThoiGianThi, DiaDiemThi, PhongThi, MaPhongThi)
+            -- (ChungChiID, ThoiGianLamBai, ThoiGianThi, DiaDiemThi, PhongThi, MaPhongThi)
+            (ChungChiID, ThoiGianLamBai, ThoiGianThi, DiaDiemThi, PhongThiID)
           OUTPUT INSERTED.BaiThiID
           VALUES
-            (@ChungChiID, @TG_BD, @NgayThi, @DiaDiemThi, @PhongThi, @MaPhongThi)
+            (@ChungChiID, @TG_BD, @NgayThi, @DiaDiemThi, @MaPhongThi)
         `);
 
       await tx.commit();
