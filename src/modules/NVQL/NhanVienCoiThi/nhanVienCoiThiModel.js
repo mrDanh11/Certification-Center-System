@@ -17,11 +17,13 @@ const NhanVienCoiThiModel = {
         await tx.request()
           .input('NhanVienID', sql_Int, nhanVienID)
           .input('BaiThiID',   sql_Int, baiThiID)
-          .input('MaPhongThi', sql_Int, maPhongThi)
+          // .input('MaPhongThi', sql_Int, maPhongThi)
           .query(`
-            INSERT INTO NhanVienCoiThi (NhanVienID, BaiThiID, MaPhongThi)
-            VALUES (@NhanVienID, @BaiThiID, @MaPhongThi)
+            INSERT INTO NhanVienCoiThi (NhanVienID, BaiThiID)
+            VALUES (@NhanVienID, @BaiThiID)
           `);
+          // INSERT INTO NhanVienCoiThi (NhanVienID, BaiThiID, MaPhongThi)
+          //   VALUES (@NhanVienID, @BaiThiID, @MaPhongThi)
       }
 
       await tx.commit();

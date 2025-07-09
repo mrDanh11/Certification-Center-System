@@ -18,7 +18,7 @@ const NhanVienCoiThiController = {
       const id = parseInt(baiThiID, 10);
       const list = assignments.map(a => ({
         nhanVienID: parseInt(a.nhanVienID, 10),
-        maPhongThi: parseInt(a.maPhongThi, 10)
+        // maPhongThi: parseInt(a.maPhongThi, 10)
       }));
 
       await NhanVienCoiThiModel.themNhanVienCoiThi(id, list);

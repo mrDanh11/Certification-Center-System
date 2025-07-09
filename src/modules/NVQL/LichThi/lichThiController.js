@@ -10,10 +10,10 @@ const LichThiController = {
         cmbThoiGianKT,
         cmbNgayThi,
         txtDiaDiemThi,
-        txtPhongThi,
+        // txtPhongThi,
         cmbMaPhongThi
       } = req.body;
-
+      console.log('check req.body: ', req.body)
       // chuyển sang số 
       const baiThiID = await LichThiModel.taoLichThi({
         chungChiID:       cmbChungChiID  ? parseInt(cmbChungChiID, 10) : null,
@@ -21,7 +21,7 @@ const LichThiController = {
         thoiGianKT:       cmbThoiGianKT,
         cmbNgayThi,      // tên key trùng với input name
         txtDiaDiemThi,
-        txtPhongThi,
+        // txtPhongThi,
         cmbMaPhongThi:    cmbMaPhongThi  ? parseInt(cmbMaPhongThi, 10) : null
       });
 

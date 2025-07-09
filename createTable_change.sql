@@ -68,7 +68,7 @@ CREATE TABLE ChungChi (
 GO
 
 CREATE TABLE PhongThi (
-    PhongThi INT IDENTITY(1,1) PRIMARY KEY,
+    PhongThiID INT IDENTITY(1,1) PRIMARY KEY,
     TenPhong   NVARCHAR(100) NOT NULL
 );
 GO
@@ -79,10 +79,10 @@ CREATE TABLE LichThi (
     ThoiGianLamBai TIME,
     ThoiGianThi Date,
     DiaDiemThi NVARCHAR(100),
-    PhongThi INT,
+    PhongThiID INT,
     PRIMARY KEY (BaiThiID),
     CONSTRAINT FK_LichThi_ChungChiID FOREIGN KEY (ChungChiID) REFERENCES ChungChi(ChungChiID),
-    CONSTRAINT FK_LichThi_MaPhongThi FOREIGN KEY (PhongThi) REFERENCES PhongThi(PhongThi)
+    CONSTRAINT FK_LichThi_MaPhongThi FOREIGN KEY (PhongThiID) REFERENCES PhongThi(PhongThiID)
 );
 GO
 
@@ -292,19 +292,19 @@ INSERT INTO PhongThi (TenPhong) VALUES
   (N'Phòng C302');
 GO
 -- 5. LichThi (tham chiếu ChungChiID)
-INSERT INTO LichThi(ChungChiID, ThoiGianLamBai, ThoiGianThi, DiaDiemThi, PhongThi) VALUES
+INSERT INTO LichThi(ChungChiID, ThoiGianLamBai, ThoiGianThi, DiaDiemThi, PhongThiID) VALUES
 (1, '13:00:00', '2025-06-10', N'Hà Nội', 1),
 (2, '12:30:00', '2025-06-11', N'Hồ Chí Minh', 2),
 (3, '08:00:00', '2025-06-12', N'Đà Nẵng', 3),
 (4, '09:45:00', '2025-06-13', N'Hải Phòng', 4),
 (5, '10:15:00', '2025-06-14', N'Cần Thơ', 5);
 GO
-INSERT INTO LichThi(ChungChiID, ThoiGianLamBai, ThoiGianThi, DiaDiemThi, PhongThi) VALUES
+INSERT INTO LichThi(ChungChiID, ThoiGianLamBai, ThoiGianThi, DiaDiemThi, PhongThiID) VALUES
 -- Chứng chỉ A (ChungChiID = 1) - cho SBD001
-(1, '08:00:00', '2025-07-15', N'Hà Nội', N'Phòng A101'),
-(1, '09:30:00', '2025-07-20', N'Hà Nội', N'Phòng A102'),
-(1, '13:30:00', '2025-07-25', N'Hà Nội', N'Phòng A103'),
-(1, '15:00:00', '2025-08-05', N'Hồ Chí Minh', N'Phòng B201'),
+(1, '08:00:00', '2025-07-15', N'Hà Nội', '1'),
+(1, '09:30:00', '2025-07-20', N'Hà Nội', '2'),
+(1, '13:30:00', '2025-07-25', N'Hà Nội', '1'),
+(1, '15:00:00', '2025-08-05', N'Hồ Chí Minh', '1')
 
 -- Chứng chỉ B (ChungChiID = 2) - thêm cho đa dạng
 (2, '08:00:00', '2025-07-18', N'Hồ Chí Minh', N'Phòng B101'),
