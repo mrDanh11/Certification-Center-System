@@ -90,7 +90,7 @@ const PhieuGiaHanModel = {
                 INNER JOIN PhieuDuThi pdt ON ts.ThiSinhID = pdt.ThiSinhID AND ts.PhieuID = pdt.PhieuID
                 INNER JOIN LichThi lt_truoc ON pgh.LichThiTruoc = lt_truoc.BaiThiID
                 LEFT JOIN LichThi lt_sau ON pgh.LichThiSau = lt_sau.BaiThiID
-                LEFT JOIN PhongThi pt ON lt_truoc.PhongThi = pt.PhongThi
+                LEFT JOIN PhongThi pt ON lt_truoc.PhongThiID = pt.PhongThiID
                 WHERE pgh.PhieuGiaHanID = ${id}
             `;
             await pool.connect()

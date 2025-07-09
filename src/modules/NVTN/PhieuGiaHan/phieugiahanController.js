@@ -264,10 +264,11 @@ timThongTinThiSinh: async (req, res) => {
                 message: 'Không tìm thấy thông tin thí sinh với số báo danh này'
             });
         }
-        
+        const validation = await PhieuGiaHanModel.ValidateGiaHan(sbd);
         res.json({
             success: true,
-            data: thongTin
+            data: thongTin,
+            validation: validation
         });
     } catch (error) {
         console.error('Error in timThongTinThiSinh:', error);
@@ -311,6 +312,61 @@ chiTietPhieuGiaHan: async (req, res) => {
         console.error('Error in chiTietPhieuGiaHan:', error);
         res.status(500).json({ 
             message: 'Có lỗi xảy ra khi hiển thị chi tiết phiếu gia hạn' 
+        });
+    }
+},
+// API: Lấy danh sách lịch thi (trả về JSON)
+// Cập nhật method APILayDanhSachLichThi:
+
+APILayDanhSachLichThi: async (req, res) => {
+    try {
+        const { chungChiID } = req.params;
+        const { chungChiID: queryChungChiID, page = 1, limit = 10 } = req.query;
+        
+        const finalChungChiID = chungChiID || queryChungChiID;
+        const pageNum = parseInt(page);
+        const limitNum = parseInt(limit);
+        const offset = (pageNum - 1) * limitNum;
+        
+        console.log('APILayDanhSachLichThi called with:', { 
+            chungChiID: finalChungChiID, 
+            page: pageNum, 
+            limit: limitNum,
+            offset 
+        });
+        
+        // Lấy tổng số records
+        const totalCount = await PhieuGiaHanModel.DemSoLuongLichThi(finalChungChiID);
+        
+        // Lấy dữ liệu với phân trang
+        const lichThi = await PhieuGiaHanModel.LayDanhSachLichThiPhanTrang(
+            finalChungChiID, 
+            offset, 
+            limitNum
+        );
+        
+        const totalPages = Math.ceil(totalCount / limitNum);
+        
+        res.json({
+            success: true,
+            data: lichThi,
+            pagination: {
+                currentPage: pageNum,
+                totalPages: totalPages,
+                totalItems: totalCount,
+                itemsPerPage: limitNum,
+                hasNext: pageNum < totalPages,
+                hasPrev: pageNum > 1
+            },
+            chungChiID: finalChungChiID
+        });
+        
+    } catch (err) {
+        console.error('Error in APILayDanhSachLichThi:', err);
+        res.status(500).json({
+            success: false,
+            error: err.message,
+            message: 'Không thể tải danh sách lịch thi'
         });
     }
 },

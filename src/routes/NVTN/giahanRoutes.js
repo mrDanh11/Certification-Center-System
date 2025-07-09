@@ -22,6 +22,10 @@ router.get('/chitiet/:id', phieugiahanController.chiTietPhieuGiaHan);
 router.get('/lichthi', phieugiahanController.LayDanhSachLichThi);
 router.get('/lichthi/:giaHanId', phieugiahanController.LayDanhSachLichThi);
 
+// Thêm route API để lấy dữ liệu lịch thi
+router.get('/api/lichthi', phieugiahanController.APILayDanhSachLichThi);
+router.get('/api/lichthi/:chungChiID', phieugiahanController.APILayDanhSachLichThi);
+
 // Route tìm kiếm thí sinh theo SBD
 router.get('/timkiem', phieugiahanController.TimKiemThiSinh);
 
