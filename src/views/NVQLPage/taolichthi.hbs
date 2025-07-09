@@ -92,17 +92,6 @@
             {{/each}}
           </select>
         </div>
-        <!-- Phòng thi -->
-        <div class="flex flex-col space-y-2">
-          <label for="cmbChonPhongThi" class="font-bold">* Phòng thi</label>
-          <select id="cmbChonPhongThi" name="cmbMaPhongThi" required
-                  class="h-9 px-2 border rounded-lg">
-            <option value="">-- Chọn phòng --</option>
-            {{#each DSPhongThi}}
-              <option value="{{PhongThiID}}">{{TenPhong}}</option>
-            {{/each}}
-          </select>
-        </div>
         <!-- Địa điểm thi -->
         <div class="flex flex-col space-y-2">
           <label for="cmbDiaDiemThi" class="font-bold">* Địa điểm thi</label>
@@ -111,6 +100,17 @@
             <option value="">-- Chọn địa điểm --</option>
             {{#each optionsDiaDiem}}
               <option value="{{this.value}}">{{this.label}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <!-- Phòng thi -->
+        <div class="flex flex-col space-y-2">
+          <label for="cmbChonPhongThi" class="font-bold">* Phòng thi</label>
+          <select id="cmbChonPhongThi" name="cmbMaPhongThi" required
+                  class="h-9 px-2 border rounded-lg">
+            <option value="">-- Chọn phòng --</option>
+            {{#each DSPhongThi}}
+              <option value="{{PhongThiID}}">{{TenPhong}}</option>
             {{/each}}
           </select>
         </div>

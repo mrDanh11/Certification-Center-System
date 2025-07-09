@@ -1,5 +1,5 @@
 // src/modules/NVQL/NhanVienCoiThi/nhanVienCoiThiModel.js
-const { pool, sql_Int } = require('../../../config/db');
+const { pool, sql_Int, sql_Date } = require('../../../config/db');
 
 const NhanVienCoiThiModel = {
   /**
@@ -34,6 +34,26 @@ const NhanVienCoiThiModel = {
     } finally {
       conn.close();
     }
+  },
+
+  async checkNVCoiThi(nhanVienID, ngayThi) {
+    const conn = await pool.connect();
+    try {
+      const result = await conn.request()
+        .input('NV',      sql_Int,  nhanVienID)
+        .input('NgayThi', sql_Date, ngayThi)
+        .query(`
+          SELECT 1
+          FROM NhanVienCoiThi nvct
+          JOIN LichThi lt ON lt.BaiThiID = nvct.BaiThiID
+          WHERE nvct.NhanVienID = @NV
+            AND lt.ThoiGianThi = @NgayThi
+        `);
+      return result.recordset.length > 0;
+    } finally {
+      conn.close();
+    }
+
   }
 };
 
