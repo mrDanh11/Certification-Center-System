@@ -9,41 +9,47 @@
         <div class="flex flex-col items-left space-y-2 w-[calc(100%-1.5rem)]">
           <label for="maKhachHang" class="w-50 flex-initial font-bold">Mã khách hàng</label>
           <input id="maKhachHang" name="maDonVi" type="text"
-            class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg" value="{{maKhachHang}}" />
+            class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg" value="{{maKhachHang}}"
+            list="KhachHangList" />
+          <datalist id="KhachHangList">
+            {{#each KhachHangList}}
+            <option value="{{KhachHangID}}">{{Hoten}} ({{KhachHangID}})</option>
+            {{/each}}
+          </datalist>
         </div>
         <div class="flex flex-col items-left space-y-2 w-full">
           <label class="w-50 flex-initial font-bold">Tên khách hàng</label>
-          <input id="tenKhachHang" type="text" readonly
-            class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg" value="{{tenKhachHang}}">
+          <input id="tenKhachHang" type="text" readonly disabled
+            class="ml-0 h-9 px-2 border-2 border-gray-200 bg-gray-100 rounded-lg" value="">
         </div>
         <div class="flex flex-col items-left space-y-2 w-[calc(100%-1.5rem)]">
           <label class="w-50 flex-initial font-bold">Giới tính</label>
-          <input id="gioiTinh" type="text" readonly class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg"
-            value="{{gioiTinh}}">
+          <input id="gioiTinh" type="text" readonly
+            class="ml-0 h-9 px-2 border-2 border-gray-200 bg-gray-100 rounded-lg" disabled value="{{gioiTinh}}">
         </div>
         <div class="flex flex-col items-left space-y-2 w-full">
           <label class="w-50 flex-initial font-bold">CCCD</label>
-          <input id="cccd" type="text" readonly class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg"
-            value="{{cccd}}" oninput="">
+          <input id="cccd" type="text" readonly class="ml-0 h-9 px-2 border-2 border-gray-200 bg-gray-100 rounded-lg"
+            disabled value="{{cccd}}" oninput="">
         </div>
         <div class="flex flex-col items-left space-y-2 w-[calc(100%-1.5rem)]">
           <label class="w-50 flex-initial font-bold">Số điện thoại</label>
-          <input id="sdt" type="text" readonly class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg"
-            value="{{sdt}}">
+          <input id="sdt" type="text" readonly class="ml-0 h-9 px-2 border-2 border-gray-200 bg-gray-100 rounded-lg"
+            disabled value="{{sdt}}">
         </div>
         <div class="flex flex-col items-left space-y-2 w-full">
           <label class="w-50 flex-initial font-bold">Email</label>
-          <input id="email" type="email" readonly class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg"
-            value="{{email}}">
+          <input id="email" type="email" readonly class="ml-0 h-9 px-2 border-2 border-gray-200 bg-gray-100 rounded-lg"
+            disabled value="{{email}}">
         </div>
         <div class="flex flex-col items-left space-y-2 w-[calc(100%-1.5rem)]">
           <label class="w-50 flex-initial font-bold">Loại khách hàng</label>
-          <input id="loaiKhachHang" type="text" readonly
-            class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg" value="{{loaiKhachHang}}">
+          <input id="loaiKhachHang" type="text" readonly disabled
+            class="ml-0 h-9 px-2 border-2 border-gray-200 bg-gray-100 rounded-lg" value="{{loaiKhachHang}}">
         </div>
-        <button type="button"
-          class="relative h-12 min-w-[50%] ml-auto mt-auto p-2 rounded-lg text-white font-bold bg-[#2E8BC0] hover:-translate-y-1 active:-translate-y-0.5 shadow-xl transition-all"
-          id="btnTimKiemKH">Tìm Kiếm</button>
+        <!-- <button type="button" -->
+        <!--   class="relative h-12 min-w-[50%] ml-auto mt-auto p-2 rounded-lg text-white font-bold bg-[#2E8BC0] hover:-translate-y-1 active:-translate-y-0.5 shadow-xl transition-all" -->
+        <!--   id="btnTimKiemKH">Tìm Kiếm</button> -->
       </div>
     </section>
 
@@ -75,22 +81,32 @@
 
     <!-- Danh sách thí sinh -->
     <section class="mb-6 border-2 border-gray-100 bg-white shadow-md py-6 px-9 rounded-lg">
-      <div class="flex justify-between items-center mb-2">
-        <h3 class="font-semibold text-lg">👥 Danh sách thí sinh</h3>
+      <div class="flex flex-row py-4 gap-4">
+        <h3 class="font-semibold text-lg px-4 w-full">👥 Danh sách thí sinh </h3>
         <div>
           <button id="addThiSinhBtn" type="button"
-            class="p-2 rounded-lg text-white font-bold bg-[#2E8BC0] hover:-translate-y-1 active:-translate-y-0.5 shadow-xl transition-all">+
-            Thêm thí
-            sinh</button>
+            class="w-40 p-2 rounded-lg text-white font-bold bg-[#2E8BC0] hover:-translate-y-1 active:-translate-y-0.5 shadow-xl transition-all">+
+            Thêm thí sinh</button>
         </div>
+      </div>
+
+      <div class="flex justify-between items-center mb-2">
+        <div class="flex flex-row w-40">
+          <p class="font-semibold text-lg px-4 w-fit">Số lượng: </p>
+          <span id="thiSinhCounter" class="w-10 text-left font-semibold text-xl">1</span>
+        </div>
+        <p class="text-right px-4">Tips: Giữ nút để thêm nhiều thí sinh</p>
       </div>
 
       <div id="thiSinhContainer">
         <div class="min-w-full flex flex-row  space-y-2 relative">
-          <div class="flex flex-col items-left w-[40%]">
+          <div class="flex flex-col items-left w-[7%]">
+            <label class="font-semibold mt-auto text-lg">STT</label>
+          </div>
+          <div class="flex flex-col items-left w-[35%]">
             <label class="font-semibold mt-auto text-lg">Họ tên</label>
           </div>
-          <div class="flex flex-col items-left w-[40%]">
+          <div class="flex flex-col items-left w-[35%]">
             <label class="font-semibold text-lg">CCCD (Chỉ số)</label>
           </div>
           <div class="flex flex-col items-left w-[20%]">

@@ -1,10 +1,11 @@
-const btnTimKiemKH_Click = async () => {
+let ThiSinhCounter = 0;
+
+const txtKhachHangID_Change = async () => {
   const maKhachHangInput = document.querySelector("#maKhachHang");
 
   const maKhachHang = maKhachHangInput.value.trim();
 
   if (!maKhachHang) {
-    alert("Vui lòng nhập Mã khách hàng.");
     return;
   }
   console.log(maKhachHang);
@@ -31,7 +32,7 @@ const btnTimKiemKH_Click = async () => {
     txtLoaiKhachHang_OnChange();
   } catch (err) {
     console.error(err);
-    alert("Không thể lấy thông tin khách hàng.");
+    // alert("Không thể lấy thông tin khách hàng.");
   }
 };
 
@@ -103,13 +104,16 @@ const addThiSinhBtn_Click = async () => {
   newRow.className = "max-w-full flex flex-row gap-4 space-y-2 relative thiSinhRow";
 
   newRow.innerHTML = `
-    <div class="flex flex-col items-left min-w-[30%]">
+    <div class="flex flex-col items-left min-w-[3%]">
+      <p class="mt-auto ml-0 h-9 px-2 bg-white rounded-lg thiSinhSTT" ></p>
+    </div>
+    <div class="flex flex-col items-left min-w-[25%]">
       <input type="text" name="thiSinhHoTen" class="mt-auto ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg" value="">
     </div>
-    <div class="flex flex-col items-left min-w-[30%]">
+    <div class="flex flex-col items-left min-w-[25%]">
       <input type="text" name="thiSinhCCCD" minlength="12" maxlength="12" name="thiSinhCCCD" class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg" required>
     </div>
-    <div class="flex flex-col items-left min-w-[15%]">
+    <div class="flex flex-col items-left min-w-[10%]">
       <select name="thiSinhGioiTinh" class="ml-0 h-9 px-2 border-2 border-gray-200 bg-white rounded-lg">
         <option value="">Phái</option>
         <option value="Nam">Nam</option>
@@ -129,6 +133,16 @@ const addThiSinhBtn_Click = async () => {
       console.log("Sanitized CCCD:", this.value);
     });
   }
+
+  ThiSinhCounter += 1;
+  const thiSinhCounterElem = document.getElementById('thiSinhCounter');
+  thiSinhCounterElem.innerHTML = ThiSinhCounter;
+  const thiSinhSTT = document.querySelectorAll('.thiSinhSTT');
+  let counter = 1;
+  thiSinhSTT.forEach(elem => {
+    elem.innerHTML = counter;
+    counter += 1;
+  });
 };
 
 const btnDangKy_Click = async () => {
@@ -243,7 +257,7 @@ const btnDangKy_Click = async () => {
 
     const tsResult = await thisinhResponse.json();
     if (thisinhResponse.ok) {
-      alert('🎉 Đăng ký thành công!');
+      alert(`🎉 Đăng ký thành công!, mã phiếu đã tạo: ${phieuResult.phieuID}`);
     } else {
       throw new Error(tsResult.error || 'Không thể thêm danh sách thí sinh.');
     }
@@ -262,25 +276,56 @@ const btnDangKy_Click = async () => {
   }
 };
 
+
+// in ms
+let debounceTimeout;
+let intervalId;
+const debounceTime = 500;
+const repeatInterval = 80;
+function clearTimers() {
+  clearTimeout(debounceTimeout);
+  clearInterval(intervalId);
+}
+
 document.addEventListener("DOMContentLoaded", function() { // OnLoad() function
-  const btnTimKiem = document.querySelector('#btnTimKiemKH');
+  const txtKhachHangID = document.getElementById('maKhachHang');
   const addButton = document.getElementById("addThiSinhBtn");
   const container = document.getElementById("thiSinhContainer");
   // const txtthiSinhCCCD = document.querySelector('#thiSinhCCCD');
 
-  btnTimKiem.addEventListener("click", btnTimKiemKH_Click);
+  txtKhachHangID.addEventListener("input", txtKhachHangID_Change);
 
   addButton.addEventListener("click", addThiSinhBtn_Click);
+  addButton.addEventListener("mousedown", async function() {
+    debounceTimeout = setTimeout(() => {
+      intervalId = setInterval(addThiSinhBtn_Click, repeatInterval);
+      addThiSinhBtn_Click();
+    }, debounceTime);
+  });
+
+  ['mouseup', 'mouseleave'].forEach(event => {
+    addButton.addEventListener(event, clearTimers);
+  });
 
   container.addEventListener("click", function(e) {
     if (e.target.classList.contains("deleteBtn")) {
+      ThiSinhCounter -= 1;
+      const thiSinhCounterElem = document.getElementById('thiSinhCounter');
+      thiSinhCounterElem.innerHTML = ThiSinhCounter;
       const row = e.target.closest(".thiSinhRow");
       if (row) row.remove();
+      const thiSinhSTT = document.querySelectorAll('.thiSinhSTT');
+      let counter = 1;
+      thiSinhSTT.forEach(elem => {
+        elem.innerHTML = counter;
+        counter += 1;
+      });
     }
   });
 
   const btnDangKy = document.querySelector('#btnDangKy');
   btnDangKy.addEventListener("click", btnDangKy_Click);
+
 
   LayDSChungChi();
   txtLoaiKhachHang_OnChange();
