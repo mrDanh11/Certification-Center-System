@@ -92,6 +92,27 @@ const KhachHang = {
       `);
 
     return result.recordset[0].KhachHangID;
+  },
+
+  LayDSKhachHang: async () => {
+    try {
+      const stmt = `
+      select * from KhachHang
+      `;
+
+      await pool.connect();
+      const result = await pool.request()
+        .query(stmt);
+
+      if (result.recordset.length <= 0){
+        throw new Error('no customer found')
+      }
+      await pool.close();
+      return result.recordset;
+    }
+    catch (err){
+			throw new Error('Error get information in khachhang: ' + err.message);
+    }
   }
 }
 

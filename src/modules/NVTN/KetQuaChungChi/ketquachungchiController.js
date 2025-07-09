@@ -1,17 +1,21 @@
 const KQCModel = require('./ketquachungchiModel');
-
+const khachhangModel = require('../../NVKT/KhachHang/khachhangModel')
 const kqcController = {
   // 1) Trang chính “Cấp chứng chỉ”
-  renderPage: (req, res) => {
+  renderPage: async (req, res) => {
+    const { cccd } = req.query;
     // nếu vừa lưu thành công, show alert
     const success = req.query.success === '1';
     const alertScript = success
       ? `<script>alert("Cập nhật thành công");</script>`
       : '';
+    const CCCDList = await khachhangModel.LayDSKhachHang();
     res.render('NVTNPage/ketquachungchi', {
       layout: 'NVTN/NVTNmain',
       title: 'Cấp chứng chỉ',
-      scripts: alertScript + '<script src="/js/NVTN/ketquachungchi.js"></script>'
+      scripts: alertScript + '<script src="/js/NVTN/ketquachungchi.js"></script>',
+      CCCDList: CCCDList,
+      CCCDQuery: `${cccd}`,
     });
   },
 

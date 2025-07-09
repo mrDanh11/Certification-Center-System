@@ -74,19 +74,9 @@
 //   });
 // });
 
-document.addEventListener('DOMContentLoaded', () => {
-  const btnSearch         = document.getElementById('btnSearch');
-  const btnProceedConfirm = document.getElementById('btnProceedConfirm');
-  const cccdInput         = document.getElementById('cccdInput');
-  const customerSection   = document.getElementById('customerSection');
-  const certTableSection  = document.getElementById('certTableSection');
-  const certTableBody     = document.getElementById('certTableBody');
-  let currentCustomerType = null;
-
-  // 1) Khi nhấn “Tìm kiếm”
-  btnSearch.addEventListener('click', async () => {
+const LayTTKhachHang = async function () {
     const cccd = cccdInput.value.trim();
-    if (!cccd) return alert('Hãy nhập CCCD trước khi tra cứu');
+    if (!cccd) return;
 
     try {
       const res = await fetch(
@@ -154,9 +144,25 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
     } catch (err) {
-      alert(err.error || err);
+      console.log(err.error || err);
     }
-  });
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  // const btnSearch         = document.getElementById('btnSearch');
+  const btnProceedConfirm = document.getElementById('btnProceedConfirm');
+  const cccdInput         = document.getElementById('cccdInput');
+  const customerSection   = document.getElementById('customerSection');
+  const certTableSection  = document.getElementById('certTableSection');
+  const certTableBody     = document.getElementById('certTableBody');
+  let currentCustomerType = null;
+
+  if (cccdInput && cccd_hbs !== 'undefined') {
+      cccdInput.value = cccd_hbs;
+      LayTTKhachHang();
+  }
+  // 1) Khi nhấn “Tìm kiếm”
+  cccdInput.addEventListener('input', LayTTKhachHang);
 
   // 5) Khi nhấn “Nhận chứng chỉ”
   btnProceedConfirm.addEventListener('click', () => {
