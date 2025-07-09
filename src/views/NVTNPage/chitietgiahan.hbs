@@ -89,17 +89,7 @@
             </div>
             
             <!-- Section Content -->
-            <div class="p-6">
-                {{#unless isNewExtension}}
-                <!-- Hiển thị loại gia hạn khi xem chi tiết -->
-                <div class="mb-6">
-                    <div class="flex">
-                        <span class="font-semibold text-gray-700 text-sm min-w-fit mr-2">Loại gia hạn:</span>
-                        <span class="text-gray-600 text-sm">{{chiTietGiaHan.loaiGiaHan}}</span>
-                    </div>
-                </div>
-                {{/unless}}
-                
+            <div class="p-6">     
                 <form id="extensionForm">
                     <!-- Hidden fields -->
                     <input type="hidden" id="extensionId" value="{{chiTietGiaHan.id}}">
@@ -107,6 +97,7 @@
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         {{#if isNewExtension}}
+                        <!-- Khi tạo mới: Chỉ hiển thị dropdown -->
                         <div>
                             <label for="extensionType" class="block text-sm font-medium text-gray-700 mb-2">
                                 Loại gia hạn <span class="text-red-500">*</span>
@@ -124,35 +115,38 @@
                             </select>
                         </div>
                         
+                        <!-- Hidden input để lưu lý do gia hạn (sẽ được cập nhật tự động) -->
+                        <input type="hidden" id="extensionReason" name="extensionReason" value="">
+                        {{else}}
+                        <!-- Khi xem chi tiết: Hiển thị thông tin dạng text -->
                         <div>
-                            <label for="extensionReason" class="block text-sm font-medium text-gray-700 mb-2">
-                                Lý do gia hạn
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Loại gia hạn
                             </label>
-                            <input 
-                                type="text" 
-                                id="extensionReason" 
-                                name="extensionReason"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                                readonly
-                                placeholder="Chọn loại gia hạn để tự động điền lý do"
-                            >
-                            <small class="text-gray-500 text-xs mt-1">Lý do sẽ tự động điền theo loại gia hạn</small>
+                            <div class="w-full px-3 py-2 border border-gray-200 rounded-md bg-gray-50 text-gray-700">
+                                {{chiTietGiaHan.loaiGiaHan}}
+                            </div>
                         </div>
                         {{/if}}
                         
                         <div>
                             <label for="replacementDate" class="block text-sm font-medium text-gray-700 mb-2">
-                                Ngày thay thế <span class="text-red-500">*</span>
+                                Ngày thay thế {{#if isNewExtension}}<span class="text-red-500">*</span>{{/if}}
                             </label>
+                            {{#if isNewExtension}}
                             <input 
-                                type="date" 
+                                type="text" 
                                 id="replacementDate" 
                                 name="replacementDate"
-                                value="{{chiTietGiaHan.ngayThayThe}}"
                                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
                                 required
                             >
                             <small class="text-gray-500 text-xs mt-1">Chọn ngày thi thay thế</small>
+                            {{else}}
+                            <div class="w-full px-3 py-2 border border-gray-200 rounded-md bg-gray-50 text-gray-700">
+                                {{chiTietGiaHan.ngayThayThe}}
+                            </div>
+                            {{/if}}
                         </div>
                     </div>
                     
@@ -201,8 +195,90 @@
                 onclick="cancelExtension()"
                 class="bg-gray-400 hover:bg-gray-500 text-white font-medium px-8 py-3 rounded-md transition-colors duration-200 focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 outline-none"
             >
-                {{#if isNewExtension}}Hủy{{else}}Quay lại{{/if}}
+                Quay lại
             </button>
+        </div>
+    </div>
+    <!-- Schedule Selection Dialog -->
+    <div id="scheduleDialog" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-6xl max-h-[85vh] flex flex-col">
+                <!-- Dialog Header -->
+                <div class="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-t-lg">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-semibold">Chọn lịch thi thay thế</h3>
+                        <button onclick="closeScheduleDialog()" class="text-white hover:text-gray-300">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Dialog Body -->
+                <div class="flex-1 overflow-hidden flex flex-col">
+                    <!-- Loading State -->
+                    <div id="scheduleLoading" class="flex-1 flex items-center justify-center">
+                        <div class="text-center py-8">
+                            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                            <p class="mt-2 text-gray-600">Đang tải danh sách lịch thi...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Content State -->
+                    <div id="scheduleContent" class="hidden flex-1 flex flex-col">
+                        <!-- Table Header -->
+                        <div class="bg-gray-50 p-4 border-b">
+                            <div class="grid grid-cols-5 gap-4 font-semibold text-gray-700 text-sm">
+                                <div>Mã bài thi</div>
+                                <div>Ngày thi</div>
+                                <div>Giờ thi</div>
+                                <div>Địa điểm</div>
+                                <div>Chứng chỉ</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Table Body - Scrollable -->
+                        <div class="flex-1 overflow-y-auto">
+                            <div id="scheduleList">
+                                <!-- Schedule items will be populated here -->
+                            </div>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div id="schedulePagination" class="border-t bg-gray-50 p-4">
+                            <div class="flex items-center justify-between">
+                                <div class="text-sm text-gray-600" id="paginationInfo">
+                                    <!-- Pagination info will be populated here -->
+                                </div>
+                                <div class="flex gap-2" id="paginationButtons">
+                                    <!-- Pagination buttons will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Error State -->
+                    <div id="scheduleError" class="flex-1 flex items-center justify-center hidden">
+                        <div class="text-center py-8">
+                            <p class="text-red-600 mb-4">Có lỗi xảy ra khi tải danh sách lịch thi</p>
+                            <button onclick="loadScheduleData(1)" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                                Thử lại
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Dialog Footer -->
+                <div class="bg-gray-50 px-4 py-3 rounded-b-lg border-t">
+                    <div class="flex justify-end">
+                        <button onclick="closeScheduleDialog()" 
+                                class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">
+                            Hủy
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -220,7 +296,6 @@ async function searchStudent() {
         return;
     }
     
-    // Show loading
     const button = event.target;
     const originalHtml = button.innerHTML;
     button.innerHTML = '<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>';
@@ -234,7 +309,26 @@ async function searchStudent() {
             throw new Error(result.message || 'Không tìm thấy thông tin thí sinh');
         }
         
+        // ** KIỂM TRA VALIDATION DUY NHẤT Ở ĐÂY **
+        if (result.validation && !result.validation.isValid) {
+            let errorMessage = 'Không thể tạo phiếu gia hạn cho SBD này:\n\n';
+            result.validation.errors.forEach(error => {
+                errorMessage += '• ' + error.message + '\n';
+            });
+            
+            alert(errorMessage);
+            return; // DỪNG WORKFLOW TẠI ĐÂY
+        }
+        
+        // Hiển thị cảnh báo nhẹ nếu gần hết lượt
+        if (result.validation && result.validation.soLanGiaHanHienTai >= 1) {
+            const soLanConLai = 2 - result.validation.soLanGiaHanHienTai;
+            alert(`Lưu ý: Khách hàng đã gia hạn ${result.validation.soLanGiaHanHienTai} lần. Còn ${soLanConLai} lần.`);
+        }
+        
+        // Nếu validation PASS → CHO PHÉP TIẾP TỤC
         studentData = result.data;
+        studentData.validation = result.validation; // Lưu validation info để dùng sau
         displayStudentInfo(studentData);
         
     } catch (error) {
@@ -270,7 +364,7 @@ function displayStudentInfo(data) {
     tomorrow.setDate(tomorrow.getDate() + 1);
     document.getElementById('replacementDate').min = tomorrow.toISOString().split('T')[0];
 }
-
+let currentChungChiID = null;
 function viewSchedule() {
     const extensionId = document.getElementById('extensionId').value;
     
@@ -290,11 +384,8 @@ function viewSchedule() {
     }
     
     // Fallback: hiển thị tất cả lịch thi
-    const scheduleUrl = extensionId && extensionId !== '' && extensionId !== 'tao' 
-        ? `/NVTN/quanligiahan/lichthi/${extensionId}`
-        : '/NVTN/quanligiahan/lichthi';
-    
-    showScheduleWindow(scheduleUrl);
+    currentChungChiID = null;
+    showScheduleDialog();
 }
 
 async function getChungChiIDAndShowSchedule(extensionId) {
@@ -305,29 +396,18 @@ async function getChungChiIDAndShowSchedule(extensionId) {
         const response = await fetch(`/NVTN/quanligiahan/lay-chung-chi/${sbd}`);
         const result = await response.json();
         
-        let scheduleUrl;
         if (result.success && result.chungChiID) {
-            // Có chứng chỉ ID - hiển thị lịch thi của chứng chỉ đó
-            scheduleUrl = extensionId && extensionId !== '' && extensionId !== 'tao' 
-                ? `/NVTN/quanligiahan/lichthi/${extensionId}?chungChiID=${result.chungChiID}`
-                : `/NVTN/quanligiahan/lichthi?chungChiID=${result.chungChiID}`;
+            currentChungChiID = result.chungChiID;
         } else {
-            // Không có chứng chỉ ID - hiển thị tất cả
-            scheduleUrl = extensionId && extensionId !== '' && extensionId !== 'tao' 
-                ? `/NVTN/quanligiahan/lichthi/${extensionId}`
-                : '/NVTN/quanligiahan/lichthi';
+            currentChungChiID = null;
         }
         
-        showScheduleWindow(scheduleUrl);
+        showScheduleDialog();
         
     } catch (error) {
         console.error('Error getting chungChiID:', error);
-        // Fallback: hiển thị tất cả lịch thi
-        const scheduleUrl = extensionId && extensionId !== '' && extensionId !== 'tao' 
-            ? `/NVTN/quanligiahan/lichthi/${extensionId}`
-            : '/NVTN/quanligiahan/lichthi';
-        
-        showScheduleWindow(scheduleUrl);
+        currentChungChiID = null;
+        showScheduleDialog();
     }
 }
 
@@ -337,113 +417,247 @@ async function getChungChiIDFromSBDAndShowSchedule(sbd, extensionId) {
         const response = await fetch(`/NVTN/quanligiahan/lay-chung-chi/${sbd}`);
         const result = await response.json();
         
-        let scheduleUrl;
         if (result.success && result.chungChiID) {
-            // Có chứng chỉ ID - hiển thị lịch thi của chứng chỉ đó
-            scheduleUrl = extensionId && extensionId !== '' && extensionId !== 'tao' 
-                ? `/NVTN/quanligiahan/lichthi/${extensionId}?chungChiID=${result.chungChiID}`
-                : `/NVTN/quanligiahan/lichthi?chungChiID=${result.chungChiID}`;
+            currentChungChiID = result.chungChiID;
         } else {
-            // Không có chứng chỉ ID - hiển thị tất cả
-            scheduleUrl = extensionId && extensionId !== '' && extensionId !== 'tao' 
-                ? `/NVTN/quanligiahan/lichthi/${extensionId}`
-                : '/NVTN/quanligiahan/lichthi';
+            currentChungChiID = null;
         }
         
-        showScheduleWindow(scheduleUrl);
+        showScheduleDialog();
         
     } catch (error) {
         console.error('Error getting chungChiID from SBD:', error);
-        // Fallback: hiển thị tất cả lịch thi
-        const scheduleUrl = extensionId && extensionId !== '' && extensionId !== 'tao' 
-            ? `/NVTN/quanligiahan/lichthi/${extensionId}`
-            : '/NVTN/quanligiahan/lichthi';
-        
-        showScheduleWindow(scheduleUrl);
+        currentChungChiID = null;
+        showScheduleDialog();
     }
 }
 
-function showScheduleWindow(scheduleUrl) {
-    console.log('Opening schedule window with URL:', scheduleUrl);
+// Hiển thị dialog và tải dữ liệu
+function showScheduleDialog() {
+    document.getElementById('scheduleDialog').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    currentPage = 1; // Reset về trang đầu
+    loadScheduleData(1);
+}
+// Đóng dialog
+function closeScheduleDialog() {
+    document.getElementById('scheduleDialog').classList.add('hidden');
+    document.body.style.overflow = 'auto'; // Restore body scroll
+}
+// Tải dữ liệu lịch thi với phân trang
+async function loadScheduleData(page = 1) {
+    const loadingEl = document.getElementById('scheduleLoading');
+    const contentEl = document.getElementById('scheduleContent');
+    const errorEl = document.getElementById('scheduleError');
     
-    const scheduleWindow = window.open(
-        scheduleUrl, 
-        'lichThi', 
-        'width=1200,height=800,scrollbars=yes,resizable=yes'
-    );
+    // Show loading
+    loadingEl.classList.remove('hidden');
+    contentEl.classList.add('hidden');
+    errorEl.classList.add('hidden');
     
-    if (!scheduleWindow) {
-        alert('Không thể mở cửa sổ lịch thi. Vui lòng cho phép popup trên trình duyệt.');
+    try {
+        let apiUrl = `/NVTN/quanligiahan/api/lichthi?page=${page}&limit=10`;
+        if (currentChungChiID) {
+            apiUrl += `&chungChiID=${currentChungChiID}`;
+        }
+        
+        const response = await fetch(apiUrl);
+        const result = await response.json();
+        
+        if (!response.ok || !result.success) {
+            throw new Error(result.message || 'Không thể tải danh sách lịch thi');
+        }
+        
+        currentPage = page;
+        currentPagination = result.pagination;
+        totalPages = result.pagination.totalPages;
+        
+        displayScheduleData(result.data);
+        displayPagination(result.pagination);
+        
+        // Show content
+        loadingEl.classList.add('hidden');
+        contentEl.classList.remove('hidden');
+        
+    } catch (error) {
+        console.error('Error loading schedule data:', error);
+        
+        // Show error
+        loadingEl.classList.add('hidden');
+        errorEl.classList.remove('hidden');
+    }
+}
+// Hiển thị dữ liệu lịch thi trong table format
+function displayScheduleData(scheduleData) {
+    const scheduleList = document.getElementById('scheduleList');
+    
+    if (!scheduleData || scheduleData.length === 0) {
+        scheduleList.innerHTML = `
+            <div class="text-center py-12 text-gray-500">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+                <p class="mt-2">Không có lịch thi phù hợp</p>
+            </div>
+        `;
         return;
     }
     
-    // Remove existing event listeners to avoid duplicates
-    window.removeEventListener('message', handleScheduleMessage);
-    
-    // Add new event listener
-    window.addEventListener('message', handleScheduleMessage);
+    scheduleList.innerHTML = scheduleData.map((schedule, index) => `
+        <div class="border-b border-gray-200 hover:bg-blue-50 cursor-pointer transition-colors schedule-item p-4" 
+             onclick="selectSchedule(${JSON.stringify(schedule).replace(/"/g, '&quot;')})">
+            <div class="grid grid-cols-5 gap-4 items-center">
+                <div>
+                    <div class="font-semibold text-blue-600 text-sm">${schedule.maBaiThi}</div>
+                </div>
+                <div>
+                    <div class="font-medium text-gray-900 text-sm">${schedule.ngayThi}</div>
+                </div>
+                <div>
+                    <div class="text-gray-700 text-sm">${schedule.gioThi}</div>
+                </div>
+                <div>
+                    <div class="text-gray-700 text-sm">${schedule.diaDiem}</div>
+                </div>
+                <div>
+                    ${schedule.tenChungChi ? `
+                        <span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
+                            ${schedule.tenChungChi}
+                        </span>
+                    ` : `
+                        <span class="text-gray-400 text-xs">-</span>
+                    `}
+                </div>
+            </div>
+        </div>
+    `).join('');
 }
-
-function handleScheduleMessage(event) {
-    console.log('Received message:', event.data);
+// Hiển thị phân trang
+function displayPagination(pagination) {
+    const paginationInfo = document.getElementById('paginationInfo');
+    const paginationButtons = document.getElementById('paginationButtons');
     
-    if (event.data.type === 'SCHEDULE_SELECTED') {
-        const selectedSchedule = event.data.data;
-        updateFormWithSchedule(selectedSchedule);
-        
-        // Close the schedule window if it's still open
-        const scheduleWindow = window.open('', 'lichThi');
-        if (scheduleWindow) {
-            scheduleWindow.close();
+    // Hiển thị thông tin phân trang
+    const startItem = (pagination.currentPage - 1) * pagination.itemsPerPage + 1;
+    const endItem = Math.min(pagination.currentPage * pagination.itemsPerPage, pagination.totalItems);
+    
+    paginationInfo.innerHTML = `
+        Hiển thị ${startItem}-${endItem} trong tổng số ${pagination.totalItems} lịch thi
+    `;
+    
+    // Tạo buttons phân trang
+    let buttonsHtml = '';
+    
+    // Previous button
+    if (pagination.hasPrev) {
+        buttonsHtml += `
+            <button onclick="loadScheduleData(${pagination.currentPage - 1})" 
+                    class="px-3 py-1 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50">
+                ‹ Trước
+            </button>
+        `;
+    } else {
+        buttonsHtml += `
+            <button disabled class="px-3 py-1 bg-gray-100 border border-gray-300 rounded text-sm text-gray-400 cursor-not-allowed">
+                ‹ Trước
+            </button>
+        `;
+    }
+    
+    // Page numbers
+    const maxPagesToShow = 5;
+    let startPage = Math.max(1, pagination.currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(pagination.totalPages, startPage + maxPagesToShow - 1);
+    
+    // Adjust startPage if we're near the end
+    if (endPage - startPage < maxPagesToShow - 1) {
+        startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+        if (i === pagination.currentPage) {
+            buttonsHtml += `
+                <button class="px-3 py-1 bg-blue-500 text-white border border-blue-500 rounded text-sm">
+                    ${i}
+                </button>
+            `;
+        } else {
+            buttonsHtml += `
+                <button onclick="loadScheduleData(${i})" 
+                        class="px-3 py-1 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50">
+                    ${i}
+                </button>
+            `;
         }
     }
+    
+    // Next button
+    if (pagination.hasNext) {
+        buttonsHtml += `
+            <button onclick="loadScheduleData(${pagination.currentPage + 1})" 
+                    class="px-3 py-1 bg-white border border-gray-300 rounded text-sm hover:bg-gray-50">
+                Sau ›
+            </button>
+        `;
+    } else {
+        buttonsHtml += `
+            <button disabled class="px-3 py-1 bg-gray-100 border border-gray-300 rounded text-sm text-gray-400 cursor-not-allowed">
+                Sau ›
+            </button>
+        `;
+    }
+    
+    paginationButtons.innerHTML = buttonsHtml;
 }
-
+// Chọn lịch thi
+function selectSchedule(scheduleData) {
+    // Cập nhật form với dữ liệu đã chọn
+    updateFormWithSchedule(scheduleData);
+    
+    // Đóng dialog
+    closeScheduleDialog();
+}
+// Cập nhật form với dữ liệu lịch thi đã chọn (giữ nguyên function cũ)
 function updateFormWithSchedule(scheduleData) {
     const replacementDateField = document.getElementById('replacementDate');
     if (replacementDateField && scheduleData.ngayThi) {
-        // Convert date format if needed
         const dateParts = scheduleData.ngayThi.split('/');
         if (dateParts.length === 3) {
             const formattedDate = `${dateParts[2]}-${dateParts[1].padStart(2, '0')}-${dateParts[0].padStart(2, '0')}`;
             replacementDateField.value = formattedDate;
         }
     }
+    
     idBaiThi = scheduleData.id || '';
+    
+    // Hiển thị thông báo
     alert(`Đã chọn lịch thi:\nMã bài thi: ${scheduleData.maBaiThi}\nNgày: ${scheduleData.ngayThi}\nGiờ: ${scheduleData.gioThi}\nĐịa điểm: ${scheduleData.diaDiem}`);
 }
-
-async function createExtension() {
-    if (!studentData) {
-        alert('Vui lòng tìm kiếm thông tin thí sinh trước');
-        return;
+// Xử lý đóng dialog khi click outside
+document.addEventListener('DOMContentLoaded', function() {
+    const dialog = document.getElementById('scheduleDialog');
+    if (dialog) {
+        dialog.addEventListener('click', function(e) {
+            if (e.target === dialog) {
+                closeScheduleDialog();
+            }
+        });
     }
     
-    const form = document.getElementById('extensionForm');
-    const formData = new FormData(form);
-    
-    const extensionType = formData.get('extensionType');
-    const extensionReason = formData.get('extensionReason');
-    const replacementDate = formData.get('replacementDate');
-
-    const maBaiThi = idBaiThi || studentData.id;
-    console.log('Creating extension with data:', {
-        sbd: studentData.sbd,
-        maBaiThi: maBaiThi,
-        loaiGiaHan: extensionType,
-        ngayThayThe: replacementDate,
-        liDoGiaHan: extensionReason,
-        thongTinThiSinh: studentData
+    // Xử lý ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !dialog.classList.contains('hidden')) {
+            closeScheduleDialog();
+        }
     });
+});
+async function createExtension() {
+    // Validate form input cơ bản
+    const extensionType = document.getElementById('extensionType').value;
+    const replacementDate = document.getElementById('replacementDate').value;
     
-    // Validate
     if (!extensionType) {
         alert('Vui lòng chọn loại gia hạn');
-        return;
-    }
-    
-    if (!extensionReason || !extensionReason.trim()) {
-        alert('Vui lòng chọn loại gia hạn để tự động điền lý do');
         return;
     }
     
@@ -452,44 +666,23 @@ async function createExtension() {
         return;
     }
     
-    // Tự động tạo lý do gia hạn nếu chưa có (fallback)
-    let finalExtensionReason = extensionReason.trim();
-    if (!finalExtensionReason) {
-        if (extensionType === 'Bình Thường') {
-            finalExtensionReason = 'Bình thường';
-        } else if (extensionType === 'Đặc biệt') {
-            finalExtensionReason = 'Bệnh nặng';
-        } else {
-            finalExtensionReason = 'Khác';
-        }
-    }
-    
-    // Check date is in future
+    // Validation ngày (cơ bản)
     const selectedDate = new Date(replacementDate);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
     if (selectedDate <= today) {
-        alert('Ngày thay thế phải sau ngày hiện tại');
+        alert('Ngày thay thế phải sau ngày hôm nay');
         return;
     }
     
-    // Show loading
     const button = event.target;
     const originalHtml = button.innerHTML;
     button.innerHTML = 'Đang tạo...';
     button.disabled = true;
     
     try {
-        console.log('Creating extension with data:', {
-            sbd: studentData.sbd,
-            maBaiThi: maBaiThi,
-            loaiGiaHan: extensionType,
-            ngayThayThe: replacementDate,
-            liDoGiaHan: finalExtensionReason,
-            thongTinThiSinh: studentData
-        });
-        
+        // ** GỌI API TẠO - KHÔNG CẦN VALIDATION THÊM **
         const response = await fetch('/NVTN/quanligiahan/tao', {
             method: 'POST',
             headers: {
@@ -497,16 +690,14 @@ async function createExtension() {
             },
             body: JSON.stringify({
                 sbd: studentData.sbd,
-                maBaiThi: maBaiThi,
+                maBaiThi: maBaiThi || '',
                 loaiGiaHan: extensionType,
                 ngayThayThe: replacementDate,
-                liDoGiaHan: finalExtensionReason,
                 thongTinThiSinh: studentData
             })
         });
         
         const result = await response.json();
-        console.log('Server response:', result);
         
         if (!response.ok || !result.success) {
             throw new Error(result.error || result.message || 'Không thể tạo phiếu gia hạn');
@@ -518,6 +709,7 @@ async function createExtension() {
     } catch (error) {
         console.error('Lỗi tạo gia hạn:', error);
         alert(error.message || 'Đã xảy ra lỗi khi tạo phiếu gia hạn');
+    } finally {
         button.innerHTML = originalHtml;
         button.disabled = false;
     }
