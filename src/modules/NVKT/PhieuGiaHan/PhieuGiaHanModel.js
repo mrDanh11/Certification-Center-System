@@ -69,9 +69,9 @@ const PhieuGiaHanModel = {
             const query = `
                 SELECT 
                     pgh.PhieuGiaHanID as id,
-                    'SB' + RIGHT('000' + CAST(pdt.SoBaoDanh AS VARCHAR), 3) as sbd,
-                    'BT' + RIGHT('000' + CAST(lt_truoc.BaiThiID AS VARCHAR), 3) as maBaiThi,
-                    'TS' + RIGHT('000' + CAST(ts.ThiSinhID AS VARCHAR), 3) as maThiSinh,
+                    pdt.SoBaoDanh as sbd,
+                    lt_truoc.BaiThiID as maBaiThi,
+                    ts.ThiSinhID as maThiSinh,
                     FORMAT(lt_truoc.ThoiGianThi, 'dd/MM/yyyy') as ngayThiCu,
                     ts.CCCD as cccd,
                     CONVERT(VARCHAR(5), lt_truoc.ThoiGianLamBai, 108) as gioThiCu,

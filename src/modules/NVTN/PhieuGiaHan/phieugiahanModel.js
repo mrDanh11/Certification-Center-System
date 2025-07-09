@@ -81,9 +81,9 @@ const PhieuGiaHanModel = {
             const query = `
                 SELECT 
                     pgh.PhieuGiaHanID as id,
-                    'SB' + RIGHT('000' + CAST(pdt.SoBaoDanh AS VARCHAR), 3) as sbd,
-                    'BT' + RIGHT('000' + CAST(lt_truoc.BaiThiID AS VARCHAR), 3) as maBaiThi,
-                    'TS' + RIGHT('000' + CAST(ts.ThiSinhID AS VARCHAR), 3) as maThiSinh,
+                    pdt.SoBaoDanh as sbd,
+                    lt_truoc.BaiThiID as maBaiThi,
+                    ts.ThiSinhID as maThiSinh,
                     FORMAT(lt_truoc.ThoiGianThi, 'dd/MM/yyyy') as ngayThiCu,
                     ts.CCCD as cccd,
                     CONVERT(VARCHAR(5), lt_truoc.ThoiGianLamBai, 108) as gioThiCu,
@@ -153,7 +153,7 @@ const PhieuGiaHanModel = {
             let query = `
                 SELECT 
                     lt.BaiThiID as id,
-                    'BT' + RIGHT('000' + CAST(lt.BaiThiID AS VARCHAR), 3) as maBaiThi,
+                    lt.BaiThiID as maBaiThi,
                     FORMAT(lt.ThoiGianThi, 'dd/MM/yyyy') as ngayThi,
                     CONVERT(VARCHAR(5), lt.ThoiGianLamBai, 108) as gioThi,
                     lt.DiaDiemThi as diaDiem,
@@ -204,7 +204,7 @@ const PhieuGiaHanModel = {
             let query = `
                 SELECT 
                     lt.BaiThiID as id,
-                    'BT' + RIGHT('000' + CAST(lt.BaiThiID AS VARCHAR), 3) as maBaiThi,
+                    lt.BaiThiID as maBaiThi,
                     cc.TenChungChi as tenChungChi,
                     lt.DiaDiemThi as diaDiem,
                     ISNULL(pt.TenPhong, N'Phòng chưa xác định') as phongThi,
@@ -309,7 +309,7 @@ const PhieuGiaHanModel = {
             const query = `
                 SELECT 
                     ts.ThiSinhID as id,
-                    'SB' + RIGHT('000' + CAST(pdt.SoBaoDanh AS VARCHAR), 3) as sbd,
+                    pdt.SoBaoDanh as sbd,
                     ts.Hoten as hoTen,
                     ts.CCCD as cccd,
                     pd.PhieuID
@@ -342,9 +342,9 @@ const PhieuGiaHanModel = {
         
         const query = `
             SELECT 
-                'SB' + RIGHT('000' + CAST(pdt.SoBaoDanh AS VARCHAR), 3) as sbd,
-                'BT' + RIGHT('000' + CAST(lt.BaiThiID AS VARCHAR), 3) as maBaiThi,
-                'TS' + RIGHT('000' + CAST(ts.ThiSinhID AS VARCHAR), 3) as maThiSinh,
+                pdt.SoBaoDanh as sbd,
+                lt.BaiThiID as maBaiThi,
+                ts.ThiSinhID as maThiSinh,
                 ts.Hoten as hoTen,
                 ts.CCCD as cccd,
                 FORMAT(lt.ThoiGianThi, 'dd/MM/yyyy') as ngayThiCu,

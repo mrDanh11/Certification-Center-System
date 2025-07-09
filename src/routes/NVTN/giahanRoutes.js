@@ -24,6 +24,7 @@ router.get('/lichthi/:giaHanId', phieugiahanController.LayDanhSachLichThi);
 
 // Thêm route API để lấy dữ liệu lịch thi
 router.get('/api/lichthi', phieugiahanController.APILayDanhSachLichThi);
+
 router.get('/api/lichthi/:chungChiID', phieugiahanController.APILayDanhSachLichThi);
 
 // Route tìm kiếm thí sinh theo SBD
@@ -34,6 +35,8 @@ router.post('/tao', phieugiahanController.TaoPhieuGiaHan);
 
 // Route xử lý chọn lịch thi
 router.post('/chonlichthi/:giaHanId', phieugiahanController.ChonLichThi);
+
+router.put('/capnhat/:giaHanId', phieugiahanController.CapNhatLichThi);
 
 // Route xử lý chọn lịch thi khi không có giaHanId (cho trường hợp tạo mới)
 router.post('/chonlichthi', (req, res) => {

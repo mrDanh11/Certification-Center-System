@@ -1,3 +1,4 @@
+const lichthi = require('../../NVKT/LichThi/lichthiModel');
 const PhieuGiaHanModel = require('./phieugiahanModel');
 
 const phieugiahanController = {
@@ -402,7 +403,40 @@ layChungChiIDTheoSBD: async (req, res) => {
             message: 'Có lỗi xảy ra khi lấy chứng chỉ ID'
         });
     }
-}
+},
+  CapNhatLichThi: async (req, res) => {
+    try {
+        const { giaHanId } = req.params;
+        const { lichThiId } = req.body;
+        
+        if (!giaHanId) {
+            return res.status(400).json({
+                success: false,
+                message: 'giaHanId không được trống'
+            });
+        }
+
+        if (!lichThiId) {
+            return res.status(400).json({
+                success: false,
+                message: 'LichThiID không được trống'
+            });
+        }
+        
+        await PhieuGiaHanModel.CapNhatLichThi(giaHanId, lichThiId);
+        
+        res.status(200).json({
+            success: true,
+        });
+    } catch (error) {
+        console.error('Error in CapNhatLichThi:', error);
+        res.json({
+            success: false,
+            message: 'Có lỗi xảy ra khi cập nhật phiếu gia hạn'
+        });
+    }
+},
+
 };
 
 module.exports = phieugiahanController;
