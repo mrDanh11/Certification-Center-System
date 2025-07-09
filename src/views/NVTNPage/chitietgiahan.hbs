@@ -539,7 +539,7 @@ async function updateExtension() {
                 replacementDate: formData.get('replacementDate')
             })
         });
-        
+        console.log(response,response.ok)
         if (!response.ok) {
             throw new Error('Không thể cập nhật yêu cầu gia hạn');
         }
@@ -567,9 +567,9 @@ function updateExtensionReason() {
 }
 
 function cancelExtension() {
-    if (confirm('Bạn có chắc chắn muốn hủy?')) {
-        window.location.href = '/NVTN/quanligiahan';
-    }
+
+
+    window.location.href = '/NVTN/quanligiahan';
 }
 
 // Event listeners

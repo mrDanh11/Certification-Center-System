@@ -4,6 +4,7 @@ const PhieuGiaHanModel = {
     // Helper method để execute query
     executeQuery: async (query) => {
         try {
+            await pool.connect()
             return await pool.request().query(query);
         } catch (err) {
             throw new Error('Database query error: ' + err.message);
@@ -41,6 +42,7 @@ const PhieuGiaHanModel = {
                 INNER JOIN PhieuDangKy pd ON pgh.PhieuID = pd.PhieuID
                 INNER JOIN KhachHang kh ON pd.KhachHangID = kh.KhachHangID
                 INNER JOIN LichThi lt_truoc ON pgh.LichThiTruoc = lt_truoc.BaiThiID
+                LEFT JOIN PhongThi pt ON lt_truoc.PhongThi = pt.PhongThi
                 ${whereCondition}
                 ORDER BY pgh.NgayLap DESC
                 OFFSET ${offset} ROWS FETCH NEXT ${limit} ROWS ONLY
@@ -86,7 +88,7 @@ const PhieuGiaHanModel = {
                     ts.CCCD as cccd,
                     CONVERT(VARCHAR(5), lt_truoc.ThoiGianLamBai, 108) as gioThiCu,
                     ts.Hoten as hoTen,
-                    lt_truoc.DiaDiemThi + ' - ' + ISNULL(lt_truoc.PhongThi, 'Phòng chưa xác định') as diaDiemCu,
+                    lt_truoc.DiaDiemThi + ' - ' + ISNULL(pt.TenPhong, N'Phòng chưa xác định') as diaDiemCu,
                     pgh.LoaiGiaHan as loaiGiaHan,
                     CASE 
                         WHEN pgh.TinhTrang = N'Chờ duyệt' THEN N'Bệnh nặng'
@@ -100,11 +102,12 @@ const PhieuGiaHanModel = {
                 INNER JOIN PhieuDuThi pdt ON ts.ThiSinhID = pdt.ThiSinhID AND ts.PhieuID = pdt.PhieuID
                 INNER JOIN LichThi lt_truoc ON pgh.LichThiTruoc = lt_truoc.BaiThiID
                 LEFT JOIN LichThi lt_sau ON pgh.LichThiSau = lt_sau.BaiThiID
+                LEFT JOIN PhongThi pt ON lt_truoc.PhongThi = pt.PhongThi
                 WHERE pgh.PhieuGiaHanID = ${id}
             `;
             
             const result = await pool.request().query(query);
-            console.log('Query results:', result.recordset); // Debug log
+            // console.log('Query results:', result.recordset); // Debug log
             if (result.recordset.length === 0) {
                 throw new Error('Không tìm thấy phiếu gia hạn');
             }
@@ -127,7 +130,7 @@ const PhieuGiaHanModel = {
                     'BT' + RIGHT('000' + CAST(lt.BaiThiID AS VARCHAR), 3) as maBaiThi,
                     cc.TenChungChi as tenChungChi,
                     lt.DiaDiemThi as diaDiem,
-                    ISNULL(lt.PhongThi, 'Phòng chưa xác định') as phongThi,
+                    ISNULL(pt.TenPhong, N'Phòng chưa xác định') as phongThi,
                     FORMAT(lt.ThoiGianThi, 'dd/MM/yyyy') as ngayThi,
                     FORMAT(lt.ThoiGianLamBai, 'HH:mm') as gioThi,
                     (
@@ -137,14 +140,16 @@ const PhieuGiaHanModel = {
                     ) as soLuongDaDangKy
                 FROM LichThi lt
                 INNER JOIN ChungChi cc ON lt.ChungChiID = cc.ChungChiID
+                LEFT JOIN PhongThi pt ON lt.PhongThi = pt.PhongThi
                 WHERE lt.ThoiGianThi > GETDATE()
                 ${chungChiID ? `AND lt.ChungChiID = ${chungChiID}` : ''}
                 ORDER BY lt.ThoiGianThi ASC
             `;
             
             console.log('Executing query:', query);
+            await pool.connect()
             const result = await pool.request().query(query);
-            console.log('Query results:', result.recordset.length, 'records');
+            // console.log('Query results:', result.recordset.length, 'records');
             
             // Format data
             const formattedResults = result.recordset.map(item => ({
@@ -181,6 +186,7 @@ const PhieuGiaHanModel = {
             }
             
             console.log('Executing query:', query);
+            await pool.connect()
             const result = await pool.request().query(query);
             
             if (result.recordset.length === 0) {
@@ -204,7 +210,8 @@ const PhieuGiaHanModel = {
                     TinhTrang = N'Chờ duyệt'
                 WHERE PhieuGiaHanID = ${phieuGiaHanID}
             `;
-            
+            console.log(query)
+            await pool.connect()
             const result = await pool.request().query(query);
             return result.rowsAffected[0] > 0;
             
@@ -231,7 +238,7 @@ const PhieuGiaHanModel = {
                 INNER JOIN PhieuDangKy pd ON ts.PhieuID = pd.PhieuID
                 WHERE pdt.SoBaoDanh = ${soBaoDanh}
             `;
-            
+            await pool.connect()
             const result = await pool.request().query(query);
             
             if (result.recordset.length === 0) {
@@ -262,17 +269,18 @@ const PhieuGiaHanModel = {
                 ts.CCCD as cccd,
                 FORMAT(lt.ThoiGianThi, 'dd/MM/yyyy') as ngayThiCu,
                 CONVERT(VARCHAR(5), lt.ThoiGianLamBai, 108) as gioThiCu,
-                lt.DiaDiemThi + ' - ' + ISNULL(lt.PhongThi, 'Phòng chưa xác định') as diaDiemCu
+                lt.DiaDiemThi + ' - ' + ISNULL(pt.TenPhong, N'Phòng chưa xác định') as diaDiemCu
             FROM ThiSinh ts
             INNER JOIN PhieuDuThi pdt ON ts.ThiSinhID = pdt.ThiSinhID AND ts.PhieuID = pdt.PhieuID
             INNER JOIN PhieuDangKy pd ON ts.PhieuID = pd.PhieuID
             INNER JOIN LichThi lt ON pdt.LichThi = lt.BaiThiID
+            LEFT JOIN PhongThi pt ON lt.PhongThi = pt.PhongThi
             WHERE pdt.SoBaoDanh = ${soBaoDanh}
         `;
         
         console.log('Executing SQL Server query with pool:', !!pool); // Debug log
         console.log('Query:', query); // Debug query
-        
+        await pool.connect()
         const result = await pool.request().query(query);
         console.log('Query results:', result.recordset); // Debug log
         
@@ -303,7 +311,7 @@ taoMaPhieuTuDong: async () => {
             WHERE MaPhieu LIKE '${prefix}%' 
             ORDER BY MaPhieu DESC
         `;
-        
+        await pool.connect()
         const result = await pool.request().query(query);
         
         let nextNumber = 1;
@@ -332,7 +340,7 @@ taoMaPhieuTuDong: async () => {
                 INNER JOIN LichThi lt ON pdt.LichThi = lt.BaiThiID
                 WHERE pdt.SoBaoDanh = ${soBaoDanh}
             `;
-            
+            await pool.connect()
             const result = await pool.request().query(query);
             
             if (result.recordset.length === 0) {

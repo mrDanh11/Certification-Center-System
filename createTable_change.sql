@@ -299,6 +299,33 @@ INSERT INTO LichThi(ChungChiID, ThoiGianLamBai, ThoiGianThi, DiaDiemThi, PhongTh
 (4, '09:45:00', '2025-06-13', N'Hải Phòng', 4),
 (5, '10:15:00', '2025-06-14', N'Cần Thơ', 5);
 GO
+INSERT INTO LichThi(ChungChiID, ThoiGianLamBai, ThoiGianThi, DiaDiemThi, PhongThi) VALUES
+-- Chứng chỉ A (ChungChiID = 1) - cho SBD001
+(1, '08:00:00', '2025-07-15', N'Hà Nội', N'Phòng A101'),
+(1, '09:30:00', '2025-07-20', N'Hà Nội', N'Phòng A102'),
+(1, '13:30:00', '2025-07-25', N'Hà Nội', N'Phòng A103'),
+(1, '15:00:00', '2025-08-05', N'Hồ Chí Minh', N'Phòng B201'),
+
+-- Chứng chỉ B (ChungChiID = 2) - thêm cho đa dạng
+(2, '08:00:00', '2025-07-18', N'Hồ Chí Minh', N'Phòng B101'),
+(2, '10:00:00', '2025-07-22', N'Đà Nẵng', N'Phòng C101'),
+(2, '14:00:00', '2025-07-28', N'Hà Nội', N'Phòng A104'),
+
+-- Chứng chỉ TOEIC (ChungChiID = 3)
+(3, '08:00:00', '2025-07-16', N'Hà Nội', N'Phòng A201'),
+(3, '13:00:00', '2025-07-21', N'Hồ Chí Minh', N'Phòng B202'),
+(3, '15:30:00', '2025-07-26', N'Đà Nẵng', N'Phòng C201'),
+
+-- Chứng chỉ Kế toán trưởng (ChungChiID = 4)
+(4, '08:30:00', '2025-07-17', N'Hà Nội', N'Phòng A301'),
+(4, '10:30:00', '2025-07-23', N'Hồ Chí Minh', N'Phòng B301'),
+(4, '14:30:00', '2025-07-29', N'Hải Phòng', N'Phòng D101'),
+
+-- Chứng chỉ Lập trình (ChungChiID = 5)
+(5, '09:00:00', '2025-07-19', N'Hà Nội', N'Phòng A401'),
+(5, '11:00:00', '2025-07-24', N'Hồ Chí Minh', N'Phòng B401'),
+(5, '16:00:00', '2025-07-30', N'Cần Thơ', N'Phòng E101');
+GO
 
 INSERT INTO NhanVienCoiThi (NhanVienID, BaiThiID) VALUES
 (1, 1),
@@ -320,11 +347,11 @@ GO
 
 -- 7. PhieuDangKy (NVTiepNhanLap thuộc TiepNhan (id=2), KhachHangID: 1-5)
 INSERT INTO PhieuDangKy(KhachHangID, ThoiGianLap, TinhTrangThanhToan, TinhTrangHuy ,LoaiPhieu, NVTiepNhanLap) VALUES
-(1, '2025-06-01', 1, 0, N'Cá Nhân', 2),
+(1, '2025-06-01', 0, 0, N'Cá Nhân', 2),
 (2, '2025-06-01', 0, 0, N'Cá Nhân', 2),
-(3, '2025-06-02', 1, 0, N'Đơn Vị', 2),
+(3, '2025-06-02', 0, 0, N'Đơn Vị', 2),
 (4, '2025-06-03', 0, 0, N'Cá Nhân', 2),
-(5, '2025-06-03', 1, 0, N'Đơn Vị', 2);
+(5, '2025-06-03', 0, 0, N'Đơn Vị', 2);
 
 -- 8. HoaDon (PhieuID 1-5, NVKeToanLap: 3)
 /*INSERT INTO HoaDon(PhieuID, ThoiGianLap, SoTienTong, SoTienGiam, ThanhTien, TienNhan, NVKeToanLap) VALUES
@@ -383,12 +410,12 @@ INSERT INTO DanhSachDKThi(PhieuID, BaiThiID) VALUES
 (5, 5);
 
 -- 16. PhieuGiaHan (SoBaoDanh: 1-5, LichThiTruoc: 1-5, LichThiSau: 2-5,1)
-INSERT INTO PhieuGiaHan(TinhTrang, NgayLap, PhieuID, LichThiTruoc, LichThiSau) VALUES
-(N'Chờ duyệt', '2025-06-21', 1, 1, 2),
-(N'Đã duyệt', '2025-06-22', 2, 2, 3),
-(N'Đã duyệt', '2025-06-23', 3, 3, 4),
-(N'Từ chối', '2025-06-24', 4, 4, 5),
-(N'Chờ duyệt', '2025-06-25', 5, 5, 1);
+INSERT INTO PhieuGiaHan(LoaiGiaHan, TinhTrang, NgayLap, PhieuID, LichThiTruoc, LichThiSau) VALUES
+(N'Đặc biệt', N'Chờ duyệt', '2025-06-21', 1, 1, 2),
+(N'Bình Thường', N'Đã duyệt', '2025-06-22', 2, 2, 3),
+(N'Đặc biệt', N'Đã duyệt', '2025-06-23', 3, 3, 4),
+(N'Bình Thường', N'Từ chối', '2025-06-24', 4, 4, 5),
+(N'Đặc biệt', N'Chờ duyệt', '2025-06-25', 5, 5, 1);
 
 -- 17. PhieuThanhToan (PhieuDonViID: 3,5; NVKeToanLap: 3)
 /*INSERT INTO PhieuThanhToan(SoTienTong, SoTienGiam, ThanhTien, NgayLap, MaThanhToan, TinhTrangDuyet, PhieuDonViID, NVKeToanLap) VALUES

@@ -209,7 +209,7 @@ const phieugiahanController = {
             const success = await PhieuGiaHanModel.CapNhatLichThi(giaHanId, lichThiId);
             
             if (success) {
-                res.json({ 
+                return res.status(200).json({ 
                     success: true,
                     message: 'Chọn lịch thi thành công',
                     data: {

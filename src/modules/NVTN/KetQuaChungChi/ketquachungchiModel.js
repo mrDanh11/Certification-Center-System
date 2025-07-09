@@ -58,7 +58,7 @@ const KetQuaChungChi = {
         pdt.Diem,
         pdt.KQ
       FROM KetQuaChungChi kqc
-      JOIN PhieuDangKy pdk ON pdk.PhieuID = kqc.PhieuID
+      JOIN PhieuDangKy pdk ON pdk.PhieuID = kqc.NguoiNhanID
       JOIN PhieuDuThi    pdt ON pdk.PhieuID  = pdt.PhieuID
       JOIN ThiSinh       ts  ON pdt.ThiSinhID = ts.ThiSinhID
                             AND pdt.PhieuID   = ts.PhieuID

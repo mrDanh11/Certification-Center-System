@@ -36,7 +36,7 @@ const PhieuGiaHanModel = {
                 ORDER BY pgh.NgayLap DESC
                 OFFSET ${offset} ROWS FETCH NEXT ${limit} ROWS ONLY
             `;
-            
+            await pool.connect()
             const result = await pool.request().query(query);
             
             // Đếm tổng số bản ghi
@@ -76,7 +76,7 @@ const PhieuGiaHanModel = {
                     ts.CCCD as cccd,
                     CONVERT(VARCHAR(5), lt_truoc.ThoiGianLamBai, 108) as gioThiCu,
                     ts.Hoten as hoTen,
-                    lt_truoc.DiaDiemThi + ' - ' + ISNULL(lt_truoc.PhongThi, 'Phòng chưa xác định') as diaDiemCu,
+                    lt_truoc.DiaDiemThi + ' - ' + ISNULL(pt.TenPhong, N'Phòng chưa xác định') as diaDiemCu,
                     CASE 
                         WHEN pgh.TinhTrang = N'Chờ duyệt' THEN N'Bệnh nặng'
                         ELSE N'Lý do khác'
@@ -90,14 +90,15 @@ const PhieuGiaHanModel = {
                 INNER JOIN PhieuDuThi pdt ON ts.ThiSinhID = pdt.ThiSinhID AND ts.PhieuID = pdt.PhieuID
                 INNER JOIN LichThi lt_truoc ON pgh.LichThiTruoc = lt_truoc.BaiThiID
                 LEFT JOIN LichThi lt_sau ON pgh.LichThiSau = lt_sau.BaiThiID
+                LEFT JOIN PhongThi pt ON lt_truoc.PhongThi = pt.PhongThi
                 WHERE pgh.PhieuGiaHanID = ${id}
             `;
-            
+            await pool.connect()
             const result = await pool.request().query(query);
             if (result.recordset.length === 0) {
                 throw new Error('Không tìm thấy phiếu gia hạn');
             }
-            console.log('Chi tiết phiếu gia hạn:', result.recordset[0]);
+            // console.log('Chi tiết phiếu gia hạn:', result.recordset[0]);
             return result.recordset[0];
             
         } catch (err) {
@@ -116,7 +117,7 @@ const PhieuGiaHanModel = {
                 FROM PhieuGiaHan 
                 WHERE PhieuGiaHanID = ${id}
             `;
-            
+            await pool.connect()
             const checkResult = await pool.request().query(checkQuery);
             
             if (checkResult.recordset.length === 0) {
@@ -124,7 +125,7 @@ const PhieuGiaHanModel = {
             }
             
             const currentStatus = checkResult.recordset[0].TinhTrang;
-            console.log('Current status:', currentStatus);
+            // console.log('Current status:', currentStatus);
             
             let newStatus;
             
@@ -145,7 +146,7 @@ const PhieuGiaHanModel = {
             
             console.log('Executing query:', updateQuery);
             console.log('Chuyển trạng thái từ:', currentStatus, '→', newStatus);
-            
+            await pool.connect()
             const result = await pool.request().query(updateQuery);
             
             console.log('Update result:', result);
@@ -169,7 +170,7 @@ const PhieuGiaHanModel = {
                 FROM PhieuGiaHan 
                 WHERE PhieuGiaHanID = ${id}
             `;
-            
+            await pool.connect()
             const checkResult = await pool.request().query(checkQuery);
             
             if (checkResult.recordset.length === 0) {
@@ -188,7 +189,7 @@ const PhieuGiaHanModel = {
             `;
             
             console.log('Executing reject query:', updateQuery);
-            
+            await pool.connect()
             const result = await pool.request().query(updateQuery);
             
             console.log('Reject result:', result);
@@ -212,7 +213,7 @@ const PhieuGiaHanModel = {
                 FROM PhieuGiaHan 
                 WHERE PhieuGiaHanID = ${id}
             `;
-            
+            await pool.connect()
             const checkResult = await pool.request().query(checkQuery);
             
             if (checkResult.recordset.length === 0) {

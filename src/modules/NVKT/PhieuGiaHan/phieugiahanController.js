@@ -9,7 +9,7 @@ const phieugiahanController = {
             const searchValue = req.query.search || '';
 
             const result = await PhieuGiaHanModel.LayDanhSachPhieuGiaHan(page, limit, searchValue);
-            console.log('Danh sách phiếu gia hạn từ database:', result);
+            // console.log('Danh sách phiếu gia hạn từ database:', result);
             // Tạo dữ liệu phân trang
             const pages = [];
             for (let i = 1; i <= result.totalPages; i++) {

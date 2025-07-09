@@ -1,7 +1,7 @@
 const mssql = require('mssql');
 // Thiết lập kết nối với MySQL
 const config = {
-    server: "localhost\\DUCANH",
+    server: "localhost",
     user: "NVHT",
     password: "1234@",
     database: "QuanLyDangKyThi",
