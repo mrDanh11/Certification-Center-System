@@ -416,9 +416,9 @@ INSERT INTO PhieuDangKy(KhachHangID, ThoiGianLap, TinhTrangThanhToan, LoaiPhieu,
 INSERT INTO PhieuCaNhan(PhieuID) VALUES (1), (2), (4);
 
 -- 10. PhieuDonVi (PhieuID 3,5), NVKeToanHuy: 3
-INSERT INTO PhieuDonVi(PhieuID, SoLuong, NVKeToanHuy) VALUES
-(3, 5, 3),
-(5, 10, 3);
+INSERT INTO PhieuDonVi(PhieuID, SoLuong, NVKeToanHuy, ChungChiID, NgayMongMuon) VALUES
+(3, 5, 3, 3, '2025-02-02'),
+(5, 10, 3, 4, '2025-03-03');
 
 -- 11. ThiSinh (PhieuID: 1-5)
 INSERT INTO ThiSinh(PhieuID, CCCD, Hoten, Phai) VALUES
