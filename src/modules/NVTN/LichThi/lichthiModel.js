@@ -54,6 +54,27 @@ const LichThiModel = {
         }
     },
 
+    LayAllLichThi: async () => {
+        try {
+        const stmt = `
+        select * from LichThi
+        `;
+
+        await pool.connect();
+        const result = await pool.request()
+            .query(stmt);
+
+        if (result.recordset.length <= 0){
+            throw new Error('no lich thi found')
+        }
+        await pool.close();
+        return result.recordset;
+        }
+        catch (err){
+                throw new Error('Error get information in lich thi: ' + err.message);
+        }
+    },
+
     // Lấy tất cả lịch thi có sẵn
     LayTatCaLichThi: async () => {
         try {

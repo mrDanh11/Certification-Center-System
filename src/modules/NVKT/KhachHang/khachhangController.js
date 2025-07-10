@@ -10,6 +10,15 @@ const khachhangController = {
         return res.status(500).json({ error: err.message });
       }
     },
+    LayDSKhachHang: async (req, res) => { 
+      try {
+        const infoKH = await KhachHang.LayDSKhachHang(); 
+        return res.status(200).json(infoKH)
+      }
+      catch (err){
+        return res.status(500).json({ error: err.message });
+      }
+    },
     LayThongTinKH: async (req, res) => {
         try {
             const {maDangKy} = req.query;

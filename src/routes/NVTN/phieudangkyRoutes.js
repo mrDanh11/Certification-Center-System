@@ -4,4 +4,6 @@ const phieudangkyController = require('../../modules/NVKT/PhieuDangKy/phieudangk
 
 router.get('/', phieudangkyController.LayThongTinDK);
 router.post('/', phieudangkyController.TaoPhieuDangKy);
+
+router.get('/ALLPhieuDangKy', phieudangkyController.LayDanhSachDK);
 module.exports = router;
