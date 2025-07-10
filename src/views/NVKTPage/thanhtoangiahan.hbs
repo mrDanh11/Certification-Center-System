@@ -54,71 +54,64 @@
         </div>
         
         <!-- Payment Information Section -->
-        <div class="bg-white rounded-lg p-8">
-            <form id="paymentForm" class="space-y-6">
-                <!-- Hidden field for extension ID -->
-                <input type="hidden" id="extensionId" value="{{thongTinGiaHan.id}}">
-                
-                <!-- Amount and Received Amount Row -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="flex items-center">
-                        <label for="amount" class="text-lg font-medium text-gray-700 mr-4 min-w-fit">
-                            Thành tiền:
-                        </label>
-                        <input 
-                            type="number" 
-                            id="amount" 
-                            name="amount"
-                            value="{{thanhToan.soTien}}"
-                            class="flex-1 px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                            readonly
-                        >
+            <div class="bg-white rounded-lg p-8">
+                <form id="paymentForm" class="space-y-6">
+                    <!-- Hidden field for extension ID -->
+                    <input type="hidden" id="extensionId" value="{{thongTinGiaHan.id}}">
+                    
+                    <!-- Amount, Received, Change Row -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <label for="amount" class="block text-lg font-medium text-gray-700 mb-2">
+                                Thành tiền:
+                            </label>
+                            <input 
+                                type="number" 
+                                id="amount" 
+                                name="amount"
+                                value="{{thanhToan.soTien}}"
+                                class="block w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                readonly
+                            >
+                        </div>
+                        
+                        <div>
+                            <label for="received" class="block text-lg font-medium text-gray-700 mb-2">
+                                Tiền nhận:
+                            </label>
+                            <input 
+                                type="number" 
+                                id="received" 
+                                name="received"
+                                class="block w-full px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none mb-4"
+                                oninput="calculateChange()"
+                            >
+                            <label for="change" class="block text-lg font-medium text-gray-700 mb-2 mt-2">
+                                Tiền thối:
+                            </label>
+                            <input 
+                                type="number" 
+                                id="change" 
+                                name="change"
+                                value="0"
+                                class="block w-full px-4 py-2 border border-gray-300 rounded bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                                readonly
+                            >
+                        </div>
                     </div>
                     
-                    <div class="flex items-center">
-                        <label for="received" class="text-lg font-medium text-gray-700 mr-4 min-w-fit">
-                            Tiền nhận:
-                        </label>
-                        <input 
-                            type="number" 
-                            id="received" 
-                            name="received"
-                            class="flex-1 px-4 py-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                            oninput="calculateChange()"
+                    <!-- Confirm Button -->
+                    <div class="flex justify-end pt-4">
+                        <button 
+                            type="button" 
+                            onclick="confirmPayment()"
+                            class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg transition-colors duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 outline-none"
                         >
+                            Xác nhận thanh toán
+                        </button>
                     </div>
-                </div>
-                
-                <!-- Change Row -->
-                <div class="flex justify-end">
-                    <div class="flex items-center w-full md:w-1/2">
-                        <label for="change" class="text-lg font-medium text-gray-700 mr-4 min-w-fit">
-                            Tiền thối:
-                        </label>
-                        <input 
-                            type="number" 
-                            id="change" 
-                            name="change"
-                            value="0"
-                            class="flex-1 px-4 py-2 border border-gray-300 rounded bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                            readonly
-                        >
-                    </div>
-                </div>
-                
-                <!-- Confirm Button -->
-                <div class="flex justify-end pt-4">
-                    <button 
-                        type="button" 
-                        onclick="confirmPayment()"
-                        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8 py-3 rounded-lg transition-colors duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 outline-none"
-                    >
-                        Xác nhận thanh toán
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
+                </form>
+            </div>
 </div>
 
 <script>
@@ -134,6 +127,7 @@ async function confirmPayment() {
     const form = document.getElementById('paymentForm');
     const formData = new FormData(form);
     const paymentData = Object.fromEntries(formData);
+    console.log('Payment Data:', paymentData);
     
     // Validate payment
     const amount = parseFloat(paymentData.amount) || 0;
@@ -170,6 +164,31 @@ async function confirmPayment() {
         }
         
         const result = await response.json();
+        // 2. Gọi API lưu hóa đơn
+        await fetch('/NVKT/HoaDon/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                maDangKy: '{{thongTinGiaHan.maThiSinh}}',           // Thay đổi từ phieuID thành maDangKy
+                TongTien: amount,                // Thay đổi từ soTienTong thành TongTien
+                SoTienGiam: 0,                     // Thay đổi từ soTienGiam thành TiemGiam
+                ThanhTien: amount,               // Giữ nguyên ThanhTien
+                TienNhan: received,              // Giữ nguyên TienNhan
+                NVKeToanLap: 3,                  // Giữ nguyên NVKeToanLap
+                HinhThucThanhToan: 'Tiền mặt'
+            })
+        });
+
+        // 3. Gọi API thêm vào danh sách chờ
+        await fetch('/NVKT/dsCho/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                thiSinhID: '{{thongTinGiaHan.maThiSinh}}',  // Bổ sung thiSinhID từ dữ liệu view
+                phieuID: '{{thongTinGiaHan.maThiSinh}}',                       // Giữ nguyên phieuID
+                tinhTrang: 0
+            })
+        });
         
         if (confirm('Xác nhận thanh toán?')) {
             alert('Thanh toán thành công!');

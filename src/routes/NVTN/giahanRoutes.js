@@ -8,29 +8,10 @@ router.get('/', phieugiahanController.LayDanhSachPhieuGiaHan);
 // Route tạo phiếu gia hạn - GET (hiển thị form)
 
 router.get('/api/ALLGiaHan', phieugiahanController.LayAllGiaHan);
-//router.post('/tao', phieugiahanController.taoPhieuGiaHan);
-
-
-// Route tìm thông tin thí sinh theo SBD
-router.get('/tim-thi-sinh/:sbd', phieugiahanController.timThongTinThiSinh);
-
-// Route lấy chứng chỉ ID theo SBD
-router.get('/lay-chung-chi/:sbd', phieugiahanController.layChungChiIDTheoSBD);
 
 // Route xem chi tiết
 router.get('/chitiet/:id', phieugiahanController.chiTietPhieuGiaHan);
-
-// Route xem lịch thi
-router.get('/lichthi', phieugiahanController.LayDanhSachLichThi);
-router.get('/lichthi/:giaHanId', phieugiahanController.LayDanhSachLichThi);
-
-// Thêm route API để lấy dữ liệu lịch thi
-router.get('/api/lichthi', phieugiahanController.APILayDanhSachLichThi);
-
-router.get('/api/lichthi/:chungChiID', phieugiahanController.APILayDanhSachLichThi);
-
-// Route tìm kiếm thí sinh theo SBD
-router.get('/timkiem', phieugiahanController.TimKiemThiSinh);
+router.get('/chitiet-tao', phieugiahanController.taoPhieuGiaHan);
 
 // Route tạo yêu cầu gia hạn
 router.post('/tao', phieugiahanController.TaoPhieuGiaHan);

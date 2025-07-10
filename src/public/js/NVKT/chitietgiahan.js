@@ -38,9 +38,26 @@ function handleApprove() {
             }
             return response.json();
         })
-        .then(data => {
+        .then(async (data) => {
             console.log('Response data:', data);
             if (data.success || data.message) {
+                // ✅ THÊM: Ghi vào danh sách chờ sau khi duyệt thành công
+                try {
+                    await fetch('/NVKT/dsCho', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            thiSinhID: chiTietGiaHan.maThiSinh || chiTietGiaHan.ThiSinhID,
+                            phieuID: id,
+                            tinhTrang: 0 // 0: chờ xử lý
+                        })
+                    });
+                    console.log('✅ Đã thêm vào danh sách chờ');
+                } catch (err) {
+                    console.error('❌ Lỗi khi thêm vào danh sách chờ:', err);
+                    // Không throw error để không làm gián đoạn flow chính
+                }
+
                 alert('Duyệt phiếu gia hạn thành công!');
                 // Reload trang để cập nhật trạng thái
                 window.location.reload();
@@ -62,7 +79,7 @@ function handleApprove() {
             `;
         });
     }
-}
+}-
 
 function handleReject() {
     const lyDoTuChoi = prompt('Nhập lý do từ chối:', 'Không đủ điều kiện');
@@ -192,39 +209,19 @@ function renderStatusBadge(tinhTrang) {
 
 function renderActionButtons(tinhTrang) {
     const actionButtons = document.getElementById('actionButtons');
-    if (!actionButtons) {
-        console.error('actionButtons element not found!');
-        return;
-    }
-    
-    // Clear existing buttons
+    if (!actionButtons) return;
     actionButtons.innerHTML = '';
-    
-    console.log('Rendering buttons for status:', tinhTrang);
-    
-    // Normalize the status (trim whitespace)
-    const normalizedStatus = tinhTrang ? tinhTrang.trim() : '';
-    console.log('Normalized status:', normalizedStatus);
-    
-    // Logic nghiệp vụ theo yêu cầu:
-    // 1. Chờ duyệt: Có thể Duyệt, Thanh toán, Từ chối
-    // 2. Đã thanh toán: Chỉ có thể Duyệt
-    // 3. Đã duyệt, Từ chối: Chỉ có thể xem (chỉ nút Quay lại)
-    
-    if (normalizedStatus === 'Chờ duyệt') {
-        console.log('Status: Chờ duyệt - Adding approve, reject buttons');
-        
-        // Lấy loại gia hạn để quyết định có hiển thị nút thanh toán không
-        const chiTietGiaHan = window.chiTietGiaHan || {};
-        const loaiGiaHan = chiTietGiaHan.loaiGiaHan ? chiTietGiaHan.loaiGiaHan.trim() : '';
-        console.log('Loại gia hạn:', loaiGiaHan);
-        
+
+    const chiTietGiaHan = window.chiTietGiaHan || {};
+    const loaiGiaHan = chiTietGiaHan.loaiGiaHan ? chiTietGiaHan.loaiGiaHan.trim() : '';
+
+    // Chỉ hiển thị nút Duyệt và Từ chối khi trạng thái là "Chờ duyệt"
+    if (tinhTrang === 'Chờ duyệt') {
         // Nút Duyệt
         actionButtons.innerHTML += `
             <button 
                 id="approveBtn"
                 type="button" 
-                onclick="handleApprove()"
                 class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-semibold rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200 min-w-24"
             >
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -233,7 +230,6 @@ function renderActionButtons(tinhTrang) {
                 Duyệt
             </button>
         `;
-        
         // Nút Từ chối
         actionButtons.innerHTML += `
             <button 
@@ -248,56 +244,28 @@ function renderActionButtons(tinhTrang) {
                 Từ chối
             </button>
         `;
-        
-        // Nút Thanh toán - chỉ hiển thị khi LoaiGiaHan = "Bình Thường"
-        if (loaiGiaHan === 'Bình Thường') {
-            console.log('Loại gia hạn là Bình Thường - Adding payment button');
-            actionButtons.innerHTML += `
-                <button 
-                    id="paymentBtn"
-                    type="button" 
-                    onclick="handlePayment()"
-                    class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-semibold rounded-md text-sky-900 bg-sky-200 hover:bg-sky-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 transition-colors duration-200 min-w-24"
-                >
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                    </svg>
-                    Thanh toán
-                </button>
-            `;
-        } else {
-            console.log('Loại gia hạn là Đặc biệt - Payment button will not be shown');
-        }
-    } 
-    else if (normalizedStatus === 'Đã thanh toán') {
-        console.log('Status: Đã thanh toán - Adding only approve button');
-        
-        // Chỉ nút Duyệt
-        actionButtons.innerHTML += `
-            <button 
-                id="approveBtn"
-                type="button" 
-                onclick="handleApprove()"
-                class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-sm font-semibold rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200 min-w-24"
-            >
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                </svg>
-                Duyệt
-            </button>
-        `;
+
+        // Gán sự kiện cho nút Duyệt
+        setTimeout(() => {
+            const approveBtn = document.getElementById('approveBtn');
+            if (approveBtn) {
+                approveBtn.onclick = function() {
+                    if (loaiGiaHan === 'Bình Thường') {
+                        // Chuyển sang trang thanh toán
+                        window.location.href = `/NVKT/quanligiahan/thanhtoan/${chiTietGiaHan.id}`;
+                    } else if (loaiGiaHan === 'Đặc biệt') {
+                        // Duyệt luôn
+                        handleApprove();
+
+                    } else {
+                        alert('Loại gia hạn không hợp lệ!');
+                    }
+                };
+            }
+        }, 0);
     }
-    else if (normalizedStatus === 'Đã duyệt' || normalizedStatus === 'Từ chối') {
-        console.log('Status: ' + normalizedStatus + ' - Read only mode, only back button');
-        // Chỉ cho phép xem, không có nút thao tác nào khác
-    }
-    else {
-        console.log('Unknown status: ' + normalizedStatus + ' - Fallback to read only mode');
-        // Trạng thái không xác định, chỉ cho phép xem
-    }
-    
-    // Luôn luôn hiển thị nút Quay lại
-    console.log('Adding back button');
+
+    // Luôn có nút Quay lại
     actionButtons.innerHTML += `
         <button 
             type="button" 
@@ -310,7 +278,4 @@ function renderActionButtons(tinhTrang) {
             Quay lại
         </button>
     `;
-    
-    console.log('Final buttons HTML:', actionButtons.innerHTML);
-    console.log('Number of buttons rendered:', actionButtons.children.length);
 }

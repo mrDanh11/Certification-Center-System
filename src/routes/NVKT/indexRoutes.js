@@ -8,6 +8,7 @@ const hoadonRoutes = require("./hoadonRoutes");
 const phieuthanhtoanRoutes = require("./phieuthanhtoanRoutes");
 const sendemailRoutes = require("./sendemailRoutes");
 const giahanRoutes = require('./giahanRoutes');
+const dsChoRoutes = require('./dsChoRoutes');
 module.exports = (app) => {
 
     app.use('/NVKT/quanligiahan', giahanRoutes);
@@ -27,6 +28,8 @@ module.exports = (app) => {
     app.use('/NVKT/danhsachDKThi', danhsachDKThiRoutes)
 
     app.use('/NVKT/lichthi', lichthiRoutes)
+
+    app.use('/NVKT/dsCho', dsChoRoutes)
 
     app.use('/NVKT',viewsRoutes)
 }

@@ -2,8 +2,9 @@ const HoaDon = require('./hoadonModel');
 const hoadonController = {
     LuuHoaDon: async (req, res) => {
         try {
-            const { maDangKy, TongTien, TiemGiam, ThanhTien, TienNhan, NVKeToanLap,HinhThucThanhToan } = req.body;
-            const result = await HoaDon.LuuHoaDon(maDangKy, TongTien, TiemGiam, ThanhTien, TienNhan, NVKeToanLap,HinhThucThanhToan);
+            console.log('Received data:', req.body);
+            const { maDangKy, TongTien, SoTienGiam, ThanhTien, TienNhan, NVKeToanLap,HinhThucThanhToan } = req.body;
+            const result = await HoaDon.LuuHoaDon(maDangKy, TongTien, SoTienGiam, ThanhTien, TienNhan, NVKeToanLap,HinhThucThanhToan);
             if (result) {
                 res.json({ message: 'Lưu Hóa Đơn thành công' });
             } else {
