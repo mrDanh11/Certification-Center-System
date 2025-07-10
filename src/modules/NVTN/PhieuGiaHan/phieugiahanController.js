@@ -39,6 +39,16 @@ const phieugiahanController = {
         }
     },
 
+    LayAllGiaHan: async (req, res) => { 
+      try {
+        const infoGH = await PhieuGiaHanModel.LayAllGiaHan(); 
+        return res.status(200).json(infoGH)
+      }
+      catch (err){
+        return res.status(500).json({ error: err.message });
+      }
+    },
+
     // Lấy chi tiết phiếu gia hạn
     LayChiTietPhieuGiaHan: async (req, res) => {
         try {

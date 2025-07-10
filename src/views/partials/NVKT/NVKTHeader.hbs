@@ -1,54 +1,64 @@
 <header class="sticky top-0 z-10">
-    <nav id="navbar" class="flex items-center h-128 px-8 py-4 backdrop-blur-md  bg-slate-400 opacity-85">
+  <nav id="navbar"
+    class="flex items-center justify-between h-20 px-6 md:px-12 py-2 backdrop-blur-md bg-slate-800/90 shadow-md rounded-b-lg">
 
-        <div class="logo-container h-18 w-24 md:w-36 mr-0 block">
-            <a href="/NVKT" class="w-full h-auto">
-                <img src="/img/logo.png" class="w-24 h-12" alt="logoSushiABD">
-            </a>
-        </div>
+    <!-- Logo -->
+    <div class="logo-container h-16 w-24 md:w-36 flex-shrink-0">
+      <a href="/NVKT" class="block w-full h-full">
+        <img src="/img/logo.png" class="w-full h-full object-contain" alt="logoSushiABD" />
+      </a>
+    </div>
 
-        <ul class="nav-list flex px-4 text-white text-base md:space-x-12">
-            <li><a href="/NVKT/ThanhToan"
-                    class="transition-transform duration-200 transform hover:scale-110 hover:font-bold hover:text-green-700">
-                    Thanh toán đăng ký</a></li>
-        </ul>
+    <!-- Nav Links -->
+    <div class="flex items-center space-x-4 md:space-x-6 ml-6 text-sm">
+      <a href="/NVKT"
+        class="transition duration-200 hover:bg-blue hover:text-white px-3 py-2 rounded-md text-white font-medium">
+        Trang chủ
+      </a>
 
-        <ul class="nav-list flex px-4 text-white text-base md:space-x-12">
-            <li><a href="/NVKT/ThanhToan/ChuaThanhToan"
-                    class="transition-transform duration-200 transform hover:scale-110 hover:font-bold hover:text-green-700">
-                    Danh sách chưa thanh toán</a></li>
-        </ul>
-        <ul class="nav-list flex px-4 text-white text-base md:space-x-12">
-            <li><a href="/NVKT/quanligiahan"
-                    class="transition-transform duration-200 transform hover:scale-110 hover:font-bold hover:text-green-700">
-                    Quản lí gia hạn</a></li>
-        </ul>
-        <ul class="flex space-x-4 ml-auto items-center relative">
-            <li id="userNameContainer" class="text-white font-semibold hidden md:block"></li>
+      <span class="text-gray-400">|</span>
 
-            <!-- Icon và dropdown -->
-            <li class="relative">
-                <button id="userMenuBtn" class="flex items-center justify-center text-white focus:outline-none">
-                <i class="fa-solid fa-user text-3xl"></i>
-                </button>
+      <a href="/NVKT/ThanhToan"
+        class="transition duration-200 hover:bg-blue hover:text-white px-3 py-2 rounded-md text-white font-medium">
+        Thanh toán đăng ký
+      </a>
 
-                <!-- Dropdown -->
-                <div id="userDropdown" class="absolute right-0 mt-2 w-40 bg-white rounded-md shadow-lg z-20 hidden">
-                <a href="/" id="logoutBtn"
-                    class="block px-4 py-2 text-gray-800 hover:bg-gray-200 hover:text-red-600">
-                    Đăng xuất
-                </a>
-                </div>
-            </li>
-        </ul>
-                </a>
-                </div>
-            </li>
-        </ul>
+      <span class="text-gray-400">|</span>
 
+      <a href="/NVKT/ThanhToan/ChuaThanhToan"
+        class="transition duration-200 hover:bg-blue hover:text-white px-3 py-2 rounded-md text-white font-medium">
+        Danh sách chưa thanh toán
+      </a>
 
-    </nav>
+      <span class="text-gray-400">|</span>
+
+      <a href="/NVKT/quanligiahan"
+        class="transition duration-200 hover:bg-blue hover:text-white px-3 py-2 rounded-md text-white font-medium">
+        Quản lí gia hạn
+      </a>
+    </div>
+
+    <!-- User Info -->
+    <div class="flex items-center space-x-4 relative ml-auto">
+      <!-- Username -->
+      <span id="userNameContainer" class="text-white font-semibold hidden md:block"></span>
+
+      <!-- Dropdown Button -->
+      <button id="userMenuBtn"
+        class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-700 hover:bg-slate-600 focus:outline-none transition">
+        <i class="fa-solid fa-user text-xl text-white"></i>
+      </button>
+
+      <!-- Dropdown Menu -->
+      <div id="userDropdown"
+        class="absolute top-14 right-0 w-40 bg-white rounded-md shadow-lg z-20 hidden overflow-hidden">
+        <a href="/" id="logoutBtn"
+          class="block px-4 py-2 text-gray-800 hover:bg-gray-100 hover:text-red-500 transition">Đăng xuất</a>
+      </div>
+    </div>
+  </nav>
 </header>
+
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {

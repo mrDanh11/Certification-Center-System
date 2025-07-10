@@ -5,6 +5,8 @@ const lichthiController = require('../../modules/NVTN/LichThi/lichthiController'
 // Route cho trang lịch thi
 router.get('/', lichthiController.LayTatCaLichThi);
 
+router.get('/AllLicThi', lichthiController.LayAllLichThi);
+
 // Route cho lịch thi theo loại chứng chỉ
 router.get('/loai/:chungChiId', lichthiController.APILayLichThiTheoLoai);
 

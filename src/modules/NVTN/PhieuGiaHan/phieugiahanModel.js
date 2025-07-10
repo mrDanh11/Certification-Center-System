@@ -11,6 +11,27 @@ const PhieuGiaHanModel = {
         }
     },
 
+    LayAllGiaHan: async () => {
+        try {
+        const stmt = `
+        select * from PhieuGiaHan
+        `;
+
+        await pool.connect();
+        const result = await pool.request()
+            .query(stmt);
+
+        if (result.recordset.length <= 0){
+            throw new Error('no gia han found')
+        }
+        await pool.close();
+        return result.recordset;
+        }
+        catch (err){
+                throw new Error('Error get information in gia han: ' + err.message);
+        }
+    },
+
     // Lấy danh sách phiếu gia hạn với phân trang
     LayDanhSachPhieuGiaHan: async (page = 1, limit = 10, searchValue = '') => {
         try {

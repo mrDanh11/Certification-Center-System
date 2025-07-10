@@ -28,6 +28,16 @@ const lichthiController = {
         }
     },
 
+    LayAllLichThi: async (req, res) => { 
+      try {
+        const infoLT = await LichThiModel.LayAllLichThi(); 
+        return res.status(200).json(infoLT)
+      }
+      catch (err){
+        return res.status(500).json({ error: err.message });
+      }
+    },
+
     // Lấy tất cả lịch thi
     LayTatCaLichThi: async (req, res) => {
         try {

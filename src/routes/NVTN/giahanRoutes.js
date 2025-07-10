@@ -6,6 +6,8 @@ const phieugiahanController = require('../../modules/NVTN/PhieuGiaHan/phieugiaha
 router.get('/', phieugiahanController.LayDanhSachPhieuGiaHan);
 
 // Route tạo phiếu gia hạn - GET (hiển thị form)
+
+router.get('/api/ALLGiaHan', phieugiahanController.LayAllGiaHan);
 //router.post('/tao', phieugiahanController.taoPhieuGiaHan);
 
 

@@ -1,10 +1,54 @@
-<div class="relative mt-0 header-bg flex items-center justify-center w-full h-[600px]">
-    <img src="/img/slider.jpg" class="absolute h-full w-full" alt="">
-    <h1 class="absolute text-9xl font-bold text-center">Nhân Viên Quản Lý</h1>
-</div>
+<section class="relative bg-white py-12">
+  <!-- Tiêu đề -->
+  <h1 class="text-center text-3xl font-bold text-blue-700 pb-4 border-b border-gray-200">Trang chủ</h1>
+  <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 items-center mt-8">
 
-<div>
-    <div>
+    <!-- Bên trái: Hình nền và lời chào -->
+    <div class="relative h-[400px] w-full rounded-xl overflow-hidden shadow-md">
+      <img src="/img/slider.jpg" class="absolute h-full w-full object-cover" alt="Banner" />
+      <div class="absolute inset-0 bg-black/50"></div>
+      <div class="absolute inset-0 flex flex-col items-start justify-center text-white p-6">
+        <h1 class="text-3xl md:text-5xl font-bold mb-3 drop-shadow-lg">Nhân Viên Quản Lý</h1>
+        <p class="text-lg md:text-xl drop-shadow">Tạo lịch thi và quản lý tài nguyên</p>
+      </div>
     </div>
-</div>
 
+    <!-- Bên phải: Các ô thống kê -->
+    <div>
+      <h2 class="text-2xl font-bold mb-1">Thống kê lịch thi</h2>
+      <p class="text-gray-500 mb-6">Tình hình các lịch thi</p>
+
+      <div class="grid grid-cols-1 gap-4">
+        <!-- Phiếu đăng ký mới -->
+        <div class="bg-sky-100 hover:bg-sky-200 transition p-5 rounded-xl shadow flex items-start gap-4">
+          <div class="bg-sky-500 text-white p-3 rounded-full">
+            <i class="fa-solid fa-file-circle-plus w-6 h-6"></i>
+          </div>
+          <div>
+            <p id="so-lich-thi" class="text-2xl font-bold">0</p>
+            <p class="text-gray-700">Số lượng lịch thi</p>
+            <a href="/NVTN/tiepnhan" class="text-sm underline text-green-700 hover:text-green-900">Tạo lịch thi →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+(async () => {
+  try {
+    const [resLichThi] = await Promise.all([
+      fetch("/NVTN/lichthi/AllLicThi"),
+    ]);
+    const lichthi = await resLichThi.json();
+
+    const soLT = lichthi.length;
+
+    document.getElementById('so-lich-thi').innerText = soLT;
+  } catch (err) {
+    console.error("Lỗi khi lấy thống kê tiếp nhận:", err);
+  }
+})();
+</script>
