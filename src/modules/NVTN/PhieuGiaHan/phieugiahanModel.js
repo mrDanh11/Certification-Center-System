@@ -307,15 +307,15 @@ ValidateGiaHan: async (sbd) => {
         }
         
         // // 3. Kiểm tra thời gian (ít nhất 24 giờ trước khi thi)
-        // const thoiGianInfo = await PhieuGiaHanModel.KiemTraThoiGianGiaHan(sbd);
-        // if (thoiGianInfo.gioConLai < 24) {
-        //     const ngayThi = new Date(thoiGianInfo.ThoiGianThi).toLocaleDateString('vi-VN');
-        //     const gioThi = thoiGianInfo.ThoiGianLamBai;
-        //     errors.push({
-        //         field: 'thoiGian',
-        //         message: `Chỉ còn ${thoiGianInfo.gioConLai} giờ đến kỳ thi (${ngayThi} lúc ${gioThi}). Cần ít nhất 24 giờ để gia hạn.`
-        //     });
-        // }
+        const thoiGianInfo = await PhieuGiaHanModel.KiemTraThoiGianGiaHan(sbd);
+        if (thoiGianInfo.gioConLai < 24) {
+            const ngayThi = new Date(thoiGianInfo.ThoiGianThi).toLocaleDateString('vi-VN');
+            const gioThi = thoiGianInfo.ThoiGianLamBai;
+            errors.push({
+                field: 'thoiGian',
+                message: `Chỉ còn ${thoiGianInfo.gioConLai} giờ đến kỳ thi (${ngayThi} lúc ${gioThi}). Cần ít nhất 24 giờ để gia hạn.`
+            });
+        }
         
         return {
             isValid: errors.length === 0,

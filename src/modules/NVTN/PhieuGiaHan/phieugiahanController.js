@@ -108,7 +108,7 @@ const phieugiahanController = {
             }
             
             // Tìm PhieuID và LichThi hiện tại từ SBD
-            const studentInfo = await PhieuGiaHanModel.TimKiemThiSinhTheoSBD(soBaoDanh.toString());
+            const studentInfo = await ThiSinh.TimKiemThiSinhTheoSBD(soBaoDanh.toString());
             if (!studentInfo) {
                 return res.status(400).json({ 
                     success: false,
@@ -125,13 +125,12 @@ const phieugiahanController = {
 
             const scheduleResult = await lichThiModel.layLichThiTruoc(currentScheduleQuery);
             const lichThiTruoc = scheduleResult.recordset[0]?.lichThiTruoc || 1;
-            
+
             // Tạo phiếu gia hạn mới với cấu trúc đúng của bảng PhieuGiaHan
             const phieuGiaHanID = await PhieuGiaHanModel.TaoPhieuGiaHan(
                 studentInfo.PhieuID,    // PhieuID từ thông tin thí sinh
                 lichThiTruoc,           // LichThiTruoc (lịch thi hiện tại)
-                ngayThayThe,
-                maBaiThi,                   // LichThiSau (sẽ được cập nhật sau khi chọn lịch thi)
+                ngayThayThe,                  // LichThiSau (sẽ được cập nhật sau khi chọn lịch thi)
                 'Chờ duyệt',           // TinhTrang
                 loaiGiaHan             // LoaiGiaHan
             );
