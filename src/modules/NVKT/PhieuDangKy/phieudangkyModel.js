@@ -93,13 +93,13 @@ const PhieuDangKy = {
     const infoRequest = transaction.request();
     await infoRequest
       .input('PhieuID', sql_Int, phieuID)
-      .input('LoaiBaiThi', sql_Str, baiThiInfo.loaiBaiThi)
+      .input('ChungChiID', sql_Str, baiThiInfo.loaiBaiThi)
       .input('NgayMongMuon', sql_Date, baiThiInfo.ngayThi)
       .input('YeuCau', sql_Str, baiThiInfo.yeuCau || '')
       .input('SoLuong', sql_Int, soLuong)
       .query(`
-        INSERT INTO PhieuDonVi (PhieuID, LoaiBaiThi, NgayMongMuon, YeuCau, SoLuong)
-        VALUES (@PhieuID, @LoaiBaiThi, @NgayMongMuon, @YeuCau, @SoLuong)
+        INSERT INTO PhieuDonVi (PhieuID, ChungChiID, NgayMongMuon, YeuCau, SoLuong)
+        VALUES (@PhieuID, @ChungChiID, @NgayMongMuon, @YeuCau, @SoLuong)
       `);
   },
 
