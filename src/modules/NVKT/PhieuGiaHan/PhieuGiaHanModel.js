@@ -75,8 +75,11 @@ const PhieuGiaHanModel = {
                     FORMAT(lt_truoc.ThoiGianThi, 'dd/MM/yyyy') as ngayThiCu,
                     ts.CCCD as cccd,
                     CONVERT(VARCHAR(5), lt_truoc.ThoiGianLamBai, 108) as gioThiCu,
+                    CONVERT(VARCHAR(5), lt_sau.ThoiGianLamBai, 108) as gioThiMoi,
                     ts.Hoten as hoTen,
                     lt_truoc.DiaDiemThi + ' - ' + ISNULL(pt.TenPhong, N'Phòng chưa xác định') as diaDiemCu,
+                    lt_sau.DiaDiemThi + ' - ' + ISNULL(pt.TenPhong, N'Phòng chưa xác định') as diaDiemMoi,
+                    cc.Gia as giaChungChi,
                     CASE 
                         WHEN pgh.TinhTrang = N'Chờ duyệt' THEN N'Bệnh nặng'
                         ELSE N'Lý do khác'
@@ -91,6 +94,7 @@ const PhieuGiaHanModel = {
                 INNER JOIN LichThi lt_truoc ON pgh.LichThiTruoc = lt_truoc.BaiThiID
                 LEFT JOIN LichThi lt_sau ON pgh.LichThiSau = lt_sau.BaiThiID
                 LEFT JOIN PhongThi pt ON lt_truoc.PhongThiID = pt.PhongThiID
+                LEFT JOIN ChungChi cc On lt_sau.ChungChiID = cc.ChungChiID
                 WHERE pgh.PhieuGiaHanID = ${id}
             `;
             await pool.connect()
@@ -98,7 +102,6 @@ const PhieuGiaHanModel = {
             if (result.recordset.length === 0) {
                 throw new Error('Không tìm thấy phiếu gia hạn');
             }
-            // console.log('Chi tiết phiếu gia hạn:', result.recordset[0]);
             return result.recordset[0];
             
         } catch (err) {
@@ -201,9 +204,22 @@ const PhieuGiaHanModel = {
             throw new Error('Error rejecting PhieuGiaHan: ' + err.message);
         }
     },
-
+    CapNhatDaDuyet: async (id) => {
+    try {
+        const updateQuery = `
+            UPDATE PhieuGiaHan
+            SET TinhTrang = N'Đã duyệt'
+            WHERE PhieuGiaHanID = ${id}
+        `;
+        await pool.connect();
+        const result = await pool.request().query(updateQuery);
+        return result.rowsAffected[0] > 0;
+    } catch (err) {
+        throw new Error('Error updating to Đã duyệt: ' + err.message);
+    }
+},
     // Cập nhật trạng thái thanh toán
-    CapNhatThanhToan: async (id, soTien, tienNhan, tienThoi, phuongThucThanhToan) => {
+    CapNhatThanhToan: async (id) => {
         try {
             console.log('CapNhatThanhToan - Params:', { id, soTien, tienNhan, tienThoi, phuongThucThanhToan });
             

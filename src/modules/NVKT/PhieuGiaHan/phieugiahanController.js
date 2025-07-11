@@ -1,5 +1,6 @@
 const PhieuGiaHanModel = require('./PhieuGiaHanModel');
-
+const HoaDon = require('../HoaDon/hoadonModel');
+const DanhSachCho = require('../DanhSachCho/dsChoModel');
 const phieugiahanController = {
     // Lấy danh sách phiếu gia hạn
     LayDanhSachPhieuGiaHan: async (req, res) => {
@@ -190,13 +191,13 @@ const phieugiahanController = {
                 maThiSinh: chiTietGiaHan.maThiSinh,
                 ngayThiMoi: chiTietGiaHan.ngayThayThe,
                 cccd: chiTietGiaHan.cccd,
-                gioThiMoi: '14:00', // Có thể lấy từ lịch thi mới
+                gioThiMoi: chiTietGiaHan.gioThiMoi, // Có thể lấy từ lịch thi mới
                 hoTen: chiTietGiaHan.hoTen,
-                diaDiemMoi: 'Phòng 102 - Tòa B' // Có thể lấy từ lịch thi mới
+                diaDiemMoi: chiTietGiaHan.diaDiemMoi // Có thể lấy từ lịch thi mới
             };
             
             const thanhToan = {
-                soTien: 500000, // Phí gia hạn cố định hoặc tính toán
+                soTien: chiTietGiaHan.giaChungChi*0.5, // Phí gia hạn cố định hoặc tính toán
                 tienNhan: 0,
                 tienThoi: 0
             };
@@ -215,58 +216,33 @@ const phieugiahanController = {
 
     // Xử lý thanh toán gia hạn
     XuLyThanhToan: async (req, res) => {
-        try {
-            const { id } = req.params;
-            const { soTien, tienNhan, tienThoi, phuongThucThanhToan } = req.body;
-            
-            // Kiểm tra phiếu gia hạn tồn tại và trạng thái
-            const chiTietGiaHan = await PhieuGiaHanModel.LayChiTietPhieuGiaHan(id);
-            
-            if (!chiTietGiaHan) {
-                return res.status(404).json({ error: 'Không tìm thấy phiếu gia hạn' });
-            }
-            
-            // Kiểm tra trạng thái có thể thanh toán
-            if (chiTietGiaHan.TinhTrang === 'Đã thanh toán') {
-                return res.status(400).json({ error: 'Phiếu gia hạn đã được thanh toán' });
-            }
-            
-            if (chiTietGiaHan.TinhTrang === 'Từ chối') {
-                return res.status(400).json({ error: 'Phiếu gia hạn đã bị từ chối, không thể thanh toán' });
-            }
-            
-            if (chiTietGiaHan.TinhTrang !== 'Chờ duyệt' && chiTietGiaHan.TinhTrang !== 'Đã duyệt') {
-                return res.status(400).json({ error: 'Phiếu gia hạn không ở trạng thái có thể thanh toán' });
-            }
-            
-            // Validate payment
-            if (tienNhan < soTien) {
-                return res.status(400).json({ error: 'Số tiền nhận không đủ' });
-            }
-            
-            const success = await PhieuGiaHanModel.CapNhatThanhToan(id, soTien, tienNhan, tienThoi, phuongThucThanhToan);
-            
-            if (success) {
-                res.json({ 
-                    message: 'Thanh toán gia hạn thành công',
-                    data: {
-                        id,
-                        soTien,
-                        tienNhan,
-                        tienThoi,
-                        phuongThucThanhToan,
-                        thoiGianThanhToan: new Date()
-                    }
-                });
-            } else {
-                res.status(500).json({ error: 'Không thể cập nhật thanh toán' });
-            }
-            
-        } catch (err) {
-            console.error('Error in XuLyThanhToan:', err);
-            res.status(500).json({ error: err.message });
+    try {
+        const { id } = req.params;
+
+        // Kiểm tra phiếu gia hạn tồn tại
+        const chiTietGiaHan = await PhieuGiaHanModel.LayChiTietPhieuGiaHan(id);
+        if (!chiTietGiaHan) {
+            return res.status(404).json({ error: 'Không tìm thấy phiếu gia hạn' });
         }
+
+        // Chỉ cho phép thanh toán khi trạng thái là "Chờ duyệt"
+        if (chiTietGiaHan.TinhTrang !== 'Chờ duyệt') {
+            return res.status(400).json({ error: 'Phiếu gia hạn không ở trạng thái chờ duyệt' });
+        }
+
+        // Cập nhật trạng thái thành "Đã duyệt"
+        const success = await PhieuGiaHanModel.CapNhatDaDuyet(id);
+
+        if (success) {
+            res.json({ message: 'Đã duyệt phiếu gia hạn thành công', id });
+        } else {
+            res.status(500).json({ error: 'Không thể cập nhật trạng thái phiếu gia hạn' });
+        }
+    } catch (err) {
+        console.error('Error in XuLyThanhToan:', err);
+        res.status(500).json({ error: err.message });
     }
+}
 };
 
 module.exports = phieugiahanController;

@@ -1,4 +1,6 @@
 const lichthi = require('../../NVKT/LichThi/lichthiModel');
+const lichThiModel = require('..//LichThi/lichthiModel');
+const ThiSinh = require('../ThiSinh/thisinhModel');
 const PhieuGiaHanModel = require('./phieugiahanModel');
 
 const phieugiahanController = {
@@ -66,51 +68,6 @@ const phieugiahanController = {
             res.status(500).json({ error: err.message });
         }
     },
-
-    // Lấy danh sách lịch thi
-    LayDanhSachLichThi: async (req, res) => {
-        try {
-            const { giaHanId } = req.params;
-            const { chungChiID } = req.query; // Lấy chungChiID từ query parameter
-            
-            console.log('LayDanhSachLichThi called with giaHanId:', giaHanId, 'chungChiID:', chungChiID);
-            
-            // Sử dụng method có sẵn trong PhieuGiaHanModel
-            const lichThi = await PhieuGiaHanModel.LayDanhSachLichThi(chungChiID);
-            
-            res.render('NVTNPage/lichthi', {
-                lichThi: lichThi,
-                giaHanId: giaHanId || null,
-                chungChiID: chungChiID || null,
-                title: 'Chọn lịch thi thay thế',
-                layout: 'NVTN/NVTNmain'
-            });
-            
-        } catch (err) {
-            console.error('Error in LayDanhSachLichThi:', err);
-            res.redirect('/NVTN/quanligiahan?error=' + encodeURIComponent('Không thể tải danh sách lịch thi'));
-        }
-    },
-
-    // Tìm kiếm thí sinh theo SBD
-    TimKiemThiSinh: async (req, res) => {
-        try {
-            const { sbd } = req.query;
-            
-            if (!sbd) {
-                return res.status(400).json({ error: 'Vui lòng nhập SBD' });
-            }
-            
-            const studentData = await PhieuGiaHanModel.TimKiemThiSinhTheoSBD(sbd);
-            
-            res.json(studentData);
-            
-        } catch (err) {
-            console.error('Error in TimKiemThiSinh:', err);
-            res.status(404).json({ error: err.message });
-        }
-    },
-
     // Tạo phiếu gia hạn
     TaoPhieuGiaHan: async (req, res) => {
         try {
@@ -142,7 +99,7 @@ const phieugiahanController = {
             }
             
             // Lấy thông tin cần thiết từ thongTinThiSinh
-            const soBaoDanh = parseInt((sbd || thongTinThiSinh.sbd || '').replace(/\D/g, '')) || 0;
+            const soBaoDanh = sbd;
             if (!soBaoDanh) {
                 return res.status(400).json({ 
                     success: false,
@@ -151,7 +108,7 @@ const phieugiahanController = {
             }
             
             // Tìm PhieuID và LichThi hiện tại từ SBD
-            const studentInfo = await PhieuGiaHanModel.TimKiemThiSinhTheoSBD(soBaoDanh.toString());
+            const studentInfo = await ThiSinh.TimKiemThiSinhTheoSBD(soBaoDanh.toString());
             if (!studentInfo) {
                 return res.status(400).json({ 
                     success: false,
@@ -165,14 +122,15 @@ const phieugiahanController = {
                 FROM PhieuDuThi pdt 
                 WHERE pdt.SoBaoDanh = ${soBaoDanh}
             `;
-            const scheduleResult = await PhieuGiaHanModel.executeQuery(currentScheduleQuery);
+
+            const scheduleResult = await lichThiModel.layLichThiTruoc(currentScheduleQuery);
             const lichThiTruoc = scheduleResult.recordset[0]?.lichThiTruoc || 1;
-            
+
             // Tạo phiếu gia hạn mới với cấu trúc đúng của bảng PhieuGiaHan
             const phieuGiaHanID = await PhieuGiaHanModel.TaoPhieuGiaHan(
                 studentInfo.PhieuID,    // PhieuID từ thông tin thí sinh
                 lichThiTruoc,           // LichThiTruoc (lịch thi hiện tại)
-                maBaiThi,                   // LichThiSau (sẽ được cập nhật sau khi chọn lịch thi)
+                ngayThayThe,                  // LichThiSau (sẽ được cập nhật sau khi chọn lịch thi)
                 'Chờ duyệt',           // TinhTrang
                 loaiGiaHan             // LoaiGiaHan
             );
@@ -255,53 +213,10 @@ hienThiFormTao: async (req, res) => {
     }
 },
 
-// Tìm thông tin thí sinh theo SBD
-timThongTinThiSinh: async (req, res) => {
-    try {
-        const { sbd } = req.params;
-        
-        if (!sbd) {
-            return res.json({
-                success: false,
-                message: 'Số báo danh không được để trống'
-            });
-        }
-        
-        const thongTin = await PhieuGiaHanModel.timThongTinThiSinhTheoSBD(sbd);
-        
-        if (!thongTin) {
-            return res.json({
-                success: false,
-                message: 'Không tìm thấy thông tin thí sinh với số báo danh này'
-            });
-        }
-        const validation = await PhieuGiaHanModel.ValidateGiaHan(sbd);
-        res.json({
-            success: true,
-            data: thongTin,
-            validation: validation
-        });
-    } catch (error) {
-        console.error('Error in timThongTinThiSinh:', error);
-        res.json({
-            success: false,
-            message: 'Có lỗi xảy ra khi tìm kiếm thông tin thí sinh'
-        });
-    }
-},
+
 chiTietPhieuGiaHan: async (req, res) => {
     try {
         const { id } = req.params;
-        
-        // Nếu id = 'tao', hiển thị form tạo mới
-        if (id === 'tao') {
-            return res.render('NVTNPage/chitietgiahan', {
-                title: 'Tạo phiếu gia hạn mới',
-                isNewExtension: true,
-                chiTietGiaHan: {}, // Empty object for new creation,
-                layout: 'NVTN/NVTNmain'
-            });
-        }
         
         // Nếu không, lấy thông tin chi tiết phiếu gia hạn
         const chiTietGiaHan = await PhieuGiaHanModel.LayChiTietPhieuGiaHan(id);
@@ -311,7 +226,7 @@ chiTietPhieuGiaHan: async (req, res) => {
                 message: 'Không tìm thấy phiếu gia hạn' 
             });
         }
-        
+        console.log('Chi tiết phiếu gia hạn:', chiTietGiaHan);
         res.render('NVTNPage/chitietgiahan', {
             title: 'Chi tiết phiếu gia hạn',
             isNewExtension: false,
@@ -326,91 +241,17 @@ chiTietPhieuGiaHan: async (req, res) => {
         });
     }
 },
-// API: Lấy danh sách lịch thi (trả về JSON)
-// Cập nhật method APILayDanhSachLichThi:
-
-APILayDanhSachLichThi: async (req, res) => {
+taoPhieuGiaHan: async (req, res) => {
     try {
-        const { chungChiID } = req.params;
-        const { chungChiID: queryChungChiID, page = 1, limit = 10 } = req.query;
-        
-        const finalChungChiID = chungChiID || queryChungChiID;
-        const pageNum = parseInt(page);
-        const limitNum = parseInt(limit);
-        const offset = (pageNum - 1) * limitNum;
-        
-        console.log('APILayDanhSachLichThi called with:', { 
-            chungChiID: finalChungChiID, 
-            page: pageNum, 
-            limit: limitNum,
-            offset 
+        res.render('NVTNPage/taophieugiahan', {
+            title: 'Tạo mới phiếu gia hạn',
+            layout: 'NVTN/NVTNmain'
         });
         
-        // Lấy tổng số records
-        const totalCount = await PhieuGiaHanModel.DemSoLuongLichThi(finalChungChiID);
-        
-        // Lấy dữ liệu với phân trang
-        const lichThi = await PhieuGiaHanModel.LayDanhSachLichThiPhanTrang(
-            finalChungChiID, 
-            offset, 
-            limitNum
-        );
-        
-        const totalPages = Math.ceil(totalCount / limitNum);
-        
-        res.json({
-            success: true,
-            data: lichThi,
-            pagination: {
-                currentPage: pageNum,
-                totalPages: totalPages,
-                totalItems: totalCount,
-                itemsPerPage: limitNum,
-                hasNext: pageNum < totalPages,
-                hasPrev: pageNum > 1
-            },
-            chungChiID: finalChungChiID
-        });
-        
-    } catch (err) {
-        console.error('Error in APILayDanhSachLichThi:', err);
-        res.status(500).json({
-            success: false,
-            error: err.message,
-            message: 'Không thể tải danh sách lịch thi'
-        });
-    }
-},
-// Lấy chứng chỉ ID theo SBD
-layChungChiIDTheoSBD: async (req, res) => {
-    try {
-        const { sbd } = req.params;
-        
-        if (!sbd) {
-            return res.json({
-                success: false,
-                message: 'Số báo danh không được để trống'
-            });
-        }
-        
-        const chungChiID = await PhieuGiaHanModel.layChungChiIDTheoSBD(sbd);
-        
-        if (!chungChiID) {
-            return res.json({
-                success: false,
-                message: 'Không tìm thấy chứng chỉ cho SBD này'
-            });
-        }
-        
-        res.json({
-            success: true,
-            chungChiID: chungChiID
-        });
     } catch (error) {
-        console.error('Error in layChungChiIDTheoSBD:', error);
-        res.json({
-            success: false,
-            message: 'Có lỗi xảy ra khi lấy chứng chỉ ID'
+        console.error('Error in chiTietPhieuGiaHan:', error);
+        res.status(500).json({ 
+            message: 'Có lỗi xảy ra khi hiển thị chi tiết phiếu gia hạn' 
         });
     }
 },

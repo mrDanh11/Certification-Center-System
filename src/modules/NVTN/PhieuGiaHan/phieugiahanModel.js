@@ -1,16 +1,6 @@
 const { pool } = require('../../../config/db');
-
+const ThiSinh =  require('../ThiSinh/thisinhModel');
 const PhieuGiaHanModel = {
-    // Helper method để execute query
-    executeQuery: async (query) => {
-        try {
-            await pool.connect()
-            return await pool.request().query(query);
-        } catch (err) {
-            throw new Error('Database query error: ' + err.message);
-        }
-    },
-
     LayAllGiaHan: async () => {
         try {
         const stmt = `
@@ -139,132 +129,7 @@ const PhieuGiaHanModel = {
             throw new Error('Error fetching PhieuGiaHan detail: ' + err.message);
         }
     },
-    DemSoLuongLichThi: async (chungChiID = null) => {
-        try {
-            await pool.connect();
-            
-            let query = `
-                SELECT COUNT(*) as total
-                FROM LichThi lt
-                INNER JOIN ChungChi cc ON lt.ChungChiID = cc.ChungChiID
-                WHERE lt.ThoiGianThi >= CAST(GETDATE() AS DATE)
-            `;
-            
-            const request = pool.request();
-            
-            if (chungChiID) {
-                query += ` AND lt.ChungChiID = @chungChiID`;
-                request.input('chungChiID', chungChiID);
-            }
-            
-            const result = await request.query(query);
-            return result.recordset[0].total;
-            
-        } catch (error) {
-            console.error('Error in DemSoLuongLichThi:', error);
-            throw error;
-        }
-    },
-
-    // Sửa method LayDanhSachLichThiPhanTrang:
-    LayDanhSachLichThiPhanTrang: async (chungChiID = null, offset = 0, limit = 10) => {
-        try {
-            await pool.connect();
-            
-            let query = `
-                SELECT 
-                    lt.BaiThiID as id,
-                    lt.BaiThiID as maBaiThi,
-                    FORMAT(lt.ThoiGianThi, 'dd/MM/yyyy') as ngayThi,
-                    CONVERT(VARCHAR(5), lt.ThoiGianLamBai, 108) as gioThi,
-                    lt.DiaDiemThi as diaDiem,
-                    cc.TenChungChi as tenChungChi
-                FROM LichThi lt
-                INNER JOIN ChungChi cc ON lt.ChungChiID = cc.ChungChiID
-                LEFT JOIN PhongThi pt ON lt.PhongThiID = pt.PhongThiID
-                WHERE lt.ThoiGianThi >= CAST(GETDATE() AS DATE)
-            `;
-            
-            const request = pool.request();
-            request.input('offset', offset);
-            request.input('limit', limit);
-            
-            if (chungChiID) {
-                query += ` AND lt.ChungChiID = @chungChiID`;
-                request.input('chungChiID', chungChiID);
-            }
-            
-            query += `
-                ORDER BY lt.ThoiGianThi ASC, lt.ThoiGianLamBai ASC
-                OFFSET @offset ROWS
-                FETCH NEXT @limit ROWS ONLY
-            `;
-            
-            const result = await request.query(query);
-            
-            // Format dữ liệu
-            return result.recordset.map(item => ({
-                id: item.id,
-                maBaiThi: item.maBaiThi,
-                ngayThi: item.ngayThi,
-                gioThi: item.gioThi,
-                diaDiem: item.diaDiem,
-                tenChungChi: item.tenChungChi
-            }));
-            
-        } catch (error) {
-            console.error('Error in LayDanhSachLichThiPhanTrang:', error);
-            throw error;
-        }
-    },
-    // Cập nhật method LayDanhSachLichThi để nhất quán:
-    LayDanhSachLichThi: async (chungChiID) => {
-        try {
-            console.log('LayDanhSachLichThi with chungChiID:', chungChiID);
-            
-            let query = `
-                SELECT 
-                    lt.BaiThiID as id,
-                    lt.BaiThiID as maBaiThi,
-                    cc.TenChungChi as tenChungChi,
-                    lt.DiaDiemThi as diaDiem,
-                    ISNULL(pt.TenPhong, N'Phòng chưa xác định') as phongThi,
-                    FORMAT(lt.ThoiGianThi, 'dd/MM/yyyy') as ngayThi,
-                    CONVERT(VARCHAR(5), lt.ThoiGianLamBai, 108) as gioThi,
-                    (
-                        SELECT COUNT(*) 
-                        FROM PhieuDuThi pdt 
-                        WHERE pdt.LichThi = lt.BaiThiID
-                    ) as soLuongDaDangKy
-                FROM LichThi lt
-                INNER JOIN ChungChi cc ON lt.ChungChiID = cc.ChungChiID
-                LEFT JOIN PhongThi pt ON lt.PhongThiID = pt.PhongThiID
-                WHERE lt.ThoiGianThi > CAST(GETDATE() AS DATE)
-            `;
-            
-            if (chungChiID) {
-                query += ` AND lt.ChungChiID = ${chungChiID}`;
-            }
-            
-            query += ` ORDER BY lt.ThoiGianThi ASC`;
-            
-            console.log('Executing query:', query);
-            await pool.connect();
-            const result = await pool.request().query(query);
-            
-            // Format data
-            const formattedResults = result.recordset.map(item => ({
-                ...item,
-                diaDiemFull: `${item.diaDiem} - ${item.phongThi}`,
-                isAvailable: true
-            }));
-            
-            return formattedResults;
-            
-        } catch (err) {
-            throw new Error('Error fetching LichThi list: ' + err.message);
-        }
-    },
+    
 
     // Tạo phiếu gia hạn mới
     TaoPhieuGiaHan: async (phieuID, lichThiTruoc, lichThiSau, tinhTrang = 'Chờ duyệt', loaiGiaHan = 'Bình Thường') => {
@@ -321,80 +186,9 @@ const PhieuGiaHanModel = {
         }
     },
 
-    // Tìm kiếm thí sinh theo SBD
-    TimKiemThiSinhTheoSBD: async (sbd) => {
-        try {
-            // Trích xuất số từ SBD (bỏ prefix "SB")
-            const soBaoDanh = sbd.replace(/\D/g, '');
-            
-            const query = `
-                SELECT 
-                    ts.ThiSinhID as id,
-                    pdt.SoBaoDanh as sbd,
-                    ts.Hoten as hoTen,
-                    ts.CCCD as cccd,
-                    pd.PhieuID
-                FROM ThiSinh ts
-                INNER JOIN PhieuDuThi pdt ON ts.ThiSinhID = pdt.ThiSinhID AND ts.PhieuID = pdt.PhieuID
-                INNER JOIN PhieuDangKy pd ON ts.PhieuID = pd.PhieuID
-                WHERE pdt.SoBaoDanh = ${soBaoDanh}
-            `;
-            await pool.connect()
-            const result = await pool.request().query(query);
-            
-            if (result.recordset.length === 0) {
-                throw new Error('Không tìm thấy thí sinh với SBD này');
-            }
-            
-            return result.recordset[0];
-            
-        } catch (err) {
-            throw new Error('Error searching student: ' + err.message);
-        }
-    },
+   
 
-    timThongTinThiSinhTheoSBD: async (sbd) => {
-    try {
-        console.log('Searching for SBD:', sbd); // Debug log
-        
-        // Trích xuất số từ SBD để tìm kiếm (VD: "SBD001" -> "1")
-        const soBaoDanh = parseInt(sbd.replace(/\D/g, '')) || sbd;
-        console.log('Extracted SoBaoDanh:', soBaoDanh); // Debug log
-        
-        const query = `
-            SELECT 
-                pdt.SoBaoDanh as sbd,
-                lt.BaiThiID as maBaiThi,
-                ts.ThiSinhID as maThiSinh,
-                ts.Hoten as hoTen,
-                ts.CCCD as cccd,
-                FORMAT(lt.ThoiGianThi, 'dd/MM/yyyy') as ngayThiCu,
-                CONVERT(VARCHAR(5), lt.ThoiGianLamBai, 108) as gioThiCu,
-                lt.DiaDiemThi + ' - ' + ISNULL(pt.TenPhong, N'Phòng chưa xác định') as diaDiemCu
-            FROM ThiSinh ts
-            INNER JOIN PhieuDuThi pdt ON ts.ThiSinhID = pdt.ThiSinhID AND ts.PhieuID = pdt.PhieuID
-            INNER JOIN PhieuDangKy pd ON ts.PhieuID = pd.PhieuID
-            INNER JOIN LichThi lt ON pdt.LichThi = lt.BaiThiID
-            LEFT JOIN PhongThi pt ON lt.PhongThiID = pt.PhongThiID
-            WHERE pdt.SoBaoDanh = ${soBaoDanh}
-        `;
-        
-        console.log('Executing SQL Server query with pool:', !!pool); // Debug log
-        console.log('Query:', query); // Debug query
-        await pool.connect()
-        const result = await pool.request().query(query);
-        console.log('Query results:', result.recordset); // Debug log
-        
-        if (result.recordset.length === 0) {
-            return null;
-        }
-        
-        return result.recordset[0];
-    } catch (error) {
-        console.error('Error in timThongTinThiSinhTheoSBD:', error);
-        throw error;
-    }
-},
+    
 // Tạo mã phiếu tự động (sử dụng SQL Server syntax)
 taoMaPhieuTuDong: async () => {
     try {
@@ -492,38 +286,7 @@ KiemTraThoiGianGiaHan: async (sbd) => {
     }
 },
 
-// Lấy thông tin phiếu đăng ký từ SBD
-LayPhieuIDTheoSBD: async (sbd) => {
-    try {
-        await pool.connect();
-        
-        const soBaoDanh = parseInt(sbd.replace(/\D/g, '')) || sbd;
-        
-        const query = `
-            SELECT pd.PhieuID, kh.Hoten as tenKhachHang
-            FROM ThiSinh ts
-            INNER JOIN PhieuDuThi pdt ON ts.ThiSinhID = pdt.ThiSinhID AND ts.PhieuID = pdt.PhieuID
-            INNER JOIN PhieuDangKy pd ON ts.PhieuID = pd.PhieuID
-            INNER JOIN KhachHang kh ON pd.KhachHangID = kh.KhachHangID
-            WHERE pdt.SoBaoDanh = @soBaoDanh
-        `;
-        
-        const request = pool.request();
-        request.input('soBaoDanh', soBaoDanh);
-        
-        const result = await request.query(query);
-        
-        if (result.recordset.length === 0) {
-            throw new Error('Không tìm thấy phiếu đăng ký');
-        }
-        
-        return result.recordset[0];
-        
-    } catch (error) {
-        console.error('Error in LayPhieuIDTheoSBD:', error);
-        throw error;
-    }
-},
+
 
 // Validation tổng hợp trước khi tạo phiếu gia hạn
 ValidateGiaHan: async (sbd) => {
@@ -531,7 +294,7 @@ ValidateGiaHan: async (sbd) => {
         const errors = [];
         
         // 1. Kiểm tra thông tin cơ bản
-        const phieuInfo = await PhieuGiaHanModel.LayPhieuIDTheoSBD(sbd);
+        const phieuInfo = await ThiSinh.LayPhieuIDTheoSBD(sbd);
         const phieuID = phieuInfo.PhieuID;
         
         // 2. Kiểm tra số lần gia hạn (tối đa 2 lần)
@@ -544,15 +307,15 @@ ValidateGiaHan: async (sbd) => {
         }
         
         // // 3. Kiểm tra thời gian (ít nhất 24 giờ trước khi thi)
-        // const thoiGianInfo = await PhieuGiaHanModel.KiemTraThoiGianGiaHan(sbd);
-        // if (thoiGianInfo.gioConLai < 24) {
-        //     const ngayThi = new Date(thoiGianInfo.ThoiGianThi).toLocaleDateString('vi-VN');
-        //     const gioThi = thoiGianInfo.ThoiGianLamBai;
-        //     errors.push({
-        //         field: 'thoiGian',
-        //         message: `Chỉ còn ${thoiGianInfo.gioConLai} giờ đến kỳ thi (${ngayThi} lúc ${gioThi}). Cần ít nhất 24 giờ để gia hạn.`
-        //     });
-        // }
+        const thoiGianInfo = await PhieuGiaHanModel.KiemTraThoiGianGiaHan(sbd);
+        if (thoiGianInfo.gioConLai < 24) {
+            const ngayThi = new Date(thoiGianInfo.ThoiGianThi).toLocaleDateString('vi-VN');
+            const gioThi = thoiGianInfo.ThoiGianLamBai;
+            errors.push({
+                field: 'thoiGian',
+                message: `Chỉ còn ${thoiGianInfo.gioConLai} giờ đến kỳ thi (${ngayThi} lúc ${gioThi}). Cần ít nhất 24 giờ để gia hạn.`
+            });
+        }
         
         return {
             isValid: errors.length === 0,
@@ -568,31 +331,7 @@ ValidateGiaHan: async (sbd) => {
         throw error;
     }
 },
-    // Lấy chứng chỉ ID từ SBD của thí sinh
-    layChungChiIDTheoSBD: async (sbd) => {
-        try {
-            const soBaoDanh = parseInt(sbd.replace(/\D/g, '')) || sbd;
-            
-            const query = `
-                SELECT DISTINCT lt.ChungChiID
-                FROM ThiSinh ts
-                INNER JOIN PhieuDuThi pdt ON ts.ThiSinhID = pdt.ThiSinhID AND ts.PhieuID = pdt.PhieuID
-                INNER JOIN LichThi lt ON pdt.LichThi = lt.BaiThiID
-                WHERE pdt.SoBaoDanh = ${soBaoDanh}
-            `;
-            await pool.connect()
-            const result = await pool.request().query(query);
-            
-            if (result.recordset.length === 0) {
-                return null;
-            }
-            
-            return result.recordset[0].ChungChiID;
-        } catch (error) {
-            console.error('Error in layChungChiIDTheoSBD:', error);
-            throw error;
-        }
-    }
+    
     
 };
 
