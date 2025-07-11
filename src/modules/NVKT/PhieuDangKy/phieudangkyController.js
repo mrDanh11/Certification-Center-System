@@ -1,4 +1,5 @@
 const PhieuDangKy = require('./phieudangkyModel');
+const KhachHangModel = require('../KhachHang/khachhangModel');
 const phieudangkyController = {
   LayThongTinDK: async (req, res) => {
     try {
@@ -105,7 +106,7 @@ const phieudangkyController = {
   },
 
   TaoPhieuDangKy: async (req, res) => {
-    const { khachHangID, loaiPhieu, baiThiInfo, soLuong } = req.body;
+    const { khachHangID, loaiPhieu, baiThiInfo, soLuong, NVTiepNhan } = req.body;
 
     if (!khachHangID) {
       return res.status(400).json({ error: 'KhachHangID is required' });
@@ -137,9 +138,9 @@ const phieudangkyController = {
     const result = await PhieuDangKy.TaoPhieuDangKy(
       khachHangID,
       loaiPhieu,
-      undefined,
       baiThiInfo,
-      soLuong
+      soLuong,
+      NVTiepNhan
     );
 
     if (result.success) {

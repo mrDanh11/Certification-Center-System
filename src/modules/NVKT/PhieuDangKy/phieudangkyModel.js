@@ -113,7 +113,7 @@ const PhieuDangKy = {
       `);
   },
 
-  TaoPhieuDangKy: async (khachHangID, loaiPhieu, nvTiepNhanLap, baiThiInfo, soLuong) => {
+  TaoPhieuDangKy: async (khachHangID, loaiPhieu, baiThiInfo, soLuong, NVTiepNhanLap) => {
     const connection = await pool.connect();
     const transaction = connection.transaction();
 
@@ -132,15 +132,25 @@ const PhieuDangKy = {
       //   OUTPUT INSERTED.PhieuID
       //   VALUES (@KhachHangID, @ThoiGianLap, @LoaiPhieu, @NVTiepNhanLap)
       // );
+      const NVResult = await request
+        .input('NVTiepNhanLap', sql_Str, NVTiepNhanLap)
+        .query(`
+          SELECT acc.NhanVienID
+          FROM ACCOUNT acc
+          WHERE acc.username = @NVTiepNhanLap 
+        `);
+
+      const NhanVienID = NVResult.recordset[0].NhanVienID;
 
       const result = await request
         .input('KhachHangID', sql_Int, khachHangID)
         .input('ThoiGianLap', sql_DateTime, new Date())
         .input('LoaiPhieu', sql_Str, loaiPhieu)
+        .input('NhanVienID', sql_Int, NhanVienID)
         .query(`
-          INSERT INTO PhieuDangKy (KhachHangID, ThoiGianLap, LoaiPhieu)
+          INSERT INTO PhieuDangKy (KhachHangID, ThoiGianLap, LoaiPhieu, NVTiepNhanLap)
           OUTPUT INSERTED.PhieuID
-          VALUES (@KhachHangID, @ThoiGianLap, @LoaiPhieu)
+          VALUES (@KhachHangID, @ThoiGianLap, @LoaiPhieu, @NhanVienID)
         `);
 
       const phieuID = result.recordset[0].PhieuID;

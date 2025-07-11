@@ -219,7 +219,13 @@ const btnDangKy_Click = async () => {
 
   try {
     // Step 1: Create PhieuDangKy
-    const phieuBody = { khachHangID, loaiPhieu: loaiKhachHang };
+    const NVTiepNhan = sessionStorage.getItem('userName');
+    const phieuBody = { 
+      khachHangID,
+      loaiPhieu: loaiKhachHang,
+      NVTiepNhan: NVTiepNhan
+    };
+
 
     // Add extra info if đơn vị
     if (loaiKhachHang === 'Đơn Vị') {
