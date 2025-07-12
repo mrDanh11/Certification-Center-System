@@ -124,9 +124,19 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       if (!res.ok) throw await res.json();
 
+      const val = fld('phieuDangKyInput').value.trim();
+      res = await fetch('/NVQL/api/lichthi/GanLichThi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          baiThiID,
+          phieuDangKy: val,
+        })
+      });
+      if (!res.ok) throw await res.json();
+
       alert('✅ Tạo lịch & gán nhân viên coi thi thành công!');
       location.reload();
-
     } catch (err) {
       console.error(err);
       alert('❌ Lỗi: ' + (err.error || err.message));
