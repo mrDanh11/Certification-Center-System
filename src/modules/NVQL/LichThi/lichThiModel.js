@@ -35,6 +35,33 @@ const LichThiModel = {
     } finally {
       conn.close();
     }
+  },
+
+  async LichThiToiDonVi(data) {
+    const conn = await pool.connect();
+    const tx   = conn.transaction();
+    try {
+      await tx.begin();
+      console.log('Controller:', data.baiThiID, data.phieuDangKy);
+      const result = await tx.request()
+        .input('BaiThiID', sql_Int,  data.baiThiID)
+        .input('PhieuID',      sql_Int,  data.phieuDangKy)
+        .query(`
+          INSERT INTO DanhSachDKThi
+            (PhieuID, BaiThiID)
+          OUTPUT INSERTED.BaiThiID
+          VALUES
+            (@PhieuID, @BaiThiID)
+        `);
+
+      await tx.commit();
+      return result.recordset[0].BaiThiID;
+    } catch (err) {
+      await tx.rollback();
+      throw err;
+    } finally {
+      conn.close();
+    }
   }
 };
 

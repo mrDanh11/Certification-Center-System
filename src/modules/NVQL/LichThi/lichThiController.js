@@ -30,6 +30,25 @@ const LichThiController = {
       console.error('Error create LichThi:', err);
       return res.status(500).json({ error: err.message });
     }
+  },
+
+  async ganLichThi(req, res) {
+    try {
+      const {
+        baiThiID,
+        phieuDangKy,
+      } = req.body;
+      console.log('Controller:', { baiThiID, phieuDangKy});
+      const baithi = await LichThiModel.LichThiToiDonVi({
+        baiThiID,
+        phieuDangKy,
+      });
+
+      return res.json({ success: true, baithi });
+    } catch (err) {
+      console.error('Error gan LichThi:', err);
+      return res.status(500).json({ error: err.message });
+    }
   }
 };
 
