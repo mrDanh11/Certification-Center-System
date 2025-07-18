@@ -55,24 +55,12 @@ The system offers a comprehensive set of powerful features for end-to-end certif
 
 The system features an intuitive interface designed for each user role:
 
-### 👩‍💼 Management Staff Interface
-
 <p align="center">
   <img src="./src/public/img/NVQL_HomePage.png" alt="Management Staff Home Page" width="400" height="240" />
   <img src="./src/public/img/NVQL_TaoLichThi.png" alt="Management Staff creating an exam schedule" width="400" height="240" />
-</p>
-
-### 👨‍💻 Reception Staff Interface
-
-<p align="center">
   <img src="./src/public/img/NVTN_HomePage.png" alt="Reception Staff Home Page" width="400" height="240" />
   <img src="./src/public/img/NVTN_CapChungChi.png" alt="Reception Staff issuing a certificate" width="400" height="240" />
   <img src="./src/public/img/NVTN_DKMonThi.png" alt="Reception Staff registering for an exam subject" width="400" height="240" />
-</p>
-
-### 👨‍💼 Accounting Staff Interface
-
-<p align="center">
   <img src="./src/public/img/NVKT_HomePage.png" alt="Accounting Staff Home Page" width="400" height="240" />
   <img src="./src/public/img/NVKT_DSThanhToan.png" alt="Accounting Staff viewing payment list" width="400" height="240" />
   <img src="./src/public/img/NVKT_ThanhToan.png" alt="Accounting Staff processing payment" width="400" height="240" />
