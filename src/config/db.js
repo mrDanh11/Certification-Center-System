@@ -1,16 +1,18 @@
 const mssql = require('mssql');
+require("dotenv").config();
 // Thiết lập kết nối với MySQL
 const config = {
-    server: "localhost",
-    user: "NVHT",
-    password: "1234@",
-    database: "QuanLyDangKyThi",
+    server: process.env.DB_SERVER,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
     driver: "mssql",
-    options:{
-        encrypt: false,
-        enableArithAbort: false,
+    options: {
+        encrypt: process.env.DB_ENCRYPT === "true",
+        enableArithAbort: process.env.DB_ARITHABORT === "true",
     }
 };
+
 
 try {
     const pool = new mssql.ConnectionPool(config);
